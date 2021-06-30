@@ -4,5 +4,10 @@
 			"path": ".."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"map_mgr.h": "c",
+			"kheap.h": "c"
+		}
+	}
 }

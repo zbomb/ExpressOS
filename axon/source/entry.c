@@ -4,17 +4,72 @@
     axon/source/entry.c
 ==============================================================*/
 
+#include "axon/panic.h"
 #include "axon/debug_print.h"
+#include "axon/memory/page_mgr.h"
+#include "axon/memory/map_mgr.h"
+#include "axon/memory/page_alloc.h"
+#include "axon/memory/kmap.h"
+#include "axon/memory/heap_mgr.h"
+#include "axon/memory/kheap.h"
+#include "axon/arch.h"
+#include "axon/system/interrupts_mgr.h"
+
+#ifdef _X86_64_
+#include "axon/arch_x86/acpi_info.h"
+#endif
 
 
-void ax_c_main_bsp( void )
+
+void ax_c_main_bsp( void* ptr_info )
 {
-    axk_terminal_lock();
-    axk_terminal_clear();
-    axk_terminal_prints( "=====> Main Entry Point!! \n" );
-    axk_terminal_unlock();
+    axk_terminal_prints( "Kernel: Initializing...\n" );
 
-    while( true ) { __asm__( "hlt" ); }
+    /*
+        Initialize page allocator
+    */
+    if( !axk_pagemgr_init() )
+    {
+        axk_panic( "Kernel: failed to initialize page" );
+    }
+
+    /*
+        Initialize kernel memory map system
+    */
+    if( !axk_mapmgr_init() )
+    {
+        axk_panic( "Kernel: failed to initialize kernel memory map" );
+    }
+
+    /*
+        Initialize kernel heap
+    */
+    if( !axk_kheap_init() )
+    {
+        axk_panic( "Kernel: failed to initialize kernel heap" );
+    }
+
+    /*
+        Initialize ACPI tables (X86 ONLY)
+    */
+#ifdef _X86_64_
+    if( !axk_x86_acpi_parse() )
+    {
+        axk_panic( "Kernel: failed to parse ACPI tables" );
+    }
+#endif
+
+    /*
+        Initialize interrupt driver
+    */
+    if( !axk_interrupts_init() )
+    {
+        axk_panic( "Kernel: failed to initialize interrupt driver" );
+    }
+
+
+    while( 1 ) { __asm__( "hlt" ); }
+
 }
 
 

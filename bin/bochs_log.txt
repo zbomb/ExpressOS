@@ -18,7 +18,7 @@
 00000000000i[      ]   Sound support: SB16 ES1370
 00000000000i[      ]   USB support: UHCI OHCI EHCI xHCI
 00000000000i[      ]   VGA extension support: vbe cirrus voodoo
-00000000000i[MEM0  ] allocated memory at 00000204E9B89040. after alignment, vector=00000204E9B8A000
+00000000000i[MEM0  ] allocated memory at 000001D53D520040. after alignment, vector=000001D53D521000
 00000000000i[MEM0  ] 2048.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=16384
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('C:\Program Files\Bochs-2.6.11/BIOS-bochs-latest')
@@ -1551,7 +1551,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Sun Jun 20 01:54:46 2021 (time0=1624168486)
+00000000000i[CMOS  ] Setting initial clock to: Tue Jun 22 23:23:10 2021 (time0=1624418590)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -1586,7 +1586,7 @@
 00000000000i[CD1   ] load cdrom with path='C:\Users\zackb\source\repos\ExpressOS\bin\x86_64\axon\axon.iso'
 00000000000i[CD1   ] Opening image file as a cd
 00000000000i[HD    ] Media present in CD-ROM drive
-00000000000i[HD    ] Capacity is 3986 sectors (7.79 MB)
+00000000000i[HD    ] Capacity is 4005 sectors (7.82 MB)
 00000000000i[PLUGIN] init_dev of 'pci_ide' plugin device by virtual method
 00000000000i[DEV   ] PIIX3 PCI IDE controller present at device 1, function 1
 00000000000i[PLUGIN] init_dev of 'unmapped' plugin device by virtual method
@@ -1779,7 +1779,7 @@
 00006209252i[BXVGA ] VBE known Display Interface b0c5
 00006211896i[VBIOS ] VBE Bios $Id: vbe.c 228 2020-01-02 23:09:02Z vruppert $
 00006212007d[CPU0  ] interrupt(): vector = 10, TYPE = 4, EXT = 0
-00006216880i[WINGUI] dimension update x=720 y=400 fontheight=16 fontwidth=9 bpp=8
+00006217120i[WINGUI] dimension update x=720 y=400 fontheight=16 fontwidth=9 bpp=8
 00006251705d[CPU0  ] interrupt(): vector = 10, TYPE = 4, EXT = 0
 00006270034d[CPU0  ] interrupt(): vector = 10, TYPE = 4, EXT = 0
 00006270149d[CPU0  ] interrupt(): vector = 10, TYPE = 4, EXT = 0
@@ -2073,7 +2073,7 @@
 00019778306d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
 00021975299d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
 00021975299d[CPU0  ] inhibit interrupts mask = 1
-00021975299d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00021975311d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
 00024172342d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
 00024172342d[CPU0  ] inhibit interrupts mask = 1
 00024172342d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
@@ -2284,1193 +2284,1710 @@
 00131826220d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
 00131826220d[CPU0  ] inhibit interrupts mask = 1
 00131826220d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00133578898i[BIOS  ] Booting from 07c0:0000
-00133579007d[CPU0  ] inhibit interrupts mask = 3
-00133579034d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00133579737d[CPU0  ] inhibit interrupts mask = 1
-00133589346d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00133590052d[CPU0  ] inhibit interrupts mask = 1
-00133599653d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00133600368d[CPU0  ] inhibit interrupts mask = 1
-00133605885d[CPU0  ] inhibit interrupts mask = 3
-00133605885d[CPU0  ] inhibit interrupts mask = 1
-00133605894d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00133606057d[CPU0  ] protected mode activated
-00133606067d[CPU0  ] inhibit interrupts mask = 3
-00159792863d[CPU0  ] inhibit interrupts mask = 3
-00159792875d[CPU0  ] real mode activated
-00159792879d[CPU0  ] inhibit interrupts mask = 3
-00159792879d[CPU0  ] inhibit interrupts mask = 1
-00159792887d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00159792887d[CPU0  ] inhibit interrupts mask = 1
-00159792887d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00159792921d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00159793274d[CPU0  ] protected mode activated
-00159793282d[CPU0  ] inhibit interrupts mask = 3
-00159793526d[CPU0  ] inhibit interrupts mask = 3
-00159793543d[CPU0  ] real mode activated
-00159793547d[CPU0  ] inhibit interrupts mask = 3
-00159793547d[CPU0  ] inhibit interrupts mask = 1
-00159793566d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00159793919d[CPU0  ] protected mode activated
-00159793927d[CPU0  ] inhibit interrupts mask = 3
-00159794171d[CPU0  ] inhibit interrupts mask = 3
-00159794188d[CPU0  ] real mode activated
-00159794192d[CPU0  ] inhibit interrupts mask = 3
-00159794192d[CPU0  ] inhibit interrupts mask = 1
-00159794211d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00159794575d[CPU0  ] protected mode activated
-00159794583d[CPU0  ] inhibit interrupts mask = 3
-00159794827d[CPU0  ] inhibit interrupts mask = 3
-00159794844d[CPU0  ] real mode activated
-00159794848d[CPU0  ] inhibit interrupts mask = 3
-00159794848d[CPU0  ] inhibit interrupts mask = 1
-00159794867d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00159795230d[CPU0  ] protected mode activated
-00159795238d[CPU0  ] inhibit interrupts mask = 3
-00159795490d[CPU0  ] inhibit interrupts mask = 3
-00159795507d[CPU0  ] real mode activated
-00159795511d[CPU0  ] inhibit interrupts mask = 3
-00159795511d[CPU0  ] inhibit interrupts mask = 1
-00159795530d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00159795891d[CPU0  ] protected mode activated
-00159795899d[CPU0  ] inhibit interrupts mask = 3
-00159796138d[CPU0  ] inhibit interrupts mask = 3
-00159796155d[CPU0  ] real mode activated
-00159796159d[CPU0  ] inhibit interrupts mask = 3
-00159796159d[CPU0  ] inhibit interrupts mask = 1
-00159796178d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00159796552d[CPU0  ] protected mode activated
-00159796560d[CPU0  ] inhibit interrupts mask = 3
-00159796759d[CPU0  ] RDTSC: ticks 0x00000000:09864e17
-00159796779d[CPU0  ] RDTSC: ticks 0x00000000:09864e2b
-00161993807d[CPU0  ] RDTSC: ticks 0x00000000:09a7d44f
-00161995303d[CPU0  ] inhibit interrupts mask = 3
-00161995320d[CPU0  ] real mode activated
-00161995324d[CPU0  ] inhibit interrupts mask = 3
-00161995324d[CPU0  ] inhibit interrupts mask = 1
-00161995332d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00161995332d[CPU0  ] inhibit interrupts mask = 1
-00161995332d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00161995366d[CPU0  ] interrupt(): vector = 10, TYPE = 4, EXT = 0
-00161995572d[CPU0  ] protected mode activated
-00161995580d[CPU0  ] inhibit interrupts mask = 3
-00161995663d[CPU0  ] inhibit interrupts mask = 3
-00161995680d[CPU0  ] real mode activated
-00161995684d[CPU0  ] inhibit interrupts mask = 3
-00161995684d[CPU0  ] inhibit interrupts mask = 1
-00161995703d[CPU0  ] interrupt(): vector = 10, TYPE = 4, EXT = 0
-00161995954d[CPU0  ] protected mode activated
-00161995962d[CPU0  ] inhibit interrupts mask = 3
-00163048610d[CPU0  ] inhibit interrupts mask = 3
-00163048627d[CPU0  ] real mode activated
-00163048631d[CPU0  ] inhibit interrupts mask = 3
-00163048631d[CPU0  ] inhibit interrupts mask = 1
-00163048639d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00163048639d[CPU0  ] inhibit interrupts mask = 1
-00163048639d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00163048673d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00163049015d[CPU0  ] protected mode activated
-00163049023d[CPU0  ] inhibit interrupts mask = 3
-00163146797d[CPU0  ] RDTSC: ticks 0x00000000:09b96c2d
-00163149795d[CPU0  ] inhibit interrupts mask = 3
-00163149812d[CPU0  ] real mode activated
-00163149816d[CPU0  ] inhibit interrupts mask = 3
-00163149816d[CPU0  ] inhibit interrupts mask = 1
-00163149835d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00163150536d[CPU0  ] inhibit interrupts mask = 1
-00163910656d[CPU0  ] protected mode activated
-00163910664d[CPU0  ] inhibit interrupts mask = 3
-00164009214d[CPU0  ] inhibit interrupts mask = 3
-00164009231d[CPU0  ] real mode activated
-00164009235d[CPU0  ] inhibit interrupts mask = 3
-00164009235d[CPU0  ] inhibit interrupts mask = 1
-00164009254d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00164009955d[CPU0  ] inhibit interrupts mask = 1
-00164015475d[CPU0  ] protected mode activated
-00164015483d[CPU0  ] inhibit interrupts mask = 3
-00164905158d[CPU0  ] inhibit interrupts mask = 3
-00164905175d[CPU0  ] real mode activated
-00164905179d[CPU0  ] inhibit interrupts mask = 3
-00164905179d[CPU0  ] inhibit interrupts mask = 1
-00164905187d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00164905187d[CPU0  ] inhibit interrupts mask = 1
-00164905187d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00164905221d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00164905922d[CPU0  ] inhibit interrupts mask = 1
-00164911442d[CPU0  ] protected mode activated
-00164911450d[CPU0  ] inhibit interrupts mask = 3
-00165010000d[CPU0  ] inhibit interrupts mask = 3
-00165010017d[CPU0  ] real mode activated
-00165010021d[CPU0  ] inhibit interrupts mask = 3
-00165010021d[CPU0  ] inhibit interrupts mask = 1
-00165010040d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00165010741d[CPU0  ] inhibit interrupts mask = 1
-00165016261d[CPU0  ] protected mode activated
-00165016269d[CPU0  ] inhibit interrupts mask = 3
-00165492398d[CPU0  ] inhibit interrupts mask = 3
-00165492415d[CPU0  ] real mode activated
-00165492419d[CPU0  ] inhibit interrupts mask = 3
-00165492419d[CPU0  ] inhibit interrupts mask = 1
-00165492438d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00165493139d[CPU0  ] inhibit interrupts mask = 1
-00166680323d[CPU0  ] protected mode activated
-00166680331d[CPU0  ] inhibit interrupts mask = 3
-00166778881d[CPU0  ] inhibit interrupts mask = 3
-00166778898d[CPU0  ] real mode activated
-00166778902d[CPU0  ] inhibit interrupts mask = 3
-00166778902d[CPU0  ] inhibit interrupts mask = 1
-00166778921d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00166779622d[CPU0  ] inhibit interrupts mask = 1
-00166785142d[CPU0  ] protected mode activated
-00166785150d[CPU0  ] inhibit interrupts mask = 3
-00167091615d[CPU0  ] RDTSC: ticks 0x00000000:09f59d9f
-00167120001d[CPU0  ] RDTSC: ticks 0x00000000:09f60c81
-00167912315d[CPU0  ] RDTSC: ticks 0x00000000:0a02237b
-00167942132d[CPU0  ] RDTSC: ticks 0x00000000:0a0297f4
-00168751909d[CPU0  ] RDTSC: ticks 0x00000000:0a0ef325
-00168782467d[CPU0  ] RDTSC: ticks 0x00000000:0a0f6a83
-00169607973d[CPU0  ] RDTSC: ticks 0x00000000:0a1c0325
-00169619058d[CPU0  ] RDTSC: ticks 0x00000000:0a1c2e72
-00170467895d[CPU0  ] RDTSC: ticks 0x00000000:0a292237
-00170516642d[CPU0  ] RDTSC: ticks 0x00000000:0a29e0a2
-00171339009d[CPU0  ] RDTSC: ticks 0x00000000:0a366d01
-00171367777d[CPU0  ] RDTSC: ticks 0x00000000:0a36dd61
-00172186700d[CPU0  ] RDTSC: ticks 0x00000000:0a435c4c
-00172213838d[CPU0  ] RDTSC: ticks 0x00000000:0a43c64e
-00173056638d[CPU0  ] RDTSC: ticks 0x00000000:0a50a27e
-00173098701d[CPU0  ] RDTSC: ticks 0x00000000:0a5146cd
-00173938471d[CPU0  ] RDTSC: ticks 0x00000000:0a5e1727
-00173967779d[CPU0  ] RDTSC: ticks 0x00000000:0a5e89a3
-00174807507d[CPU0  ] inhibit interrupts mask = 3
-00174807524d[CPU0  ] real mode activated
-00174807528d[CPU0  ] inhibit interrupts mask = 3
-00174807528d[CPU0  ] inhibit interrupts mask = 1
-00174807536d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00174807536d[CPU0  ] inhibit interrupts mask = 1
-00174807536d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00174807570d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00174808271d[CPU0  ] inhibit interrupts mask = 1
-00174813791d[CPU0  ] protected mode activated
-00174813799d[CPU0  ] inhibit interrupts mask = 3
-00174912349d[CPU0  ] inhibit interrupts mask = 3
-00174912366d[CPU0  ] real mode activated
-00174912370d[CPU0  ] inhibit interrupts mask = 3
-00174912370d[CPU0  ] inhibit interrupts mask = 1
-00174912389d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00174913090d[CPU0  ] inhibit interrupts mask = 1
-00174918610d[CPU0  ] protected mode activated
-00174918618d[CPU0  ] inhibit interrupts mask = 3
-00175224223d[CPU0  ] RDTSC: ticks 0x00000000:0a71b59f
-00175252523d[CPU0  ] RDTSC: ticks 0x00000000:0a72242b
-00176092666d[CPU0  ] RDTSC: ticks 0x00000000:0a7ef5fa
-00176117008d[CPU0  ] RDTSC: ticks 0x00000000:0a7f5510
-00176380035d[CPU0  ] inhibit interrupts mask = 3
-00176380052d[CPU0  ] real mode activated
-00176380056d[CPU0  ] inhibit interrupts mask = 3
-00176380056d[CPU0  ] inhibit interrupts mask = 1
-00176380064d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00176380064d[CPU0  ] inhibit interrupts mask = 1
-00176380064d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00176380098d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00176380799d[CPU0  ] inhibit interrupts mask = 1
-00176962719d[CPU0  ] protected mode activated
-00176962727d[CPU0  ] inhibit interrupts mask = 3
-00177061277d[CPU0  ] inhibit interrupts mask = 3
-00177061294d[CPU0  ] real mode activated
-00177061298d[CPU0  ] inhibit interrupts mask = 3
-00177061298d[CPU0  ] inhibit interrupts mask = 1
-00177061317d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00177062018d[CPU0  ] inhibit interrupts mask = 1
-00177067538d[CPU0  ] protected mode activated
-00177067546d[CPU0  ] inhibit interrupts mask = 3
-00180341857d[CPU0  ] RDTSC: ticks 0x00000000:0abfcc61
-00180349985d[CPU0  ] RDTSC: ticks 0x00000000:0abfec21
-00180762001d[CPU0  ] inhibit interrupts mask = 3
-00180762018d[CPU0  ] real mode activated
-00180762022d[CPU0  ] inhibit interrupts mask = 3
-00180762022d[CPU0  ] inhibit interrupts mask = 1
-00180762030d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00180762030d[CPU0  ] inhibit interrupts mask = 1
-00180762030d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00180762064d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00180762765d[CPU0  ] inhibit interrupts mask = 1
-00180871069d[CPU0  ] protected mode activated
-00180871077d[CPU0  ] inhibit interrupts mask = 3
-00180969627d[CPU0  ] inhibit interrupts mask = 3
-00180969644d[CPU0  ] real mode activated
-00180969648d[CPU0  ] inhibit interrupts mask = 3
-00180969648d[CPU0  ] inhibit interrupts mask = 1
-00180969667d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00180970368d[CPU0  ] inhibit interrupts mask = 1
-00180975888d[CPU0  ] protected mode activated
-00180975896d[CPU0  ] inhibit interrupts mask = 3
-00181402105d[CPU0  ] RDTSC: ticks 0x00000000:0acff9f9
-00181410472d[CPU0  ] RDTSC: ticks 0x00000000:0ad01aa8
-00181705007d[CPU0  ] inhibit interrupts mask = 3
-00181705024d[CPU0  ] real mode activated
-00181705028d[CPU0  ] inhibit interrupts mask = 3
-00181705028d[CPU0  ] inhibit interrupts mask = 1
-00181705047d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00181705748d[CPU0  ] inhibit interrupts mask = 1
-00181825228d[CPU0  ] protected mode activated
-00181825236d[CPU0  ] inhibit interrupts mask = 3
-00181923786d[CPU0  ] inhibit interrupts mask = 3
-00181923803d[CPU0  ] real mode activated
-00181923807d[CPU0  ] inhibit interrupts mask = 3
-00181923807d[CPU0  ] inhibit interrupts mask = 1
-00181923826d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00181924527d[CPU0  ] inhibit interrupts mask = 1
-00181930047d[CPU0  ] protected mode activated
-00181930055d[CPU0  ] inhibit interrupts mask = 3
-00182702850d[CPU0  ] RDTSC: ticks 0x00000000:0ae3d302
-00182711011d[CPU0  ] RDTSC: ticks 0x00000000:0ae3f2e3
-00183832875d[CPU0  ] inhibit interrupts mask = 3
-00183832892d[CPU0  ] real mode activated
-00183832896d[CPU0  ] inhibit interrupts mask = 3
-00183832896d[CPU0  ] inhibit interrupts mask = 1
-00183832904d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00183832904d[CPU0  ] inhibit interrupts mask = 1
-00183832904d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00183832938d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00183833639d[CPU0  ] inhibit interrupts mask = 1
-00184481383d[CPU0  ] protected mode activated
-00184481391d[CPU0  ] inhibit interrupts mask = 3
-00184579941d[CPU0  ] inhibit interrupts mask = 3
-00184579958d[CPU0  ] real mode activated
-00184579962d[CPU0  ] inhibit interrupts mask = 3
-00184579962d[CPU0  ] inhibit interrupts mask = 1
-00184579970d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00184579970d[CPU0  ] inhibit interrupts mask = 1
-00184579970d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00184580004d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00184580705d[CPU0  ] inhibit interrupts mask = 1
-00184586225d[CPU0  ] protected mode activated
-00184586233d[CPU0  ] inhibit interrupts mask = 3
-00184987127d[CPU0  ] RDTSC: ticks 0x00000000:0b06adf7
-00184994782d[CPU0  ] RDTSC: ticks 0x00000000:0b06cbde
-00185116215d[CPU0  ] inhibit interrupts mask = 3
-00185116232d[CPU0  ] real mode activated
-00185116236d[CPU0  ] inhibit interrupts mask = 3
-00185116236d[CPU0  ] inhibit interrupts mask = 1
-00185116255d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00185116956d[CPU0  ] inhibit interrupts mask = 1
-00185878660d[CPU0  ] protected mode activated
-00185878668d[CPU0  ] inhibit interrupts mask = 3
-00185977218d[CPU0  ] inhibit interrupts mask = 3
-00185977235d[CPU0  ] real mode activated
-00185977239d[CPU0  ] inhibit interrupts mask = 3
-00185977239d[CPU0  ] inhibit interrupts mask = 1
-00185977258d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00185977959d[CPU0  ] inhibit interrupts mask = 1
-00185983479d[CPU0  ] protected mode activated
-00185983487d[CPU0  ] inhibit interrupts mask = 3
-00186545993d[CPU0  ] RDTSC: ticks 0x00000000:0b1e7749
-00186704380d[CPU0  ] RDTSC: ticks 0x00000000:0b20e1fc
-00187605065d[CPU0  ] inhibit interrupts mask = 3
-00187605082d[CPU0  ] real mode activated
-00187605086d[CPU0  ] inhibit interrupts mask = 3
-00187605086d[CPU0  ] inhibit interrupts mask = 1
-00187605094d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00187605094d[CPU0  ] inhibit interrupts mask = 1
-00187605094d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00187605128d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00187605829d[CPU0  ] inhibit interrupts mask = 1
-00188125093d[CPU0  ] protected mode activated
-00188125101d[CPU0  ] inhibit interrupts mask = 3
-00188223651d[CPU0  ] inhibit interrupts mask = 3
-00188223668d[CPU0  ] real mode activated
-00188223672d[CPU0  ] inhibit interrupts mask = 3
-00188223672d[CPU0  ] inhibit interrupts mask = 1
-00188223691d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00188224392d[CPU0  ] inhibit interrupts mask = 1
-00188229912d[CPU0  ] protected mode activated
-00188229920d[CPU0  ] inhibit interrupts mask = 3
-00188587276d[CPU0  ] inhibit interrupts mask = 3
-00188587293d[CPU0  ] real mode activated
-00188587297d[CPU0  ] inhibit interrupts mask = 3
-00188587297d[CPU0  ] inhibit interrupts mask = 1
-00188587316d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00188588017d[CPU0  ] inhibit interrupts mask = 1
-00188593537d[CPU0  ] protected mode activated
-00188593545d[CPU0  ] inhibit interrupts mask = 3
-00188692095d[CPU0  ] inhibit interrupts mask = 3
-00188692112d[CPU0  ] real mode activated
-00188692116d[CPU0  ] inhibit interrupts mask = 3
-00188692116d[CPU0  ] inhibit interrupts mask = 1
-00188692135d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00188692836d[CPU0  ] inhibit interrupts mask = 1
-00188698356d[CPU0  ] protected mode activated
-00188698364d[CPU0  ] inhibit interrupts mask = 3
-00189027175d[CPU0  ] RDTSC: ticks 0x00000000:0b445367
-00189040460d[CPU0  ] RDTSC: ticks 0x00000000:0b44874c
-00190468679d[CPU0  ] inhibit interrupts mask = 3
-00190468696d[CPU0  ] real mode activated
-00190468700d[CPU0  ] inhibit interrupts mask = 3
-00190468700d[CPU0  ] inhibit interrupts mask = 1
-00190468708d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00190468708d[CPU0  ] inhibit interrupts mask = 1
-00190468708d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00190468742d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00190469443d[CPU0  ] inhibit interrupts mask = 1
-00190744683d[CPU0  ] protected mode activated
-00190744691d[CPU0  ] inhibit interrupts mask = 3
-00190843241d[CPU0  ] inhibit interrupts mask = 3
-00190843258d[CPU0  ] real mode activated
-00190843262d[CPU0  ] inhibit interrupts mask = 3
-00190843262d[CPU0  ] inhibit interrupts mask = 1
-00190843281d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00190843982d[CPU0  ] inhibit interrupts mask = 1
-00190849502d[CPU0  ] protected mode activated
-00190849510d[CPU0  ] inhibit interrupts mask = 3
-00191183555d[CPU0  ] RDTSC: ticks 0x00000000:0b653ac3
-00191251323d[CPU0  ] RDTSC: ticks 0x00000000:0b66437b
-00192317021d[CPU0  ] inhibit interrupts mask = 3
-00192317038d[CPU0  ] real mode activated
-00192317042d[CPU0  ] inhibit interrupts mask = 3
-00192317042d[CPU0  ] inhibit interrupts mask = 1
-00192317050d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00192317050d[CPU0  ] inhibit interrupts mask = 1
-00192317050d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00192317084d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00192317785d[CPU0  ] inhibit interrupts mask = 1
-00192604289d[CPU0  ] protected mode activated
-00192604297d[CPU0  ] inhibit interrupts mask = 3
-00192702847d[CPU0  ] inhibit interrupts mask = 3
-00192702864d[CPU0  ] real mode activated
-00192702868d[CPU0  ] inhibit interrupts mask = 3
-00192702868d[CPU0  ] inhibit interrupts mask = 1
-00192702887d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00192703588d[CPU0  ] inhibit interrupts mask = 1
-00192709108d[CPU0  ] protected mode activated
-00192709116d[CPU0  ] inhibit interrupts mask = 3
-00193005417d[CPU0  ] inhibit interrupts mask = 3
-00193005434d[CPU0  ] real mode activated
-00193005438d[CPU0  ] inhibit interrupts mask = 3
-00193005438d[CPU0  ] inhibit interrupts mask = 1
-00193005457d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00193006158d[CPU0  ] inhibit interrupts mask = 1
-00193011678d[CPU0  ] protected mode activated
-00193011686d[CPU0  ] inhibit interrupts mask = 3
-00193110236d[CPU0  ] inhibit interrupts mask = 3
-00193110253d[CPU0  ] real mode activated
-00193110257d[CPU0  ] inhibit interrupts mask = 3
-00193110257d[CPU0  ] inhibit interrupts mask = 1
-00193110276d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00193110977d[CPU0  ] inhibit interrupts mask = 1
-00193116497d[CPU0  ] protected mode activated
-00193116505d[CPU0  ] inhibit interrupts mask = 3
-00193421006d[CPU0  ] RDTSC: ticks 0x00000000:0b875ece
-00193433713d[CPU0  ] RDTSC: ticks 0x00000000:0b879071
-00194546442d[CPU0  ] inhibit interrupts mask = 3
-00194546459d[CPU0  ] real mode activated
-00194546463d[CPU0  ] inhibit interrupts mask = 3
-00194546463d[CPU0  ] inhibit interrupts mask = 1
-00194546471d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00194546471d[CPU0  ] inhibit interrupts mask = 1
-00194546471d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00194546505d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00194547206d[CPU0  ] inhibit interrupts mask = 1
-00194629726d[CPU0  ] protected mode activated
-00194629734d[CPU0  ] inhibit interrupts mask = 3
-00194728284d[CPU0  ] inhibit interrupts mask = 3
-00194728301d[CPU0  ] real mode activated
-00194728305d[CPU0  ] inhibit interrupts mask = 3
-00194728305d[CPU0  ] inhibit interrupts mask = 1
-00194728324d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00194729025d[CPU0  ] inhibit interrupts mask = 1
-00194734545d[CPU0  ] protected mode activated
-00194734553d[CPU0  ] inhibit interrupts mask = 3
-00195041688d[CPU0  ] RDTSC: ticks 0x00000000:0ba01998
-00195067916d[CPU0  ] RDTSC: ticks 0x00000000:0ba0800c
-00195443651d[CPU0  ] inhibit interrupts mask = 3
-00195443668d[CPU0  ] real mode activated
-00195443672d[CPU0  ] inhibit interrupts mask = 3
-00195443672d[CPU0  ] inhibit interrupts mask = 1
-00195443691d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00195444392d[CPU0  ] inhibit interrupts mask = 1
-00195539729d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00195539729d[CPU0  ] inhibit interrupts mask = 1
-00195539729d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00196013487d[CPU0  ] protected mode activated
-00196013495d[CPU0  ] inhibit interrupts mask = 3
-00196112045d[CPU0  ] inhibit interrupts mask = 3
-00196112062d[CPU0  ] real mode activated
-00196112066d[CPU0  ] inhibit interrupts mask = 3
-00196112066d[CPU0  ] inhibit interrupts mask = 1
-00196112085d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00196112786d[CPU0  ] inhibit interrupts mask = 1
-00196118306d[CPU0  ] protected mode activated
-00196118314d[CPU0  ] inhibit interrupts mask = 3
-00196423591d[CPU0  ] RDTSC: ticks 0x00000000:0bb52fa7
-00196903261d[CPU0  ] RDTSC: ticks 0x00000000:0bbc815d
-00197113883d[CPU0  ] inhibit interrupts mask = 3
-00197113900d[CPU0  ] real mode activated
-00197113904d[CPU0  ] inhibit interrupts mask = 3
-00197113904d[CPU0  ] inhibit interrupts mask = 1
-00197113923d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00197114624d[CPU0  ] inhibit interrupts mask = 1
-00197221256d[CPU0  ] protected mode activated
-00197221264d[CPU0  ] inhibit interrupts mask = 3
-00197319814d[CPU0  ] inhibit interrupts mask = 3
-00197319831d[CPU0  ] real mode activated
-00197319835d[CPU0  ] inhibit interrupts mask = 3
-00197319835d[CPU0  ] inhibit interrupts mask = 1
-00197319854d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00197320555d[CPU0  ] inhibit interrupts mask = 1
-00197326075d[CPU0  ] protected mode activated
-00197326083d[CPU0  ] inhibit interrupts mask = 3
-00197626058d[CPU0  ] RDTSC: ticks 0x00000000:0bc788ca
-00197639855d[CPU0  ] RDTSC: ticks 0x00000000:0bc7beaf
-00198570587d[CPU0  ] inhibit interrupts mask = 3
-00198570604d[CPU0  ] real mode activated
-00198570608d[CPU0  ] inhibit interrupts mask = 3
-00198570608d[CPU0  ] inhibit interrupts mask = 1
-00198570616d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00198570616d[CPU0  ] inhibit interrupts mask = 1
-00198570616d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00198570650d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00198571351d[CPU0  ] inhibit interrupts mask = 1
-00199052071d[CPU0  ] protected mode activated
-00199052079d[CPU0  ] inhibit interrupts mask = 3
-00199150629d[CPU0  ] inhibit interrupts mask = 3
-00199150646d[CPU0  ] real mode activated
-00199150650d[CPU0  ] inhibit interrupts mask = 3
-00199150650d[CPU0  ] inhibit interrupts mask = 1
-00199150669d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00199151370d[CPU0  ] inhibit interrupts mask = 1
-00199156890d[CPU0  ] protected mode activated
-00199156898d[CPU0  ] inhibit interrupts mask = 3
-00199505956d[CPU0  ] RDTSC: ticks 0x00000000:0be43824
-00199649705d[CPU0  ] RDTSC: ticks 0x00000000:0be669a9
-00200901339d[CPU0  ] inhibit interrupts mask = 3
-00200901356d[CPU0  ] real mode activated
-00200901360d[CPU0  ] inhibit interrupts mask = 3
-00200901360d[CPU0  ] inhibit interrupts mask = 1
-00200901368d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00200901368d[CPU0  ] inhibit interrupts mask = 1
-00200901368d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00200901402d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00200902103d[CPU0  ] inhibit interrupts mask = 1
-00201087407d[CPU0  ] protected mode activated
-00201087415d[CPU0  ] inhibit interrupts mask = 3
-00201185965d[CPU0  ] inhibit interrupts mask = 3
-00201185982d[CPU0  ] real mode activated
-00201185986d[CPU0  ] inhibit interrupts mask = 3
-00201185986d[CPU0  ] inhibit interrupts mask = 1
-00201186005d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00201186706d[CPU0  ] inhibit interrupts mask = 1
-00201192226d[CPU0  ] protected mode activated
-00201192234d[CPU0  ] inhibit interrupts mask = 3
-00201525111d[CPU0  ] inhibit interrupts mask = 3
-00201525128d[CPU0  ] real mode activated
-00201525132d[CPU0  ] inhibit interrupts mask = 3
-00201525132d[CPU0  ] inhibit interrupts mask = 1
-00201525151d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00201525852d[CPU0  ] inhibit interrupts mask = 1
-00201531372d[CPU0  ] protected mode activated
-00201531380d[CPU0  ] inhibit interrupts mask = 3
-00201629930d[CPU0  ] inhibit interrupts mask = 3
-00201629947d[CPU0  ] real mode activated
-00201629951d[CPU0  ] inhibit interrupts mask = 3
-00201629951d[CPU0  ] inhibit interrupts mask = 1
-00201629970d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00201630671d[CPU0  ] inhibit interrupts mask = 1
-00201636191d[CPU0  ] protected mode activated
-00201636199d[CPU0  ] inhibit interrupts mask = 3
-00201988028d[CPU0  ] RDTSC: ticks 0x00000000:0c0a17bc
-00202125651d[CPU0  ] RDTSC: ticks 0x00000000:0c0c3153
-00202968985d[CPU0  ] inhibit interrupts mask = 3
-00202969002d[CPU0  ] real mode activated
-00202969006d[CPU0  ] inhibit interrupts mask = 3
-00202969006d[CPU0  ] inhibit interrupts mask = 1
-00202969014d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00202969014d[CPU0  ] inhibit interrupts mask = 1
-00202969014d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00202969048d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00202969749d[CPU0  ] inhibit interrupts mask = 1
-00203230557d[CPU0  ] protected mode activated
-00203230565d[CPU0  ] inhibit interrupts mask = 3
-00203329115d[CPU0  ] inhibit interrupts mask = 3
-00203329132d[CPU0  ] real mode activated
-00203329136d[CPU0  ] inhibit interrupts mask = 3
-00203329136d[CPU0  ] inhibit interrupts mask = 1
-00203329155d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00203329856d[CPU0  ] inhibit interrupts mask = 1
-00203335376d[CPU0  ] protected mode activated
-00203335384d[CPU0  ] inhibit interrupts mask = 3
-00203647077d[CPU0  ] RDTSC: ticks 0x00000000:0c236865
-00203678703d[CPU0  ] RDTSC: ticks 0x00000000:0c23e3ef
-00205215457d[CPU0  ] inhibit interrupts mask = 3
-00205215474d[CPU0  ] real mode activated
-00205215478d[CPU0  ] inhibit interrupts mask = 3
-00205215478d[CPU0  ] inhibit interrupts mask = 1
-00205215486d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00205215486d[CPU0  ] inhibit interrupts mask = 1
-00205215486d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00205215520d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00205216221d[CPU0  ] inhibit interrupts mask = 1
-00205555701d[CPU0  ] protected mode activated
-00205555709d[CPU0  ] inhibit interrupts mask = 3
-00205654259d[CPU0  ] inhibit interrupts mask = 3
-00205654276d[CPU0  ] real mode activated
-00205654280d[CPU0  ] inhibit interrupts mask = 3
-00205654280d[CPU0  ] inhibit interrupts mask = 1
-00205654299d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00205655000d[CPU0  ] inhibit interrupts mask = 1
-00205660520d[CPU0  ] protected mode activated
-00205660528d[CPU0  ] inhibit interrupts mask = 3
-00206018228d[CPU0  ] RDTSC: ticks 0x00000000:0c4796b4
-00206032282d[CPU0  ] RDTSC: ticks 0x00000000:0c47cd9a
-00207630532d[CPU0  ] inhibit interrupts mask = 3
-00207630549d[CPU0  ] real mode activated
-00207630553d[CPU0  ] inhibit interrupts mask = 3
-00207630553d[CPU0  ] inhibit interrupts mask = 1
-00207630561d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00207630561d[CPU0  ] inhibit interrupts mask = 1
-00207630561d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00207630595d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00207631296d[CPU0  ] inhibit interrupts mask = 1
-00207649664d[CPU0  ] protected mode activated
-00207649672d[CPU0  ] inhibit interrupts mask = 3
-00207748222d[CPU0  ] inhibit interrupts mask = 3
-00207748239d[CPU0  ] real mode activated
-00207748243d[CPU0  ] inhibit interrupts mask = 3
-00207748243d[CPU0  ] inhibit interrupts mask = 1
-00207748262d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00207748963d[CPU0  ] inhibit interrupts mask = 1
-00207754483d[CPU0  ] protected mode activated
-00207754491d[CPU0  ] inhibit interrupts mask = 3
-00208165319d[CPU0  ] RDTSC: ticks 0x00000000:0c6859c7
-00208511660d[CPU0  ] RDTSC: ticks 0x00000000:0c6da2ac
-00208620200d[CPU0  ] inhibit interrupts mask = 3
-00208620217d[CPU0  ] real mode activated
-00208620221d[CPU0  ] inhibit interrupts mask = 3
-00208620221d[CPU0  ] inhibit interrupts mask = 1
-00208620240d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00208620941d[CPU0  ] inhibit interrupts mask = 1
-00208721809d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00208721809d[CPU0  ] inhibit interrupts mask = 1
-00208721809d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00210024892d[CPU0  ] protected mode activated
-00210024900d[CPU0  ] inhibit interrupts mask = 3
-00210123450d[CPU0  ] inhibit interrupts mask = 3
-00210123467d[CPU0  ] real mode activated
-00210123471d[CPU0  ] inhibit interrupts mask = 3
-00210123471d[CPU0  ] inhibit interrupts mask = 1
-00210123490d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00210124191d[CPU0  ] inhibit interrupts mask = 1
-00210129711d[CPU0  ] protected mode activated
-00210129719d[CPU0  ] inhibit interrupts mask = 3
-00210598323d[CPU0  ] inhibit interrupts mask = 3
-00210598340d[CPU0  ] real mode activated
-00210598344d[CPU0  ] inhibit interrupts mask = 3
-00210598344d[CPU0  ] inhibit interrupts mask = 1
-00210598363d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00210599064d[CPU0  ] inhibit interrupts mask = 1
-00210604584d[CPU0  ] protected mode activated
-00210604592d[CPU0  ] inhibit interrupts mask = 3
-00210703142d[CPU0  ] inhibit interrupts mask = 3
-00210703159d[CPU0  ] real mode activated
-00210703163d[CPU0  ] inhibit interrupts mask = 3
-00210703163d[CPU0  ] inhibit interrupts mask = 1
-00210703182d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
-00210703883d[CPU0  ] inhibit interrupts mask = 1
-00210709403d[CPU0  ] protected mode activated
-00210709411d[CPU0  ] inhibit interrupts mask = 3
-00212236952d[CPU0  ] RDTSC: ticks 0x00000000:0ca67a98
-00212238078d[CPU0  ] RDTSC: ticks 0x00000000:0ca67efe
-00212245777d[CPU0  ] RDTSC: ticks 0x00000000:0ca69d11
-00212246899d[CPU0  ] RDTSC: ticks 0x00000000:0ca6a173
-00212251973d[CPU0  ] RDTSC: ticks 0x00000000:0ca6b545
-00212306325d[CPU0  ] inhibit interrupts mask = 3
-00212306342d[CPU0  ] real mode activated
-00212306346d[CPU0  ] inhibit interrupts mask = 3
-00212306346d[CPU0  ] inhibit interrupts mask = 1
-00212306354d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00212306354d[CPU0  ] inhibit interrupts mask = 1
-00212306354d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00212306388d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212306741d[CPU0  ] protected mode activated
-00212306749d[CPU0  ] inhibit interrupts mask = 3
-00212306974d[CPU0  ] inhibit interrupts mask = 3
-00212306991d[CPU0  ] real mode activated
-00212306995d[CPU0  ] inhibit interrupts mask = 3
-00212306995d[CPU0  ] inhibit interrupts mask = 1
-00212307014d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212307367d[CPU0  ] protected mode activated
-00212307375d[CPU0  ] inhibit interrupts mask = 3
-00212307600d[CPU0  ] inhibit interrupts mask = 3
-00212307617d[CPU0  ] real mode activated
-00212307621d[CPU0  ] inhibit interrupts mask = 3
-00212307621d[CPU0  ] inhibit interrupts mask = 1
-00212307640d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212308004d[CPU0  ] protected mode activated
-00212308012d[CPU0  ] inhibit interrupts mask = 3
-00212308237d[CPU0  ] inhibit interrupts mask = 3
-00212308254d[CPU0  ] real mode activated
-00212308258d[CPU0  ] inhibit interrupts mask = 3
-00212308258d[CPU0  ] inhibit interrupts mask = 1
-00212308277d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212308640d[CPU0  ] protected mode activated
-00212308648d[CPU0  ] inhibit interrupts mask = 3
-00212308873d[CPU0  ] inhibit interrupts mask = 3
-00212308890d[CPU0  ] real mode activated
-00212308894d[CPU0  ] inhibit interrupts mask = 3
-00212308894d[CPU0  ] inhibit interrupts mask = 1
-00212308913d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212309274d[CPU0  ] protected mode activated
-00212309282d[CPU0  ] inhibit interrupts mask = 3
-00212309507d[CPU0  ] inhibit interrupts mask = 3
-00212309524d[CPU0  ] real mode activated
-00212309528d[CPU0  ] inhibit interrupts mask = 3
-00212309528d[CPU0  ] inhibit interrupts mask = 1
-00212309547d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212309921d[CPU0  ] protected mode activated
-00212309929d[CPU0  ] inhibit interrupts mask = 3
-00212310613d[CPU0  ] inhibit interrupts mask = 3
-00212310630d[CPU0  ] real mode activated
-00212310634d[CPU0  ] inhibit interrupts mask = 3
-00212310634d[CPU0  ] inhibit interrupts mask = 1
-00212310653d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212311006d[CPU0  ] protected mode activated
-00212311014d[CPU0  ] inhibit interrupts mask = 3
-00212311277d[CPU0  ] inhibit interrupts mask = 3
-00212311294d[CPU0  ] real mode activated
-00212311298d[CPU0  ] inhibit interrupts mask = 3
-00212311298d[CPU0  ] inhibit interrupts mask = 1
-00212311317d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212311670d[CPU0  ] protected mode activated
-00212311678d[CPU0  ] inhibit interrupts mask = 3
-00212311941d[CPU0  ] inhibit interrupts mask = 3
-00212311958d[CPU0  ] real mode activated
-00212311962d[CPU0  ] inhibit interrupts mask = 3
-00212311962d[CPU0  ] inhibit interrupts mask = 1
-00212311981d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212312345d[CPU0  ] protected mode activated
-00212312353d[CPU0  ] inhibit interrupts mask = 3
-00212312616d[CPU0  ] inhibit interrupts mask = 3
-00212312633d[CPU0  ] real mode activated
-00212312637d[CPU0  ] inhibit interrupts mask = 3
-00212312637d[CPU0  ] inhibit interrupts mask = 1
-00212312656d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212313019d[CPU0  ] protected mode activated
-00212313027d[CPU0  ] inhibit interrupts mask = 3
-00212313290d[CPU0  ] inhibit interrupts mask = 3
-00212313307d[CPU0  ] real mode activated
-00212313311d[CPU0  ] inhibit interrupts mask = 3
-00212313311d[CPU0  ] inhibit interrupts mask = 1
-00212313330d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212313691d[CPU0  ] protected mode activated
-00212313699d[CPU0  ] inhibit interrupts mask = 3
-00212313962d[CPU0  ] inhibit interrupts mask = 3
-00212313979d[CPU0  ] real mode activated
-00212313983d[CPU0  ] inhibit interrupts mask = 3
-00212313983d[CPU0  ] inhibit interrupts mask = 1
-00212314002d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212314376d[CPU0  ] protected mode activated
-00212314384d[CPU0  ] inhibit interrupts mask = 3
-00212674529d[CPU0  ] inhibit interrupts mask = 3
-00212674546d[CPU0  ] real mode activated
-00212674550d[CPU0  ] inhibit interrupts mask = 3
-00212674550d[CPU0  ] inhibit interrupts mask = 1
-00212674569d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212674607d[CPU0  ] protected mode activated
-00212674615d[CPU0  ] inhibit interrupts mask = 3
-00212674694d[CPU0  ] inhibit interrupts mask = 3
-00212674711d[CPU0  ] real mode activated
-00212674715d[CPU0  ] inhibit interrupts mask = 3
-00212674715d[CPU0  ] inhibit interrupts mask = 1
-00212674734d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212674775d[CPU0  ] protected mode activated
-00212674783d[CPU0  ] inhibit interrupts mask = 3
-00212674856d[CPU0  ] inhibit interrupts mask = 3
-00212674873d[CPU0  ] real mode activated
-00212674877d[CPU0  ] inhibit interrupts mask = 3
-00212674877d[CPU0  ] inhibit interrupts mask = 1
-00212674896d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212674941d[CPU0  ] protected mode activated
-00212674949d[CPU0  ] inhibit interrupts mask = 3
-00212675233d[CPU0  ] inhibit interrupts mask = 3
-00212675250d[CPU0  ] real mode activated
-00212675254d[CPU0  ] inhibit interrupts mask = 3
-00212675254d[CPU0  ] inhibit interrupts mask = 1
-00212675273d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212675626d[CPU0  ] protected mode activated
-00212675634d[CPU0  ] inhibit interrupts mask = 3
-00212675859d[CPU0  ] inhibit interrupts mask = 3
-00212675876d[CPU0  ] real mode activated
-00212675880d[CPU0  ] inhibit interrupts mask = 3
-00212675880d[CPU0  ] inhibit interrupts mask = 1
-00212675899d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212676252d[CPU0  ] protected mode activated
-00212676260d[CPU0  ] inhibit interrupts mask = 3
-00212676485d[CPU0  ] inhibit interrupts mask = 3
-00212676502d[CPU0  ] real mode activated
-00212676506d[CPU0  ] inhibit interrupts mask = 3
-00212676506d[CPU0  ] inhibit interrupts mask = 1
-00212676525d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212676889d[CPU0  ] protected mode activated
-00212676897d[CPU0  ] inhibit interrupts mask = 3
-00212677122d[CPU0  ] inhibit interrupts mask = 3
-00212677139d[CPU0  ] real mode activated
-00212677143d[CPU0  ] inhibit interrupts mask = 3
-00212677143d[CPU0  ] inhibit interrupts mask = 1
-00212677162d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212677525d[CPU0  ] protected mode activated
-00212677533d[CPU0  ] inhibit interrupts mask = 3
-00212677758d[CPU0  ] inhibit interrupts mask = 3
-00212677775d[CPU0  ] real mode activated
-00212677779d[CPU0  ] inhibit interrupts mask = 3
-00212677779d[CPU0  ] inhibit interrupts mask = 1
-00212677798d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212678159d[CPU0  ] protected mode activated
-00212678167d[CPU0  ] inhibit interrupts mask = 3
-00212678392d[CPU0  ] inhibit interrupts mask = 3
-00212678409d[CPU0  ] real mode activated
-00212678413d[CPU0  ] inhibit interrupts mask = 3
-00212678413d[CPU0  ] inhibit interrupts mask = 1
-00212678432d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212678806d[CPU0  ] protected mode activated
-00212678814d[CPU0  ] inhibit interrupts mask = 3
-00212679414d[CPU0  ] inhibit interrupts mask = 3
-00212679431d[CPU0  ] real mode activated
-00212679435d[CPU0  ] inhibit interrupts mask = 3
-00212679435d[CPU0  ] inhibit interrupts mask = 1
-00212679454d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212679807d[CPU0  ] protected mode activated
-00212679815d[CPU0  ] inhibit interrupts mask = 3
-00212680078d[CPU0  ] inhibit interrupts mask = 3
-00212680095d[CPU0  ] real mode activated
-00212680099d[CPU0  ] inhibit interrupts mask = 3
-00212680099d[CPU0  ] inhibit interrupts mask = 1
-00212680118d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212680471d[CPU0  ] protected mode activated
-00212680479d[CPU0  ] inhibit interrupts mask = 3
-00212680742d[CPU0  ] inhibit interrupts mask = 3
-00212680759d[CPU0  ] real mode activated
-00212680763d[CPU0  ] inhibit interrupts mask = 3
-00212680763d[CPU0  ] inhibit interrupts mask = 1
-00212680782d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212681146d[CPU0  ] protected mode activated
-00212681154d[CPU0  ] inhibit interrupts mask = 3
-00212681417d[CPU0  ] inhibit interrupts mask = 3
-00212681434d[CPU0  ] real mode activated
-00212681438d[CPU0  ] inhibit interrupts mask = 3
-00212681438d[CPU0  ] inhibit interrupts mask = 1
-00212681457d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212681820d[CPU0  ] protected mode activated
-00212681828d[CPU0  ] inhibit interrupts mask = 3
-00212682091d[CPU0  ] inhibit interrupts mask = 3
-00212682108d[CPU0  ] real mode activated
-00212682112d[CPU0  ] inhibit interrupts mask = 3
-00212682112d[CPU0  ] inhibit interrupts mask = 1
-00212682131d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212682492d[CPU0  ] protected mode activated
-00212682500d[CPU0  ] inhibit interrupts mask = 3
-00212682763d[CPU0  ] inhibit interrupts mask = 3
-00212682780d[CPU0  ] real mode activated
-00212682784d[CPU0  ] inhibit interrupts mask = 3
-00212682784d[CPU0  ] inhibit interrupts mask = 1
-00212682803d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212683177d[CPU0  ] protected mode activated
-00212683185d[CPU0  ] inhibit interrupts mask = 3
-00212689048d[CPU0  ] inhibit interrupts mask = 3
-00212689065d[CPU0  ] real mode activated
-00212689069d[CPU0  ] inhibit interrupts mask = 3
-00212689069d[CPU0  ] inhibit interrupts mask = 1
-00212689088d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212689441d[CPU0  ] protected mode activated
-00212689449d[CPU0  ] inhibit interrupts mask = 3
-00212689674d[CPU0  ] inhibit interrupts mask = 3
-00212689691d[CPU0  ] real mode activated
-00212689695d[CPU0  ] inhibit interrupts mask = 3
-00212689695d[CPU0  ] inhibit interrupts mask = 1
-00212689714d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212690067d[CPU0  ] protected mode activated
-00212690075d[CPU0  ] inhibit interrupts mask = 3
-00212690300d[CPU0  ] inhibit interrupts mask = 3
-00212690317d[CPU0  ] real mode activated
-00212690321d[CPU0  ] inhibit interrupts mask = 3
-00212690321d[CPU0  ] inhibit interrupts mask = 1
-00212690340d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212690704d[CPU0  ] protected mode activated
-00212690712d[CPU0  ] inhibit interrupts mask = 3
-00212690937d[CPU0  ] inhibit interrupts mask = 3
-00212690954d[CPU0  ] real mode activated
-00212690958d[CPU0  ] inhibit interrupts mask = 3
-00212690958d[CPU0  ] inhibit interrupts mask = 1
-00212690977d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212691340d[CPU0  ] protected mode activated
-00212691348d[CPU0  ] inhibit interrupts mask = 3
-00212691573d[CPU0  ] inhibit interrupts mask = 3
-00212691590d[CPU0  ] real mode activated
-00212691594d[CPU0  ] inhibit interrupts mask = 3
-00212691594d[CPU0  ] inhibit interrupts mask = 1
-00212691613d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212691974d[CPU0  ] protected mode activated
-00212691982d[CPU0  ] inhibit interrupts mask = 3
-00212692207d[CPU0  ] inhibit interrupts mask = 3
-00212692224d[CPU0  ] real mode activated
-00212692228d[CPU0  ] inhibit interrupts mask = 3
-00212692228d[CPU0  ] inhibit interrupts mask = 1
-00212692247d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212692621d[CPU0  ] protected mode activated
-00212692629d[CPU0  ] inhibit interrupts mask = 3
-00212693229d[CPU0  ] inhibit interrupts mask = 3
-00212693246d[CPU0  ] real mode activated
-00212693250d[CPU0  ] inhibit interrupts mask = 3
-00212693250d[CPU0  ] inhibit interrupts mask = 1
-00212693269d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212693622d[CPU0  ] protected mode activated
-00212693630d[CPU0  ] inhibit interrupts mask = 3
-00212693893d[CPU0  ] inhibit interrupts mask = 3
-00212693910d[CPU0  ] real mode activated
-00212693914d[CPU0  ] inhibit interrupts mask = 3
-00212693914d[CPU0  ] inhibit interrupts mask = 1
-00212693933d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212694286d[CPU0  ] protected mode activated
-00212694294d[CPU0  ] inhibit interrupts mask = 3
-00212694557d[CPU0  ] inhibit interrupts mask = 3
-00212694574d[CPU0  ] real mode activated
-00212694578d[CPU0  ] inhibit interrupts mask = 3
-00212694578d[CPU0  ] inhibit interrupts mask = 1
-00212694597d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212694961d[CPU0  ] protected mode activated
-00212694969d[CPU0  ] inhibit interrupts mask = 3
-00212695232d[CPU0  ] inhibit interrupts mask = 3
-00212695249d[CPU0  ] real mode activated
-00212695253d[CPU0  ] inhibit interrupts mask = 3
-00212695253d[CPU0  ] inhibit interrupts mask = 1
-00212695272d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212695635d[CPU0  ] protected mode activated
-00212695643d[CPU0  ] inhibit interrupts mask = 3
-00212695906d[CPU0  ] inhibit interrupts mask = 3
-00212695923d[CPU0  ] real mode activated
-00212695927d[CPU0  ] inhibit interrupts mask = 3
-00212695927d[CPU0  ] inhibit interrupts mask = 1
-00212695946d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212696307d[CPU0  ] protected mode activated
-00212696315d[CPU0  ] inhibit interrupts mask = 3
-00212696578d[CPU0  ] inhibit interrupts mask = 3
-00212696595d[CPU0  ] real mode activated
-00212696599d[CPU0  ] inhibit interrupts mask = 3
-00212696599d[CPU0  ] inhibit interrupts mask = 1
-00212696618d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212696992d[CPU0  ] protected mode activated
-00212697000d[CPU0  ] inhibit interrupts mask = 3
-00212711049d[CPU0  ] inhibit interrupts mask = 3
-00212711066d[CPU0  ] real mode activated
-00212711070d[CPU0  ] inhibit interrupts mask = 3
-00212711070d[CPU0  ] inhibit interrupts mask = 1
-00212711089d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212711442d[CPU0  ] protected mode activated
-00212711450d[CPU0  ] inhibit interrupts mask = 3
-00212711675d[CPU0  ] inhibit interrupts mask = 3
-00212711692d[CPU0  ] real mode activated
-00212711696d[CPU0  ] inhibit interrupts mask = 3
-00212711696d[CPU0  ] inhibit interrupts mask = 1
-00212711715d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212712068d[CPU0  ] protected mode activated
-00212712076d[CPU0  ] inhibit interrupts mask = 3
-00212712301d[CPU0  ] inhibit interrupts mask = 3
-00212712318d[CPU0  ] real mode activated
-00212712322d[CPU0  ] inhibit interrupts mask = 3
-00212712322d[CPU0  ] inhibit interrupts mask = 1
-00212712341d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212712705d[CPU0  ] protected mode activated
-00212712713d[CPU0  ] inhibit interrupts mask = 3
-00212712938d[CPU0  ] inhibit interrupts mask = 3
-00212712955d[CPU0  ] real mode activated
-00212712959d[CPU0  ] inhibit interrupts mask = 3
-00212712959d[CPU0  ] inhibit interrupts mask = 1
-00212712978d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212713341d[CPU0  ] protected mode activated
-00212713349d[CPU0  ] inhibit interrupts mask = 3
-00212713574d[CPU0  ] inhibit interrupts mask = 3
-00212713591d[CPU0  ] real mode activated
-00212713595d[CPU0  ] inhibit interrupts mask = 3
-00212713595d[CPU0  ] inhibit interrupts mask = 1
-00212713614d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212713975d[CPU0  ] protected mode activated
-00212713983d[CPU0  ] inhibit interrupts mask = 3
-00212714208d[CPU0  ] inhibit interrupts mask = 3
-00212714225d[CPU0  ] real mode activated
-00212714229d[CPU0  ] inhibit interrupts mask = 3
-00212714229d[CPU0  ] inhibit interrupts mask = 1
-00212714248d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212714622d[CPU0  ] protected mode activated
-00212714630d[CPU0  ] inhibit interrupts mask = 3
-00212715230d[CPU0  ] inhibit interrupts mask = 3
-00212715247d[CPU0  ] real mode activated
-00212715251d[CPU0  ] inhibit interrupts mask = 3
-00212715251d[CPU0  ] inhibit interrupts mask = 1
-00212715270d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212715623d[CPU0  ] protected mode activated
-00212715631d[CPU0  ] inhibit interrupts mask = 3
-00212715894d[CPU0  ] inhibit interrupts mask = 3
-00212715911d[CPU0  ] real mode activated
-00212715915d[CPU0  ] inhibit interrupts mask = 3
-00212715915d[CPU0  ] inhibit interrupts mask = 1
-00212715934d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212716287d[CPU0  ] protected mode activated
-00212716295d[CPU0  ] inhibit interrupts mask = 3
-00212716558d[CPU0  ] inhibit interrupts mask = 3
-00212716575d[CPU0  ] real mode activated
-00212716579d[CPU0  ] inhibit interrupts mask = 3
-00212716579d[CPU0  ] inhibit interrupts mask = 1
-00212716598d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212716962d[CPU0  ] protected mode activated
-00212716970d[CPU0  ] inhibit interrupts mask = 3
-00212717233d[CPU0  ] inhibit interrupts mask = 3
-00212717250d[CPU0  ] real mode activated
-00212717254d[CPU0  ] inhibit interrupts mask = 3
-00212717254d[CPU0  ] inhibit interrupts mask = 1
-00212717273d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212717636d[CPU0  ] protected mode activated
-00212717644d[CPU0  ] inhibit interrupts mask = 3
-00212717907d[CPU0  ] inhibit interrupts mask = 3
-00212717924d[CPU0  ] real mode activated
-00212717928d[CPU0  ] inhibit interrupts mask = 3
-00212717928d[CPU0  ] inhibit interrupts mask = 1
-00212717947d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212718308d[CPU0  ] protected mode activated
-00212718316d[CPU0  ] inhibit interrupts mask = 3
-00212718579d[CPU0  ] inhibit interrupts mask = 3
-00212718596d[CPU0  ] real mode activated
-00212718600d[CPU0  ] inhibit interrupts mask = 3
-00212718600d[CPU0  ] inhibit interrupts mask = 1
-00212718619d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212718993d[CPU0  ] protected mode activated
-00212719001d[CPU0  ] inhibit interrupts mask = 3
-00212724902d[CPU0  ] inhibit interrupts mask = 3
-00212724919d[CPU0  ] real mode activated
-00212724923d[CPU0  ] inhibit interrupts mask = 3
-00212724923d[CPU0  ] inhibit interrupts mask = 1
-00212724942d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212725295d[CPU0  ] protected mode activated
-00212725303d[CPU0  ] inhibit interrupts mask = 3
-00212725528d[CPU0  ] inhibit interrupts mask = 3
-00212725545d[CPU0  ] real mode activated
-00212725549d[CPU0  ] inhibit interrupts mask = 3
-00212725549d[CPU0  ] inhibit interrupts mask = 1
-00212725568d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212725921d[CPU0  ] protected mode activated
-00212725929d[CPU0  ] inhibit interrupts mask = 3
-00212726154d[CPU0  ] inhibit interrupts mask = 3
-00212726171d[CPU0  ] real mode activated
-00212726175d[CPU0  ] inhibit interrupts mask = 3
-00212726175d[CPU0  ] inhibit interrupts mask = 1
-00212726194d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212726558d[CPU0  ] protected mode activated
-00212726566d[CPU0  ] inhibit interrupts mask = 3
-00212726791d[CPU0  ] inhibit interrupts mask = 3
-00212726808d[CPU0  ] real mode activated
-00212726812d[CPU0  ] inhibit interrupts mask = 3
-00212726812d[CPU0  ] inhibit interrupts mask = 1
-00212726831d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212727194d[CPU0  ] protected mode activated
-00212727202d[CPU0  ] inhibit interrupts mask = 3
-00212727427d[CPU0  ] inhibit interrupts mask = 3
-00212727444d[CPU0  ] real mode activated
-00212727448d[CPU0  ] inhibit interrupts mask = 3
-00212727448d[CPU0  ] inhibit interrupts mask = 1
-00212727467d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212727828d[CPU0  ] protected mode activated
-00212727836d[CPU0  ] inhibit interrupts mask = 3
-00212728061d[CPU0  ] inhibit interrupts mask = 3
-00212728078d[CPU0  ] real mode activated
-00212728082d[CPU0  ] inhibit interrupts mask = 3
-00212728082d[CPU0  ] inhibit interrupts mask = 1
-00212728101d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212728475d[CPU0  ] protected mode activated
-00212728483d[CPU0  ] inhibit interrupts mask = 3
-00212729083d[CPU0  ] inhibit interrupts mask = 3
-00212729100d[CPU0  ] real mode activated
-00212729104d[CPU0  ] inhibit interrupts mask = 3
-00212729104d[CPU0  ] inhibit interrupts mask = 1
-00212729123d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212729476d[CPU0  ] protected mode activated
-00212729484d[CPU0  ] inhibit interrupts mask = 3
-00212729747d[CPU0  ] inhibit interrupts mask = 3
-00212729764d[CPU0  ] real mode activated
-00212729768d[CPU0  ] inhibit interrupts mask = 3
-00212729768d[CPU0  ] inhibit interrupts mask = 1
-00212729787d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212730140d[CPU0  ] protected mode activated
-00212730148d[CPU0  ] inhibit interrupts mask = 3
-00212730411d[CPU0  ] inhibit interrupts mask = 3
-00212730428d[CPU0  ] real mode activated
-00212730432d[CPU0  ] inhibit interrupts mask = 3
-00212730432d[CPU0  ] inhibit interrupts mask = 1
-00212730451d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212730815d[CPU0  ] protected mode activated
-00212730823d[CPU0  ] inhibit interrupts mask = 3
-00212731086d[CPU0  ] inhibit interrupts mask = 3
-00212731103d[CPU0  ] real mode activated
-00212731107d[CPU0  ] inhibit interrupts mask = 3
-00212731107d[CPU0  ] inhibit interrupts mask = 1
-00212731126d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212731489d[CPU0  ] protected mode activated
-00212731497d[CPU0  ] inhibit interrupts mask = 3
-00212731760d[CPU0  ] inhibit interrupts mask = 3
-00212731777d[CPU0  ] real mode activated
-00212731781d[CPU0  ] inhibit interrupts mask = 3
-00212731781d[CPU0  ] inhibit interrupts mask = 1
-00212731800d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212732161d[CPU0  ] protected mode activated
-00212732169d[CPU0  ] inhibit interrupts mask = 3
-00212732432d[CPU0  ] inhibit interrupts mask = 3
-00212732449d[CPU0  ] real mode activated
-00212732453d[CPU0  ] inhibit interrupts mask = 3
-00212732453d[CPU0  ] inhibit interrupts mask = 1
-00212732472d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00212732846d[CPU0  ] protected mode activated
-00212732854d[CPU0  ] inhibit interrupts mask = 3
-00212741227d[CPU0  ] inhibit interrupts mask = 3
-00212741244d[CPU0  ] real mode activated
-00212741248d[CPU0  ] inhibit interrupts mask = 3
-00212741248d[CPU0  ] inhibit interrupts mask = 1
-00212741267d[CPU0  ] interrupt(): vector = 10, TYPE = 4, EXT = 0
-00212741328d[CPU0  ] protected mode activated
-00212741336d[CPU0  ] inhibit interrupts mask = 3
-00213439873d[CPU0  ] inhibit interrupts mask = 3
-00213439890d[CPU0  ] real mode activated
-00213439894d[CPU0  ] inhibit interrupts mask = 3
-00213439894d[CPU0  ] inhibit interrupts mask = 1
-00213439902d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
-00213439902d[CPU0  ] inhibit interrupts mask = 1
-00213439902d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
-00213439936d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00213440289d[CPU0  ] protected mode activated
-00213440297d[CPU0  ] inhibit interrupts mask = 3
-00213440522d[CPU0  ] inhibit interrupts mask = 3
-00213440539d[CPU0  ] real mode activated
-00213440543d[CPU0  ] inhibit interrupts mask = 3
-00213440543d[CPU0  ] inhibit interrupts mask = 1
-00213440562d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00213440915d[CPU0  ] protected mode activated
-00213440923d[CPU0  ] inhibit interrupts mask = 3
-00213441148d[CPU0  ] inhibit interrupts mask = 3
-00213441165d[CPU0  ] real mode activated
-00213441169d[CPU0  ] inhibit interrupts mask = 3
-00213441169d[CPU0  ] inhibit interrupts mask = 1
-00213441188d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00213441552d[CPU0  ] protected mode activated
-00213441560d[CPU0  ] inhibit interrupts mask = 3
-00213441785d[CPU0  ] inhibit interrupts mask = 3
-00213441802d[CPU0  ] real mode activated
-00213441806d[CPU0  ] inhibit interrupts mask = 3
-00213441806d[CPU0  ] inhibit interrupts mask = 1
-00213441825d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00213442188d[CPU0  ] protected mode activated
-00213442196d[CPU0  ] inhibit interrupts mask = 3
-00213442421d[CPU0  ] inhibit interrupts mask = 3
-00213442438d[CPU0  ] real mode activated
-00213442442d[CPU0  ] inhibit interrupts mask = 3
-00213442442d[CPU0  ] inhibit interrupts mask = 1
-00213442461d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00213442822d[CPU0  ] protected mode activated
-00213442830d[CPU0  ] inhibit interrupts mask = 3
-00213443055d[CPU0  ] inhibit interrupts mask = 3
-00213443072d[CPU0  ] real mode activated
-00213443076d[CPU0  ] inhibit interrupts mask = 3
-00213443076d[CPU0  ] inhibit interrupts mask = 1
-00213443095d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00213443469d[CPU0  ] protected mode activated
-00213443477d[CPU0  ] inhibit interrupts mask = 3
-00213444077d[CPU0  ] inhibit interrupts mask = 3
-00213444094d[CPU0  ] real mode activated
-00213444098d[CPU0  ] inhibit interrupts mask = 3
-00213444098d[CPU0  ] inhibit interrupts mask = 1
-00213444117d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00213444470d[CPU0  ] protected mode activated
-00213444478d[CPU0  ] inhibit interrupts mask = 3
-00213444741d[CPU0  ] inhibit interrupts mask = 3
-00213444758d[CPU0  ] real mode activated
-00213444762d[CPU0  ] inhibit interrupts mask = 3
-00213444762d[CPU0  ] inhibit interrupts mask = 1
-00213444781d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00213445134d[CPU0  ] protected mode activated
-00213445142d[CPU0  ] inhibit interrupts mask = 3
-00213445405d[CPU0  ] inhibit interrupts mask = 3
-00213445422d[CPU0  ] real mode activated
-00213445426d[CPU0  ] inhibit interrupts mask = 3
-00213445426d[CPU0  ] inhibit interrupts mask = 1
-00213445445d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00213445809d[CPU0  ] protected mode activated
-00213445817d[CPU0  ] inhibit interrupts mask = 3
-00213446080d[CPU0  ] inhibit interrupts mask = 3
-00213446097d[CPU0  ] real mode activated
-00213446101d[CPU0  ] inhibit interrupts mask = 3
-00213446101d[CPU0  ] inhibit interrupts mask = 1
-00213446120d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00213446483d[CPU0  ] protected mode activated
-00213446491d[CPU0  ] inhibit interrupts mask = 3
-00213446754d[CPU0  ] inhibit interrupts mask = 3
-00213446771d[CPU0  ] real mode activated
-00213446775d[CPU0  ] inhibit interrupts mask = 3
-00213446775d[CPU0  ] inhibit interrupts mask = 1
-00213446794d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00213447155d[CPU0  ] protected mode activated
-00213447163d[CPU0  ] inhibit interrupts mask = 3
-00213447426d[CPU0  ] inhibit interrupts mask = 3
-00213447443d[CPU0  ] real mode activated
-00213447447d[CPU0  ] inhibit interrupts mask = 3
-00213447447d[CPU0  ] inhibit interrupts mask = 1
-00213447466d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
-00213447840d[CPU0  ] protected mode activated
-00213447848d[CPU0  ] inhibit interrupts mask = 3
-00213543722d[CPU0  ] inhibit interrupts mask = 3
-00213543826d[CPU0  ] RDMSR: read 00000000:00000000 from MSR c0000080
-00213543828d[CPU0  ] WRMSR: write 00000000:00000100 to MSR c0000080
-00213543830d[CPU0  ] compatibility mode activated
-00213543833d[CPU0  ] page walk for address 0x0000000000101125
-00213543833d[CPU0  ] page walk for address 0x0000000000104022
-00213543833d[CPU0  ] page walk for address 0x000000000010400d
-00213543833d[CPU0  ] long mode activated
-00213543835d[CPU0  ] inhibit interrupts mask = 3
-00213543835d[CPU0  ] page walk for address 0x0000000000108000
-00213545942d[CPU0  ] page walk for address 0x0000000000109000
-00213550003d[CPU0  ] page walk for address 0x0000000000106ff0
-00213550003d[CPU0  ] page walk for address 0x0000000000105ff8
-00213551534d[CPU0  ] page walk for address 0xffffffff8010140d
-00213551534d[CPU0  ] page walk for address 0xffffffff8010401a
-00213551534d[CPU0  ] page walk for address 0xffffffff80103004
-00213551534d[CPU0  ] page walk for address 0xffffffff80103004
-00213551534d[CPU0  ] page walk for address 0xffffffff80102260
-00213551543d[CPU0  ] page walk for address 0xffffffff8011aff8
-00213551555d[CPU0  ] page walk for address 0xffffffff8011b000
-00213551574d[CPU0  ] page walk for address 0xffffffff800b8000
-00213552429i[CPU0  ] WARNING: HLT instruction with IF=0!
-11318670711i[WINGUI] &&&missing mouse state change
-24713000000p[WINGUI] >>PANIC<< POWER button turned off.
-24713000000i[CPU0  ] CPU is in long mode (halted)
-24713000000i[CPU0  ] CS.mode = 64 bit
-24713000000i[CPU0  ] SS.mode = 64 bit
-24713000000i[CPU0  ] EFER   = 0x00000500
-24713000000i[CPU0  ] | RAX=0000000000000001  RBX=0000000000123b40
-24713000000i[CPU0  ] | RCX=0000000000000019  RDX=0000000000000007
-24713000000i[CPU0  ] | RSP=ffffffff8011aff8  RBP=ffffffff8011aff8
-24713000000i[CPU0  ] | RSI=0000000000000000  RDI=0000000000000082
-24713000000i[CPU0  ] |  R8=ffffffff801040ef   R9=00000000801040d2
-24713000000i[CPU0  ] | R10=0000000000000000  R11=0000000000000000
-24713000000i[CPU0  ] | R12=0000000000000000  R13=0000000000000000
-24713000000i[CPU0  ] | R14=0000000000000000  R15=0000000000000000
-24713000000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf SF zf af pf cf
-24713000000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
-24713000000i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 0
-24713000000i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-24713000000i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-24713000000i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-24713000000i[CPU0  ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-24713000000i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-24713000000i[CPU0  ] |  MSR_FS_BASE:0000000000000000
-24713000000i[CPU0  ] |  MSR_GS_BASE:0000000000000000
-24713000000i[CPU0  ] | RIP=ffffffff80102281 (ffffffff80102281)
-24713000000i[CPU0  ] | CR0=0xe0000011 CR2=0x0000000000000000
-24713000000i[CPU0  ] | CR3=0x0000000000105000 CR4=0x00000020
-24713000000i[CPU0  ] 0xffffffff80102281>> jmp .-3 (0xffffffff80102280) : EBFD
-24713000000i[CMOS  ] Last time is 1624169103 (Sun Jun 20 02:05:03 2021)
-24713000000i[      ] restoring default signal behavior
-24713000000i[SIM   ] quit_sim called with exit code 1
+00133590690i[BIOS  ] Booting from 07c0:0000
+00133590799d[CPU0  ] inhibit interrupts mask = 3
+00133590826d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00133591529d[CPU0  ] inhibit interrupts mask = 1
+00133601050d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00133601756d[CPU0  ] inhibit interrupts mask = 1
+00133611269d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00133611984d[CPU0  ] inhibit interrupts mask = 1
+00133617413d[CPU0  ] inhibit interrupts mask = 3
+00133617413d[CPU0  ] inhibit interrupts mask = 1
+00133617422d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00133617585d[CPU0  ] protected mode activated
+00133617595d[CPU0  ] inhibit interrupts mask = 3
+00159804391d[CPU0  ] inhibit interrupts mask = 3
+00159804403d[CPU0  ] real mode activated
+00159804407d[CPU0  ] inhibit interrupts mask = 3
+00159804407d[CPU0  ] inhibit interrupts mask = 1
+00159804415d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00159804415d[CPU0  ] inhibit interrupts mask = 1
+00159804415d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00159804449d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00159804802d[CPU0  ] protected mode activated
+00159804810d[CPU0  ] inhibit interrupts mask = 3
+00159805054d[CPU0  ] inhibit interrupts mask = 3
+00159805071d[CPU0  ] real mode activated
+00159805075d[CPU0  ] inhibit interrupts mask = 3
+00159805075d[CPU0  ] inhibit interrupts mask = 1
+00159805094d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00159805447d[CPU0  ] protected mode activated
+00159805455d[CPU0  ] inhibit interrupts mask = 3
+00159805699d[CPU0  ] inhibit interrupts mask = 3
+00159805716d[CPU0  ] real mode activated
+00159805720d[CPU0  ] inhibit interrupts mask = 3
+00159805720d[CPU0  ] inhibit interrupts mask = 1
+00159805739d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00159806103d[CPU0  ] protected mode activated
+00159806111d[CPU0  ] inhibit interrupts mask = 3
+00159806355d[CPU0  ] inhibit interrupts mask = 3
+00159806372d[CPU0  ] real mode activated
+00159806376d[CPU0  ] inhibit interrupts mask = 3
+00159806376d[CPU0  ] inhibit interrupts mask = 1
+00159806395d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00159806758d[CPU0  ] protected mode activated
+00159806766d[CPU0  ] inhibit interrupts mask = 3
+00159807018d[CPU0  ] inhibit interrupts mask = 3
+00159807035d[CPU0  ] real mode activated
+00159807039d[CPU0  ] inhibit interrupts mask = 3
+00159807039d[CPU0  ] inhibit interrupts mask = 1
+00159807058d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00159807419d[CPU0  ] protected mode activated
+00159807427d[CPU0  ] inhibit interrupts mask = 3
+00159807666d[CPU0  ] inhibit interrupts mask = 3
+00159807683d[CPU0  ] real mode activated
+00159807687d[CPU0  ] inhibit interrupts mask = 3
+00159807687d[CPU0  ] inhibit interrupts mask = 1
+00159807706d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00159808080d[CPU0  ] protected mode activated
+00159808088d[CPU0  ] inhibit interrupts mask = 3
+00159808287d[CPU0  ] RDTSC: ticks 0x00000000:09867b1f
+00159808307d[CPU0  ] RDTSC: ticks 0x00000000:09867b33
+00162005329d[CPU0  ] RDTSC: ticks 0x00000000:09a80151
+00162006825d[CPU0  ] inhibit interrupts mask = 3
+00162006842d[CPU0  ] real mode activated
+00162006846d[CPU0  ] inhibit interrupts mask = 3
+00162006846d[CPU0  ] inhibit interrupts mask = 1
+00162006854d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00162006854d[CPU0  ] inhibit interrupts mask = 1
+00162006854d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00162006888d[CPU0  ] interrupt(): vector = 10, TYPE = 4, EXT = 0
+00162007094d[CPU0  ] protected mode activated
+00162007102d[CPU0  ] inhibit interrupts mask = 3
+00162007185d[CPU0  ] inhibit interrupts mask = 3
+00162007202d[CPU0  ] real mode activated
+00162007206d[CPU0  ] inhibit interrupts mask = 3
+00162007206d[CPU0  ] inhibit interrupts mask = 1
+00162007225d[CPU0  ] interrupt(): vector = 10, TYPE = 4, EXT = 0
+00162007476d[CPU0  ] protected mode activated
+00162007484d[CPU0  ] inhibit interrupts mask = 3
+00163060132d[CPU0  ] inhibit interrupts mask = 3
+00163060149d[CPU0  ] real mode activated
+00163060153d[CPU0  ] inhibit interrupts mask = 3
+00163060153d[CPU0  ] inhibit interrupts mask = 1
+00163060161d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00163060161d[CPU0  ] inhibit interrupts mask = 1
+00163060161d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00163060195d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00163060537d[CPU0  ] protected mode activated
+00163060545d[CPU0  ] inhibit interrupts mask = 3
+00163158319d[CPU0  ] RDTSC: ticks 0x00000000:09b9992f
+00163161317d[CPU0  ] inhibit interrupts mask = 3
+00163161334d[CPU0  ] real mode activated
+00163161338d[CPU0  ] inhibit interrupts mask = 3
+00163161338d[CPU0  ] inhibit interrupts mask = 1
+00163161357d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00163162058d[CPU0  ] inhibit interrupts mask = 1
+00163933794d[CPU0  ] protected mode activated
+00163933802d[CPU0  ] inhibit interrupts mask = 3
+00164032352d[CPU0  ] inhibit interrupts mask = 3
+00164032369d[CPU0  ] real mode activated
+00164032373d[CPU0  ] inhibit interrupts mask = 3
+00164032373d[CPU0  ] inhibit interrupts mask = 1
+00164032392d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00164033093d[CPU0  ] inhibit interrupts mask = 1
+00164038525d[CPU0  ] protected mode activated
+00164038533d[CPU0  ] inhibit interrupts mask = 3
+00164932010d[CPU0  ] inhibit interrupts mask = 3
+00164932027d[CPU0  ] real mode activated
+00164932031d[CPU0  ] inhibit interrupts mask = 3
+00164932031d[CPU0  ] inhibit interrupts mask = 1
+00164932039d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00164932039d[CPU0  ] inhibit interrupts mask = 1
+00164932039d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00164932073d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00164932774d[CPU0  ] inhibit interrupts mask = 1
+00164938206d[CPU0  ] protected mode activated
+00164938214d[CPU0  ] inhibit interrupts mask = 3
+00165036764d[CPU0  ] inhibit interrupts mask = 3
+00165036781d[CPU0  ] real mode activated
+00165036785d[CPU0  ] inhibit interrupts mask = 3
+00165036785d[CPU0  ] inhibit interrupts mask = 1
+00165036804d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00165037505d[CPU0  ] inhibit interrupts mask = 1
+00165042937d[CPU0  ] protected mode activated
+00165042945d[CPU0  ] inhibit interrupts mask = 3
+00165519074d[CPU0  ] inhibit interrupts mask = 3
+00165519091d[CPU0  ] real mode activated
+00165519095d[CPU0  ] inhibit interrupts mask = 3
+00165519095d[CPU0  ] inhibit interrupts mask = 1
+00165519114d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00165519815d[CPU0  ] inhibit interrupts mask = 1
+00166714215d[CPU0  ] protected mode activated
+00166714223d[CPU0  ] inhibit interrupts mask = 3
+00166812773d[CPU0  ] inhibit interrupts mask = 3
+00166812790d[CPU0  ] real mode activated
+00166812794d[CPU0  ] inhibit interrupts mask = 3
+00166812794d[CPU0  ] inhibit interrupts mask = 1
+00166812813d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00166813514d[CPU0  ] inhibit interrupts mask = 1
+00166818946d[CPU0  ] protected mode activated
+00166818954d[CPU0  ] inhibit interrupts mask = 3
+00167125419d[CPU0  ] RDTSC: ticks 0x00000000:09f621ab
+00167153805d[CPU0  ] RDTSC: ticks 0x00000000:09f6908d
+00167950000d[CPU0  ] RDTSC: ticks 0x00000000:0a02b6b0
+00167979817d[CPU0  ] RDTSC: ticks 0x00000000:0a032b29
+00168793462d[CPU0  ] RDTSC: ticks 0x00000000:0a0f9576
+00168824020d[CPU0  ] RDTSC: ticks 0x00000000:0a100cd4
+00169653433d[CPU0  ] RDTSC: ticks 0x00000000:0a1cb4b9
+00169664518d[CPU0  ] RDTSC: ticks 0x00000000:0a1ce006
+00170502836d[CPU0  ] inhibit interrupts mask = 3
+00170502853d[CPU0  ] real mode activated
+00170502857d[CPU0  ] inhibit interrupts mask = 3
+00170502857d[CPU0  ] inhibit interrupts mask = 1
+00170502865d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00170502865d[CPU0  ] inhibit interrupts mask = 1
+00170502865d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00170502899d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00170503600d[CPU0  ] inhibit interrupts mask = 1
+00170509032d[CPU0  ] protected mode activated
+00170509040d[CPU0  ] inhibit interrupts mask = 3
+00170607590d[CPU0  ] inhibit interrupts mask = 3
+00170607607d[CPU0  ] real mode activated
+00170607611d[CPU0  ] inhibit interrupts mask = 3
+00170607611d[CPU0  ] inhibit interrupts mask = 1
+00170607630d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00170608331d[CPU0  ] inhibit interrupts mask = 1
+00170613763d[CPU0  ] protected mode activated
+00170613771d[CPU0  ] inhibit interrupts mask = 3
+00170923805d[CPU0  ] RDTSC: ticks 0x00000000:0a30171d
+00170972453d[CPU0  ] RDTSC: ticks 0x00000000:0a30d525
+00171792275d[CPU0  ] RDTSC: ticks 0x00000000:0a3d5793
+00171820966d[CPU0  ] RDTSC: ticks 0x00000000:0a3dc7a6
+00172637380d[CPU0  ] RDTSC: ticks 0x00000000:0a4a3cc4
+00172664441d[CPU0  ] RDTSC: ticks 0x00000000:0a4aa679
+00173504675d[CPU0  ] RDTSC: ticks 0x00000000:0a5778a3
+00173546639d[CPU0  ] RDTSC: ticks 0x00000000:0a581c8f
+00174383738d[CPU0  ] RDTSC: ticks 0x00000000:0a64e27a
+00174412969d[CPU0  ] RDTSC: ticks 0x00000000:0a6554a9
+00175260101d[CPU0  ] RDTSC: ticks 0x00000000:0a7241c5
+00175288401d[CPU0  ] RDTSC: ticks 0x00000000:0a72b051
+00176132418d[CPU0  ] RDTSC: ticks 0x00000000:0a7f9142
+00176156760d[CPU0  ] RDTSC: ticks 0x00000000:0a7ff058
+00176423817d[CPU0  ] inhibit interrupts mask = 3
+00176423834d[CPU0  ] real mode activated
+00176423838d[CPU0  ] inhibit interrupts mask = 3
+00176423838d[CPU0  ] inhibit interrupts mask = 1
+00176423846d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00176423846d[CPU0  ] inhibit interrupts mask = 1
+00176423846d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00176423880d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00176424581d[CPU0  ] inhibit interrupts mask = 1
+00177003773d[CPU0  ] protected mode activated
+00177003781d[CPU0  ] inhibit interrupts mask = 3
+00177102331d[CPU0  ] inhibit interrupts mask = 3
+00177102348d[CPU0  ] real mode activated
+00177102352d[CPU0  ] inhibit interrupts mask = 3
+00177102352d[CPU0  ] inhibit interrupts mask = 1
+00177102371d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00177103072d[CPU0  ] inhibit interrupts mask = 1
+00177108504d[CPU0  ] protected mode activated
+00177108512d[CPU0  ] inhibit interrupts mask = 3
+00180382823d[CPU0  ] RDTSC: ticks 0x00000000:0ac06c67
+00180390951d[CPU0  ] RDTSC: ticks 0x00000000:0ac08c27
+00180807041d[CPU0  ] inhibit interrupts mask = 3
+00180807058d[CPU0  ] real mode activated
+00180807062d[CPU0  ] inhibit interrupts mask = 3
+00180807062d[CPU0  ] inhibit interrupts mask = 1
+00180807070d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00180807070d[CPU0  ] inhibit interrupts mask = 1
+00180807070d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00180807104d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00180807805d[CPU0  ] inhibit interrupts mask = 1
+00180915581d[CPU0  ] protected mode activated
+00180915589d[CPU0  ] inhibit interrupts mask = 3
+00181014139d[CPU0  ] inhibit interrupts mask = 3
+00181014156d[CPU0  ] real mode activated
+00181014160d[CPU0  ] inhibit interrupts mask = 3
+00181014160d[CPU0  ] inhibit interrupts mask = 1
+00181014179d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00181014880d[CPU0  ] inhibit interrupts mask = 1
+00181020312d[CPU0  ] protected mode activated
+00181020320d[CPU0  ] inhibit interrupts mask = 3
+00181446529d[CPU0  ] RDTSC: ticks 0x00000000:0ad0a781
+00181454896d[CPU0  ] RDTSC: ticks 0x00000000:0ad0c830
+00181753577d[CPU0  ] inhibit interrupts mask = 3
+00181753594d[CPU0  ] real mode activated
+00181753598d[CPU0  ] inhibit interrupts mask = 3
+00181753598d[CPU0  ] inhibit interrupts mask = 1
+00181753617d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00181754318d[CPU0  ] inhibit interrupts mask = 1
+00181873270d[CPU0  ] protected mode activated
+00181873278d[CPU0  ] inhibit interrupts mask = 3
+00181971828d[CPU0  ] inhibit interrupts mask = 3
+00181971845d[CPU0  ] real mode activated
+00181971849d[CPU0  ] inhibit interrupts mask = 3
+00181971849d[CPU0  ] inhibit interrupts mask = 1
+00181971868d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00181972569d[CPU0  ] inhibit interrupts mask = 1
+00181978001d[CPU0  ] protected mode activated
+00181978009d[CPU0  ] inhibit interrupts mask = 3
+00182750804d[CPU0  ] RDTSC: ticks 0x00000000:0ae48e54
+00182758965d[CPU0  ] RDTSC: ticks 0x00000000:0ae4ae35
+00183885125d[CPU0  ] inhibit interrupts mask = 3
+00183885142d[CPU0  ] real mode activated
+00183885146d[CPU0  ] inhibit interrupts mask = 3
+00183885146d[CPU0  ] inhibit interrupts mask = 1
+00183885154d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00183885154d[CPU0  ] inhibit interrupts mask = 1
+00183885154d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00183885188d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00183885889d[CPU0  ] inhibit interrupts mask = 1
+00184543313d[CPU0  ] protected mode activated
+00184543321d[CPU0  ] inhibit interrupts mask = 3
+00184641871d[CPU0  ] inhibit interrupts mask = 3
+00184641888d[CPU0  ] real mode activated
+00184641892d[CPU0  ] inhibit interrupts mask = 3
+00184641892d[CPU0  ] inhibit interrupts mask = 1
+00184641900d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00184641900d[CPU0  ] inhibit interrupts mask = 1
+00184641900d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00184641934d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00184642635d[CPU0  ] inhibit interrupts mask = 1
+00184648067d[CPU0  ] protected mode activated
+00184648075d[CPU0  ] inhibit interrupts mask = 3
+00185048969d[CPU0  ] RDTSC: ticks 0x00000000:0b079f89
+00185056624d[CPU0  ] RDTSC: ticks 0x00000000:0b07bd70
+00185182527d[CPU0  ] inhibit interrupts mask = 3
+00185182544d[CPU0  ] real mode activated
+00185182548d[CPU0  ] inhibit interrupts mask = 3
+00185182548d[CPU0  ] inhibit interrupts mask = 1
+00185182567d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00185183268d[CPU0  ] inhibit interrupts mask = 1
+00185954212d[CPU0  ] protected mode activated
+00185954220d[CPU0  ] inhibit interrupts mask = 3
+00186052770d[CPU0  ] inhibit interrupts mask = 3
+00186052787d[CPU0  ] real mode activated
+00186052791d[CPU0  ] inhibit interrupts mask = 3
+00186052791d[CPU0  ] inhibit interrupts mask = 1
+00186052810d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00186053511d[CPU0  ] inhibit interrupts mask = 1
+00186058943d[CPU0  ] protected mode activated
+00186058951d[CPU0  ] inhibit interrupts mask = 3
+00186649773d[CPU0  ] RDTSC: ticks 0x00000000:0b200cad
+00186809240d[CPU0  ] RDTSC: ticks 0x00000000:0b227b98
+00187739662d[CPU0  ] inhibit interrupts mask = 3
+00187739679d[CPU0  ] real mode activated
+00187739683d[CPU0  ] inhibit interrupts mask = 3
+00187739683d[CPU0  ] inhibit interrupts mask = 1
+00187739691d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00187739691d[CPU0  ] inhibit interrupts mask = 1
+00187739691d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00187739725d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00187740426d[CPU0  ] inhibit interrupts mask = 1
+00188257226d[CPU0  ] protected mode activated
+00188257234d[CPU0  ] inhibit interrupts mask = 3
+00188355784d[CPU0  ] inhibit interrupts mask = 3
+00188355801d[CPU0  ] real mode activated
+00188355805d[CPU0  ] inhibit interrupts mask = 3
+00188355805d[CPU0  ] inhibit interrupts mask = 1
+00188355824d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00188356536d[CPU0  ] inhibit interrupts mask = 1
+00188361957d[CPU0  ] protected mode activated
+00188361965d[CPU0  ] inhibit interrupts mask = 3
+00188682457d[CPU0  ] inhibit interrupts mask = 3
+00188682474d[CPU0  ] real mode activated
+00188682478d[CPU0  ] inhibit interrupts mask = 3
+00188682478d[CPU0  ] inhibit interrupts mask = 1
+00188682497d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00188683198d[CPU0  ] inhibit interrupts mask = 1
+00188688630d[CPU0  ] protected mode activated
+00188688638d[CPU0  ] inhibit interrupts mask = 3
+00188787188d[CPU0  ] inhibit interrupts mask = 3
+00188787205d[CPU0  ] real mode activated
+00188787209d[CPU0  ] inhibit interrupts mask = 3
+00188787209d[CPU0  ] inhibit interrupts mask = 1
+00188787228d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00188787929d[CPU0  ] inhibit interrupts mask = 1
+00188793361d[CPU0  ] protected mode activated
+00188793369d[CPU0  ] inhibit interrupts mask = 3
+00189159079d[CPU0  ] RDTSC: ticks 0x00000000:0b4656a7
+00189172408d[CPU0  ] RDTSC: ticks 0x00000000:0b468ab8
+00190614707d[CPU0  ] inhibit interrupts mask = 3
+00190614724d[CPU0  ] real mode activated
+00190614728d[CPU0  ] inhibit interrupts mask = 3
+00190614728d[CPU0  ] inhibit interrupts mask = 1
+00190614736d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00190614736d[CPU0  ] inhibit interrupts mask = 1
+00190614736d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00190614770d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00190615471d[CPU0  ] inhibit interrupts mask = 1
+00190889391d[CPU0  ] protected mode activated
+00190889399d[CPU0  ] inhibit interrupts mask = 3
+00190987949d[CPU0  ] inhibit interrupts mask = 3
+00190987966d[CPU0  ] real mode activated
+00190987970d[CPU0  ] inhibit interrupts mask = 3
+00190987970d[CPU0  ] inhibit interrupts mask = 1
+00190987989d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00190988690d[CPU0  ] inhibit interrupts mask = 1
+00190994122d[CPU0  ] protected mode activated
+00190994130d[CPU0  ] inhibit interrupts mask = 3
+00191328243d[CPU0  ] RDTSC: ticks 0x00000000:0b676ff3
+00191396087d[CPU0  ] RDTSC: ticks 0x00000000:0b6878f7
+00192428785d[CPU0  ] inhibit interrupts mask = 3
+00192428802d[CPU0  ] real mode activated
+00192428806d[CPU0  ] inhibit interrupts mask = 3
+00192428806d[CPU0  ] inhibit interrupts mask = 1
+00192428814d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00192428814d[CPU0  ] inhibit interrupts mask = 1
+00192428814d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00192428848d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00192429549d[CPU0  ] inhibit interrupts mask = 1
+00192714733d[CPU0  ] protected mode activated
+00192714741d[CPU0  ] inhibit interrupts mask = 3
+00192813291d[CPU0  ] inhibit interrupts mask = 3
+00192813308d[CPU0  ] real mode activated
+00192813312d[CPU0  ] inhibit interrupts mask = 3
+00192813312d[CPU0  ] inhibit interrupts mask = 1
+00192813331d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00192814032d[CPU0  ] inhibit interrupts mask = 1
+00192819464d[CPU0  ] protected mode activated
+00192819472d[CPU0  ] inhibit interrupts mask = 3
+00193115829d[CPU0  ] inhibit interrupts mask = 3
+00193115846d[CPU0  ] real mode activated
+00193115850d[CPU0  ] inhibit interrupts mask = 3
+00193115850d[CPU0  ] inhibit interrupts mask = 1
+00193115869d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00193116570d[CPU0  ] inhibit interrupts mask = 1
+00193122002d[CPU0  ] protected mode activated
+00193122010d[CPU0  ] inhibit interrupts mask = 3
+00193220560d[CPU0  ] inhibit interrupts mask = 3
+00193220577d[CPU0  ] real mode activated
+00193220581d[CPU0  ] inhibit interrupts mask = 3
+00193220581d[CPU0  ] inhibit interrupts mask = 1
+00193220600d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00193221301d[CPU0  ] inhibit interrupts mask = 1
+00193226733d[CPU0  ] protected mode activated
+00193226741d[CPU0  ] inhibit interrupts mask = 3
+00193568143d[CPU0  ] RDTSC: ticks 0x00000000:0b899d8f
+00193580848d[CPU0  ] RDTSC: ticks 0x00000000:0b89cf30
+00194697226d[CPU0  ] inhibit interrupts mask = 3
+00194697243d[CPU0  ] real mode activated
+00194697247d[CPU0  ] inhibit interrupts mask = 3
+00194697247d[CPU0  ] inhibit interrupts mask = 1
+00194697255d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00194697255d[CPU0  ] inhibit interrupts mask = 1
+00194697255d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00194697289d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00194697990d[CPU0  ] inhibit interrupts mask = 1
+00194793006d[CPU0  ] protected mode activated
+00194793014d[CPU0  ] inhibit interrupts mask = 3
+00194891564d[CPU0  ] inhibit interrupts mask = 3
+00194891581d[CPU0  ] real mode activated
+00194891585d[CPU0  ] inhibit interrupts mask = 3
+00194891585d[CPU0  ] inhibit interrupts mask = 1
+00194891604d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00194892305d[CPU0  ] inhibit interrupts mask = 1
+00194897737d[CPU0  ] protected mode activated
+00194897745d[CPU0  ] inhibit interrupts mask = 3
+00195204898d[CPU0  ] RDTSC: ticks 0x00000000:0ba29722
+00195231107d[CPU0  ] RDTSC: ticks 0x00000000:0ba2fd83
+00195614003d[CPU0  ] inhibit interrupts mask = 3
+00195614020d[CPU0  ] real mode activated
+00195614024d[CPU0  ] inhibit interrupts mask = 3
+00195614024d[CPU0  ] inhibit interrupts mask = 1
+00195614032d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00195614032d[CPU0  ] inhibit interrupts mask = 1
+00195614032d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00195614066d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00195614767d[CPU0  ] inhibit interrupts mask = 1
+00196193959d[CPU0  ] protected mode activated
+00196193967d[CPU0  ] inhibit interrupts mask = 3
+00196292517d[CPU0  ] inhibit interrupts mask = 3
+00196292534d[CPU0  ] real mode activated
+00196292538d[CPU0  ] inhibit interrupts mask = 3
+00196292538d[CPU0  ] inhibit interrupts mask = 1
+00196292557d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00196293258d[CPU0  ] inhibit interrupts mask = 1
+00196298690d[CPU0  ] protected mode activated
+00196298698d[CPU0  ] inhibit interrupts mask = 3
+00196604038d[CPU0  ] RDTSC: ticks 0x00000000:0bb7f086
+00197083750d[CPU0  ] RDTSC: ticks 0x00000000:0bbf4266
+00197262581d[CPU0  ] inhibit interrupts mask = 3
+00197262598d[CPU0  ] real mode activated
+00197262602d[CPU0  ] inhibit interrupts mask = 3
+00197262602d[CPU0  ] inhibit interrupts mask = 1
+00197262621d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00197263322d[CPU0  ] inhibit interrupts mask = 1
+00197369426d[CPU0  ] protected mode activated
+00197369434d[CPU0  ] inhibit interrupts mask = 3
+00197467984d[CPU0  ] inhibit interrupts mask = 3
+00197468001d[CPU0  ] real mode activated
+00197468005d[CPU0  ] inhibit interrupts mask = 3
+00197468005d[CPU0  ] inhibit interrupts mask = 1
+00197468024d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00197468725d[CPU0  ] inhibit interrupts mask = 1
+00197474157d[CPU0  ] protected mode activated
+00197474165d[CPU0  ] inhibit interrupts mask = 3
+00197810965d[CPU0  ] RDTSC: ticks 0x00000000:0bca5b15
+00197824710d[CPU0  ] RDTSC: ticks 0x00000000:0bca90c6
+00198747810d[CPU0  ] inhibit interrupts mask = 3
+00198747827d[CPU0  ] real mode activated
+00198747831d[CPU0  ] inhibit interrupts mask = 3
+00198747831d[CPU0  ] inhibit interrupts mask = 1
+00198747839d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00198747839d[CPU0  ] inhibit interrupts mask = 1
+00198747839d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00198747873d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00198748574d[CPU0  ] inhibit interrupts mask = 1
+00199227094d[CPU0  ] protected mode activated
+00199227102d[CPU0  ] inhibit interrupts mask = 3
+00199325652d[CPU0  ] inhibit interrupts mask = 3
+00199325669d[CPU0  ] real mode activated
+00199325673d[CPU0  ] inhibit interrupts mask = 3
+00199325673d[CPU0  ] inhibit interrupts mask = 1
+00199325692d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00199326393d[CPU0  ] inhibit interrupts mask = 1
+00199331825d[CPU0  ] protected mode activated
+00199331833d[CPU0  ] inhibit interrupts mask = 3
+00199680852d[CPU0  ] RDTSC: ticks 0x00000000:0be6e354
+00199824497d[CPU0  ] RDTSC: ticks 0x00000000:0be91471
+00201054864d[CPU0  ] inhibit interrupts mask = 3
+00201054881d[CPU0  ] real mode activated
+00201054885d[CPU0  ] inhibit interrupts mask = 3
+00201054885d[CPU0  ] inhibit interrupts mask = 1
+00201054893d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00201054893d[CPU0  ] inhibit interrupts mask = 1
+00201054893d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00201054927d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00201055628d[CPU0  ] inhibit interrupts mask = 1
+00201252812d[CPU0  ] protected mode activated
+00201252820d[CPU0  ] inhibit interrupts mask = 3
+00201351370d[CPU0  ] inhibit interrupts mask = 3
+00201351387d[CPU0  ] real mode activated
+00201351391d[CPU0  ] inhibit interrupts mask = 3
+00201351391d[CPU0  ] inhibit interrupts mask = 1
+00201351410d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00201352111d[CPU0  ] inhibit interrupts mask = 1
+00201357543d[CPU0  ] protected mode activated
+00201357551d[CPU0  ] inhibit interrupts mask = 3
+00201745803d[CPU0  ] RDTSC: ticks 0x00000000:0c06658b
+00201883348d[CPU0  ] RDTSC: ticks 0x00000000:0c087ed4
+00202726225d[CPU0  ] inhibit interrupts mask = 3
+00202726242d[CPU0  ] real mode activated
+00202726246d[CPU0  ] inhibit interrupts mask = 3
+00202726246d[CPU0  ] inhibit interrupts mask = 1
+00202726254d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00202726254d[CPU0  ] inhibit interrupts mask = 1
+00202726254d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00202726288d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00202726989d[CPU0  ] inhibit interrupts mask = 1
+00202986565d[CPU0  ] protected mode activated
+00202986573d[CPU0  ] inhibit interrupts mask = 3
+00203085123d[CPU0  ] inhibit interrupts mask = 3
+00203085140d[CPU0  ] real mode activated
+00203085144d[CPU0  ] inhibit interrupts mask = 3
+00203085144d[CPU0  ] inhibit interrupts mask = 1
+00203085163d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00203085864d[CPU0  ] inhibit interrupts mask = 1
+00203091296d[CPU0  ] protected mode activated
+00203091304d[CPU0  ] inhibit interrupts mask = 3
+00203402953d[CPU0  ] RDTSC: ticks 0x00000000:0c1faec9
+00203434403d[CPU0  ] RDTSC: ticks 0x00000000:0c2029a3
+00204967369d[CPU0  ] inhibit interrupts mask = 3
+00204967386d[CPU0  ] real mode activated
+00204967390d[CPU0  ] inhibit interrupts mask = 3
+00204967390d[CPU0  ] inhibit interrupts mask = 1
+00204967398d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00204967398d[CPU0  ] inhibit interrupts mask = 1
+00204967398d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00204967432d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00204968133d[CPU0  ] inhibit interrupts mask = 1
+00205306029d[CPU0  ] protected mode activated
+00205306037d[CPU0  ] inhibit interrupts mask = 3
+00205404587d[CPU0  ] inhibit interrupts mask = 3
+00205404604d[CPU0  ] real mode activated
+00205404608d[CPU0  ] inhibit interrupts mask = 3
+00205404608d[CPU0  ] inhibit interrupts mask = 1
+00205404627d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00205405328d[CPU0  ] inhibit interrupts mask = 1
+00205410760d[CPU0  ] protected mode activated
+00205410768d[CPU0  ] inhibit interrupts mask = 3
+00205768447d[CPU0  ] RDTSC: ticks 0x00000000:0c43c6ff
+00205782493d[CPU0  ] RDTSC: ticks 0x00000000:0c43fddd
+00207370958d[CPU0  ] inhibit interrupts mask = 3
+00207370975d[CPU0  ] real mode activated
+00207370979d[CPU0  ] inhibit interrupts mask = 3
+00207370979d[CPU0  ] inhibit interrupts mask = 1
+00207370987d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00207370987d[CPU0  ] inhibit interrupts mask = 1
+00207370987d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00207371021d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00207371722d[CPU0  ] inhibit interrupts mask = 1
+00207390002d[CPU0  ] protected mode activated
+00207390010d[CPU0  ] inhibit interrupts mask = 3
+00207488560d[CPU0  ] inhibit interrupts mask = 3
+00207488577d[CPU0  ] real mode activated
+00207488581d[CPU0  ] inhibit interrupts mask = 3
+00207488581d[CPU0  ] inhibit interrupts mask = 1
+00207488600d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00207489301d[CPU0  ] inhibit interrupts mask = 1
+00207494733d[CPU0  ] protected mode activated
+00207494741d[CPU0  ] inhibit interrupts mask = 3
+00207917855d[CPU0  ] RDTSC: ticks 0x00000000:0c64931f
+00208264106d[CPU0  ] RDTSC: ticks 0x00000000:0c69dbaa
+00208372241d[CPU0  ] inhibit interrupts mask = 3
+00208372258d[CPU0  ] real mode activated
+00208372262d[CPU0  ] inhibit interrupts mask = 3
+00208372262d[CPU0  ] inhibit interrupts mask = 1
+00208372281d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00208372982d[CPU0  ] inhibit interrupts mask = 1
+00208721811d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00208721811d[CPU0  ] inhibit interrupts mask = 1
+00208721811d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00209783093d[CPU0  ] protected mode activated
+00209783101d[CPU0  ] inhibit interrupts mask = 3
+00209881651d[CPU0  ] inhibit interrupts mask = 3
+00209881668d[CPU0  ] real mode activated
+00209881672d[CPU0  ] inhibit interrupts mask = 3
+00209881672d[CPU0  ] inhibit interrupts mask = 1
+00209881691d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00209882392d[CPU0  ] inhibit interrupts mask = 1
+00209887824d[CPU0  ] protected mode activated
+00209887832d[CPU0  ] inhibit interrupts mask = 3
+00210356436d[CPU0  ] inhibit interrupts mask = 3
+00210356453d[CPU0  ] real mode activated
+00210356457d[CPU0  ] inhibit interrupts mask = 3
+00210356457d[CPU0  ] inhibit interrupts mask = 1
+00210356476d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00210357177d[CPU0  ] inhibit interrupts mask = 1
+00210362609d[CPU0  ] protected mode activated
+00210362617d[CPU0  ] inhibit interrupts mask = 3
+00210461167d[CPU0  ] inhibit interrupts mask = 3
+00210461184d[CPU0  ] real mode activated
+00210461188d[CPU0  ] inhibit interrupts mask = 3
+00210461188d[CPU0  ] inhibit interrupts mask = 1
+00210461207d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00210461908d[CPU0  ] inhibit interrupts mask = 1
+00210467340d[CPU0  ] protected mode activated
+00210467348d[CPU0  ] inhibit interrupts mask = 3
+00211126843d[CPU0  ] inhibit interrupts mask = 3
+00211126860d[CPU0  ] real mode activated
+00211126864d[CPU0  ] inhibit interrupts mask = 3
+00211126864d[CPU0  ] inhibit interrupts mask = 1
+00211126872d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00211126872d[CPU0  ] inhibit interrupts mask = 1
+00211126872d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00211126906d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00211127607d[CPU0  ] inhibit interrupts mask = 1
+00211133039d[CPU0  ] protected mode activated
+00211133047d[CPU0  ] inhibit interrupts mask = 3
+00211231597d[CPU0  ] inhibit interrupts mask = 3
+00211231614d[CPU0  ] real mode activated
+00211231618d[CPU0  ] inhibit interrupts mask = 3
+00211231618d[CPU0  ] inhibit interrupts mask = 1
+00211231637d[CPU0  ] interrupt(): vector = 13, TYPE = 4, EXT = 0
+00211232338d[CPU0  ] inhibit interrupts mask = 1
+00211237770d[CPU0  ] protected mode activated
+00211237778d[CPU0  ] inhibit interrupts mask = 3
+00212631957d[CPU0  ] RDTSC: ticks 0x00000000:0cac8195
+00212633135d[CPU0  ] RDTSC: ticks 0x00000000:0cac862f
+00212640990d[CPU0  ] RDTSC: ticks 0x00000000:0caca4de
+00212642164d[CPU0  ] RDTSC: ticks 0x00000000:0caca974
+00212647478d[CPU0  ] RDTSC: ticks 0x00000000:0cacbe36
+00212722970d[CPU0  ] RDTSC: ticks 0x00000000:0cade51a
+00212914887d[CPU0  ] RDTSC: ticks 0x00000000:0cb0d2c7
+00212973407d[CPU0  ] inhibit interrupts mask = 3
+00212973424d[CPU0  ] real mode activated
+00212973428d[CPU0  ] inhibit interrupts mask = 3
+00212973428d[CPU0  ] inhibit interrupts mask = 1
+00212973447d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00212973800d[CPU0  ] protected mode activated
+00212973808d[CPU0  ] inhibit interrupts mask = 3
+00212974033d[CPU0  ] inhibit interrupts mask = 3
+00212974050d[CPU0  ] real mode activated
+00212974054d[CPU0  ] inhibit interrupts mask = 3
+00212974054d[CPU0  ] inhibit interrupts mask = 1
+00212974073d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00212974426d[CPU0  ] protected mode activated
+00212974434d[CPU0  ] inhibit interrupts mask = 3
+00212974659d[CPU0  ] inhibit interrupts mask = 3
+00212974676d[CPU0  ] real mode activated
+00212974680d[CPU0  ] inhibit interrupts mask = 3
+00212974680d[CPU0  ] inhibit interrupts mask = 1
+00212974699d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00212975063d[CPU0  ] protected mode activated
+00212975071d[CPU0  ] inhibit interrupts mask = 3
+00212975296d[CPU0  ] inhibit interrupts mask = 3
+00212975313d[CPU0  ] real mode activated
+00212975317d[CPU0  ] inhibit interrupts mask = 3
+00212975317d[CPU0  ] inhibit interrupts mask = 1
+00212975336d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00212975699d[CPU0  ] protected mode activated
+00212975707d[CPU0  ] inhibit interrupts mask = 3
+00212975932d[CPU0  ] inhibit interrupts mask = 3
+00212975949d[CPU0  ] real mode activated
+00212975953d[CPU0  ] inhibit interrupts mask = 3
+00212975953d[CPU0  ] inhibit interrupts mask = 1
+00212975972d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00212976333d[CPU0  ] protected mode activated
+00212976341d[CPU0  ] inhibit interrupts mask = 3
+00212976566d[CPU0  ] inhibit interrupts mask = 3
+00212976583d[CPU0  ] real mode activated
+00212976587d[CPU0  ] inhibit interrupts mask = 3
+00212976587d[CPU0  ] inhibit interrupts mask = 1
+00212976606d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00212976980d[CPU0  ] protected mode activated
+00212976988d[CPU0  ] inhibit interrupts mask = 3
+00212977672d[CPU0  ] inhibit interrupts mask = 3
+00212977689d[CPU0  ] real mode activated
+00212977693d[CPU0  ] inhibit interrupts mask = 3
+00212977693d[CPU0  ] inhibit interrupts mask = 1
+00212977712d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00212978065d[CPU0  ] protected mode activated
+00212978073d[CPU0  ] inhibit interrupts mask = 3
+00212978336d[CPU0  ] inhibit interrupts mask = 3
+00212978353d[CPU0  ] real mode activated
+00212978357d[CPU0  ] inhibit interrupts mask = 3
+00212978357d[CPU0  ] inhibit interrupts mask = 1
+00212978376d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00212978729d[CPU0  ] protected mode activated
+00212978737d[CPU0  ] inhibit interrupts mask = 3
+00212979000d[CPU0  ] inhibit interrupts mask = 3
+00212979017d[CPU0  ] real mode activated
+00212979021d[CPU0  ] inhibit interrupts mask = 3
+00212979021d[CPU0  ] inhibit interrupts mask = 1
+00212979040d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00212979404d[CPU0  ] protected mode activated
+00212979412d[CPU0  ] inhibit interrupts mask = 3
+00212979675d[CPU0  ] inhibit interrupts mask = 3
+00212979692d[CPU0  ] real mode activated
+00212979696d[CPU0  ] inhibit interrupts mask = 3
+00212979696d[CPU0  ] inhibit interrupts mask = 1
+00212979715d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00212980078d[CPU0  ] protected mode activated
+00212980086d[CPU0  ] inhibit interrupts mask = 3
+00212980349d[CPU0  ] inhibit interrupts mask = 3
+00212980366d[CPU0  ] real mode activated
+00212980370d[CPU0  ] inhibit interrupts mask = 3
+00212980370d[CPU0  ] inhibit interrupts mask = 1
+00212980389d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00212980750d[CPU0  ] protected mode activated
+00212980758d[CPU0  ] inhibit interrupts mask = 3
+00212981021d[CPU0  ] inhibit interrupts mask = 3
+00212981038d[CPU0  ] real mode activated
+00212981042d[CPU0  ] inhibit interrupts mask = 3
+00212981042d[CPU0  ] inhibit interrupts mask = 1
+00212981061d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00212981435d[CPU0  ] protected mode activated
+00212981443d[CPU0  ] inhibit interrupts mask = 3
+00213346076d[CPU0  ] inhibit interrupts mask = 3
+00213346093d[CPU0  ] real mode activated
+00213346097d[CPU0  ] inhibit interrupts mask = 3
+00213346097d[CPU0  ] inhibit interrupts mask = 1
+00213346105d[CPU0  ] interrupt(): vector = 08, TYPE = 0, EXT = 1
+00213346105d[CPU0  ] inhibit interrupts mask = 1
+00213346105d[CPU0  ] interrupt(): vector = 1c, TYPE = 4, EXT = 0
+00213346139d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213346177d[CPU0  ] protected mode activated
+00213346185d[CPU0  ] inhibit interrupts mask = 3
+00213346264d[CPU0  ] inhibit interrupts mask = 3
+00213346281d[CPU0  ] real mode activated
+00213346285d[CPU0  ] inhibit interrupts mask = 3
+00213346285d[CPU0  ] inhibit interrupts mask = 1
+00213346304d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213346345d[CPU0  ] protected mode activated
+00213346353d[CPU0  ] inhibit interrupts mask = 3
+00213346426d[CPU0  ] inhibit interrupts mask = 3
+00213346443d[CPU0  ] real mode activated
+00213346447d[CPU0  ] inhibit interrupts mask = 3
+00213346447d[CPU0  ] inhibit interrupts mask = 1
+00213346466d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213346511d[CPU0  ] protected mode activated
+00213346519d[CPU0  ] inhibit interrupts mask = 3
+00213346849d[CPU0  ] inhibit interrupts mask = 3
+00213346866d[CPU0  ] real mode activated
+00213346870d[CPU0  ] inhibit interrupts mask = 3
+00213346870d[CPU0  ] inhibit interrupts mask = 1
+00213346889d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213347242d[CPU0  ] protected mode activated
+00213347250d[CPU0  ] inhibit interrupts mask = 3
+00213347475d[CPU0  ] inhibit interrupts mask = 3
+00213347492d[CPU0  ] real mode activated
+00213347496d[CPU0  ] inhibit interrupts mask = 3
+00213347496d[CPU0  ] inhibit interrupts mask = 1
+00213347515d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213347868d[CPU0  ] protected mode activated
+00213347876d[CPU0  ] inhibit interrupts mask = 3
+00213348101d[CPU0  ] inhibit interrupts mask = 3
+00213348118d[CPU0  ] real mode activated
+00213348122d[CPU0  ] inhibit interrupts mask = 3
+00213348122d[CPU0  ] inhibit interrupts mask = 1
+00213348141d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213348505d[CPU0  ] protected mode activated
+00213348513d[CPU0  ] inhibit interrupts mask = 3
+00213348738d[CPU0  ] inhibit interrupts mask = 3
+00213348755d[CPU0  ] real mode activated
+00213348759d[CPU0  ] inhibit interrupts mask = 3
+00213348759d[CPU0  ] inhibit interrupts mask = 1
+00213348778d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213349141d[CPU0  ] protected mode activated
+00213349149d[CPU0  ] inhibit interrupts mask = 3
+00213349374d[CPU0  ] inhibit interrupts mask = 3
+00213349391d[CPU0  ] real mode activated
+00213349395d[CPU0  ] inhibit interrupts mask = 3
+00213349395d[CPU0  ] inhibit interrupts mask = 1
+00213349414d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213349775d[CPU0  ] protected mode activated
+00213349783d[CPU0  ] inhibit interrupts mask = 3
+00213350008d[CPU0  ] inhibit interrupts mask = 3
+00213350025d[CPU0  ] real mode activated
+00213350029d[CPU0  ] inhibit interrupts mask = 3
+00213350029d[CPU0  ] inhibit interrupts mask = 1
+00213350048d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213350422d[CPU0  ] protected mode activated
+00213350430d[CPU0  ] inhibit interrupts mask = 3
+00213351030d[CPU0  ] inhibit interrupts mask = 3
+00213351047d[CPU0  ] real mode activated
+00213351051d[CPU0  ] inhibit interrupts mask = 3
+00213351051d[CPU0  ] inhibit interrupts mask = 1
+00213351070d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213351423d[CPU0  ] protected mode activated
+00213351431d[CPU0  ] inhibit interrupts mask = 3
+00213351694d[CPU0  ] inhibit interrupts mask = 3
+00213351711d[CPU0  ] real mode activated
+00213351715d[CPU0  ] inhibit interrupts mask = 3
+00213351715d[CPU0  ] inhibit interrupts mask = 1
+00213351734d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213352087d[CPU0  ] protected mode activated
+00213352095d[CPU0  ] inhibit interrupts mask = 3
+00213352358d[CPU0  ] inhibit interrupts mask = 3
+00213352375d[CPU0  ] real mode activated
+00213352379d[CPU0  ] inhibit interrupts mask = 3
+00213352379d[CPU0  ] inhibit interrupts mask = 1
+00213352398d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213352762d[CPU0  ] protected mode activated
+00213352770d[CPU0  ] inhibit interrupts mask = 3
+00213353033d[CPU0  ] inhibit interrupts mask = 3
+00213353050d[CPU0  ] real mode activated
+00213353054d[CPU0  ] inhibit interrupts mask = 3
+00213353054d[CPU0  ] inhibit interrupts mask = 1
+00213353073d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213353436d[CPU0  ] protected mode activated
+00213353444d[CPU0  ] inhibit interrupts mask = 3
+00213353707d[CPU0  ] inhibit interrupts mask = 3
+00213353724d[CPU0  ] real mode activated
+00213353728d[CPU0  ] inhibit interrupts mask = 3
+00213353728d[CPU0  ] inhibit interrupts mask = 1
+00213353747d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213354108d[CPU0  ] protected mode activated
+00213354116d[CPU0  ] inhibit interrupts mask = 3
+00213354379d[CPU0  ] inhibit interrupts mask = 3
+00213354396d[CPU0  ] real mode activated
+00213354400d[CPU0  ] inhibit interrupts mask = 3
+00213354400d[CPU0  ] inhibit interrupts mask = 1
+00213354419d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213354793d[CPU0  ] protected mode activated
+00213354801d[CPU0  ] inhibit interrupts mask = 3
+00213360928d[CPU0  ] inhibit interrupts mask = 3
+00213360945d[CPU0  ] real mode activated
+00213360949d[CPU0  ] inhibit interrupts mask = 3
+00213360949d[CPU0  ] inhibit interrupts mask = 1
+00213360968d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213361321d[CPU0  ] protected mode activated
+00213361329d[CPU0  ] inhibit interrupts mask = 3
+00213361554d[CPU0  ] inhibit interrupts mask = 3
+00213361571d[CPU0  ] real mode activated
+00213361575d[CPU0  ] inhibit interrupts mask = 3
+00213361575d[CPU0  ] inhibit interrupts mask = 1
+00213361594d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213361947d[CPU0  ] protected mode activated
+00213361955d[CPU0  ] inhibit interrupts mask = 3
+00213362180d[CPU0  ] inhibit interrupts mask = 3
+00213362197d[CPU0  ] real mode activated
+00213362201d[CPU0  ] inhibit interrupts mask = 3
+00213362201d[CPU0  ] inhibit interrupts mask = 1
+00213362220d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213362584d[CPU0  ] protected mode activated
+00213362592d[CPU0  ] inhibit interrupts mask = 3
+00213362817d[CPU0  ] inhibit interrupts mask = 3
+00213362834d[CPU0  ] real mode activated
+00213362838d[CPU0  ] inhibit interrupts mask = 3
+00213362838d[CPU0  ] inhibit interrupts mask = 1
+00213362857d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213363220d[CPU0  ] protected mode activated
+00213363228d[CPU0  ] inhibit interrupts mask = 3
+00213363453d[CPU0  ] inhibit interrupts mask = 3
+00213363470d[CPU0  ] real mode activated
+00213363474d[CPU0  ] inhibit interrupts mask = 3
+00213363474d[CPU0  ] inhibit interrupts mask = 1
+00213363493d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213363854d[CPU0  ] protected mode activated
+00213363862d[CPU0  ] inhibit interrupts mask = 3
+00213364087d[CPU0  ] inhibit interrupts mask = 3
+00213364104d[CPU0  ] real mode activated
+00213364108d[CPU0  ] inhibit interrupts mask = 3
+00213364108d[CPU0  ] inhibit interrupts mask = 1
+00213364127d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213364501d[CPU0  ] protected mode activated
+00213364509d[CPU0  ] inhibit interrupts mask = 3
+00213365109d[CPU0  ] inhibit interrupts mask = 3
+00213365126d[CPU0  ] real mode activated
+00213365130d[CPU0  ] inhibit interrupts mask = 3
+00213365130d[CPU0  ] inhibit interrupts mask = 1
+00213365149d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213365502d[CPU0  ] protected mode activated
+00213365510d[CPU0  ] inhibit interrupts mask = 3
+00213365773d[CPU0  ] inhibit interrupts mask = 3
+00213365790d[CPU0  ] real mode activated
+00213365794d[CPU0  ] inhibit interrupts mask = 3
+00213365794d[CPU0  ] inhibit interrupts mask = 1
+00213365813d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213366166d[CPU0  ] protected mode activated
+00213366174d[CPU0  ] inhibit interrupts mask = 3
+00213366437d[CPU0  ] inhibit interrupts mask = 3
+00213366454d[CPU0  ] real mode activated
+00213366458d[CPU0  ] inhibit interrupts mask = 3
+00213366458d[CPU0  ] inhibit interrupts mask = 1
+00213366477d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213366841d[CPU0  ] protected mode activated
+00213366849d[CPU0  ] inhibit interrupts mask = 3
+00213367112d[CPU0  ] inhibit interrupts mask = 3
+00213367129d[CPU0  ] real mode activated
+00213367133d[CPU0  ] inhibit interrupts mask = 3
+00213367133d[CPU0  ] inhibit interrupts mask = 1
+00213367152d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213367515d[CPU0  ] protected mode activated
+00213367523d[CPU0  ] inhibit interrupts mask = 3
+00213367786d[CPU0  ] inhibit interrupts mask = 3
+00213367803d[CPU0  ] real mode activated
+00213367807d[CPU0  ] inhibit interrupts mask = 3
+00213367807d[CPU0  ] inhibit interrupts mask = 1
+00213367826d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213368187d[CPU0  ] protected mode activated
+00213368195d[CPU0  ] inhibit interrupts mask = 3
+00213368458d[CPU0  ] inhibit interrupts mask = 3
+00213368475d[CPU0  ] real mode activated
+00213368479d[CPU0  ] inhibit interrupts mask = 3
+00213368479d[CPU0  ] inhibit interrupts mask = 1
+00213368498d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213368872d[CPU0  ] protected mode activated
+00213368880d[CPU0  ] inhibit interrupts mask = 3
+00213383193d[CPU0  ] inhibit interrupts mask = 3
+00213383210d[CPU0  ] real mode activated
+00213383214d[CPU0  ] inhibit interrupts mask = 3
+00213383214d[CPU0  ] inhibit interrupts mask = 1
+00213383233d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213383586d[CPU0  ] protected mode activated
+00213383594d[CPU0  ] inhibit interrupts mask = 3
+00213383819d[CPU0  ] inhibit interrupts mask = 3
+00213383836d[CPU0  ] real mode activated
+00213383840d[CPU0  ] inhibit interrupts mask = 3
+00213383840d[CPU0  ] inhibit interrupts mask = 1
+00213383859d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213384212d[CPU0  ] protected mode activated
+00213384220d[CPU0  ] inhibit interrupts mask = 3
+00213384445d[CPU0  ] inhibit interrupts mask = 3
+00213384462d[CPU0  ] real mode activated
+00213384466d[CPU0  ] inhibit interrupts mask = 3
+00213384466d[CPU0  ] inhibit interrupts mask = 1
+00213384485d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213384849d[CPU0  ] protected mode activated
+00213384857d[CPU0  ] inhibit interrupts mask = 3
+00213385082d[CPU0  ] inhibit interrupts mask = 3
+00213385099d[CPU0  ] real mode activated
+00213385103d[CPU0  ] inhibit interrupts mask = 3
+00213385103d[CPU0  ] inhibit interrupts mask = 1
+00213385122d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213385485d[CPU0  ] protected mode activated
+00213385493d[CPU0  ] inhibit interrupts mask = 3
+00213385718d[CPU0  ] inhibit interrupts mask = 3
+00213385735d[CPU0  ] real mode activated
+00213385739d[CPU0  ] inhibit interrupts mask = 3
+00213385739d[CPU0  ] inhibit interrupts mask = 1
+00213385758d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213386119d[CPU0  ] protected mode activated
+00213386127d[CPU0  ] inhibit interrupts mask = 3
+00213386352d[CPU0  ] inhibit interrupts mask = 3
+00213386369d[CPU0  ] real mode activated
+00213386373d[CPU0  ] inhibit interrupts mask = 3
+00213386373d[CPU0  ] inhibit interrupts mask = 1
+00213386392d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213386766d[CPU0  ] protected mode activated
+00213386774d[CPU0  ] inhibit interrupts mask = 3
+00213387374d[CPU0  ] inhibit interrupts mask = 3
+00213387391d[CPU0  ] real mode activated
+00213387395d[CPU0  ] inhibit interrupts mask = 3
+00213387395d[CPU0  ] inhibit interrupts mask = 1
+00213387414d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213387767d[CPU0  ] protected mode activated
+00213387775d[CPU0  ] inhibit interrupts mask = 3
+00213388038d[CPU0  ] inhibit interrupts mask = 3
+00213388055d[CPU0  ] real mode activated
+00213388059d[CPU0  ] inhibit interrupts mask = 3
+00213388059d[CPU0  ] inhibit interrupts mask = 1
+00213388078d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213388431d[CPU0  ] protected mode activated
+00213388439d[CPU0  ] inhibit interrupts mask = 3
+00213388702d[CPU0  ] inhibit interrupts mask = 3
+00213388719d[CPU0  ] real mode activated
+00213388723d[CPU0  ] inhibit interrupts mask = 3
+00213388723d[CPU0  ] inhibit interrupts mask = 1
+00213388742d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213389106d[CPU0  ] protected mode activated
+00213389114d[CPU0  ] inhibit interrupts mask = 3
+00213389377d[CPU0  ] inhibit interrupts mask = 3
+00213389394d[CPU0  ] real mode activated
+00213389398d[CPU0  ] inhibit interrupts mask = 3
+00213389398d[CPU0  ] inhibit interrupts mask = 1
+00213389417d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213389780d[CPU0  ] protected mode activated
+00213389788d[CPU0  ] inhibit interrupts mask = 3
+00213390051d[CPU0  ] inhibit interrupts mask = 3
+00213390068d[CPU0  ] real mode activated
+00213390072d[CPU0  ] inhibit interrupts mask = 3
+00213390072d[CPU0  ] inhibit interrupts mask = 1
+00213390091d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213390452d[CPU0  ] protected mode activated
+00213390460d[CPU0  ] inhibit interrupts mask = 3
+00213390723d[CPU0  ] inhibit interrupts mask = 3
+00213390740d[CPU0  ] real mode activated
+00213390744d[CPU0  ] inhibit interrupts mask = 3
+00213390744d[CPU0  ] inhibit interrupts mask = 1
+00213390763d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213391137d[CPU0  ] protected mode activated
+00213391145d[CPU0  ] inhibit interrupts mask = 3
+00213397310d[CPU0  ] inhibit interrupts mask = 3
+00213397327d[CPU0  ] real mode activated
+00213397331d[CPU0  ] inhibit interrupts mask = 3
+00213397331d[CPU0  ] inhibit interrupts mask = 1
+00213397350d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213397703d[CPU0  ] protected mode activated
+00213397711d[CPU0  ] inhibit interrupts mask = 3
+00213397936d[CPU0  ] inhibit interrupts mask = 3
+00213397953d[CPU0  ] real mode activated
+00213397957d[CPU0  ] inhibit interrupts mask = 3
+00213397957d[CPU0  ] inhibit interrupts mask = 1
+00213397976d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213398329d[CPU0  ] protected mode activated
+00213398337d[CPU0  ] inhibit interrupts mask = 3
+00213398562d[CPU0  ] inhibit interrupts mask = 3
+00213398579d[CPU0  ] real mode activated
+00213398583d[CPU0  ] inhibit interrupts mask = 3
+00213398583d[CPU0  ] inhibit interrupts mask = 1
+00213398602d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213398966d[CPU0  ] protected mode activated
+00213398974d[CPU0  ] inhibit interrupts mask = 3
+00213399199d[CPU0  ] inhibit interrupts mask = 3
+00213399216d[CPU0  ] real mode activated
+00213399220d[CPU0  ] inhibit interrupts mask = 3
+00213399220d[CPU0  ] inhibit interrupts mask = 1
+00213399239d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213399602d[CPU0  ] protected mode activated
+00213399610d[CPU0  ] inhibit interrupts mask = 3
+00213399835d[CPU0  ] inhibit interrupts mask = 3
+00213399852d[CPU0  ] real mode activated
+00213399856d[CPU0  ] inhibit interrupts mask = 3
+00213399856d[CPU0  ] inhibit interrupts mask = 1
+00213399875d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213400236d[CPU0  ] protected mode activated
+00213400244d[CPU0  ] inhibit interrupts mask = 3
+00213400469d[CPU0  ] inhibit interrupts mask = 3
+00213400486d[CPU0  ] real mode activated
+00213400490d[CPU0  ] inhibit interrupts mask = 3
+00213400490d[CPU0  ] inhibit interrupts mask = 1
+00213400509d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213400883d[CPU0  ] protected mode activated
+00213400891d[CPU0  ] inhibit interrupts mask = 3
+00213401491d[CPU0  ] inhibit interrupts mask = 3
+00213401508d[CPU0  ] real mode activated
+00213401512d[CPU0  ] inhibit interrupts mask = 3
+00213401512d[CPU0  ] inhibit interrupts mask = 1
+00213401531d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213401884d[CPU0  ] protected mode activated
+00213401892d[CPU0  ] inhibit interrupts mask = 3
+00213402155d[CPU0  ] inhibit interrupts mask = 3
+00213402172d[CPU0  ] real mode activated
+00213402176d[CPU0  ] inhibit interrupts mask = 3
+00213402176d[CPU0  ] inhibit interrupts mask = 1
+00213402195d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213402548d[CPU0  ] protected mode activated
+00213402556d[CPU0  ] inhibit interrupts mask = 3
+00213402819d[CPU0  ] inhibit interrupts mask = 3
+00213402836d[CPU0  ] real mode activated
+00213402840d[CPU0  ] inhibit interrupts mask = 3
+00213402840d[CPU0  ] inhibit interrupts mask = 1
+00213402859d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213403223d[CPU0  ] protected mode activated
+00213403231d[CPU0  ] inhibit interrupts mask = 3
+00213403494d[CPU0  ] inhibit interrupts mask = 3
+00213403511d[CPU0  ] real mode activated
+00213403515d[CPU0  ] inhibit interrupts mask = 3
+00213403515d[CPU0  ] inhibit interrupts mask = 1
+00213403534d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213403897d[CPU0  ] protected mode activated
+00213403905d[CPU0  ] inhibit interrupts mask = 3
+00213404168d[CPU0  ] inhibit interrupts mask = 3
+00213404185d[CPU0  ] real mode activated
+00213404189d[CPU0  ] inhibit interrupts mask = 3
+00213404189d[CPU0  ] inhibit interrupts mask = 1
+00213404208d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213404569d[CPU0  ] protected mode activated
+00213404577d[CPU0  ] inhibit interrupts mask = 3
+00213404840d[CPU0  ] inhibit interrupts mask = 3
+00213404857d[CPU0  ] real mode activated
+00213404861d[CPU0  ] inhibit interrupts mask = 3
+00213404861d[CPU0  ] inhibit interrupts mask = 1
+00213404880d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00213405254d[CPU0  ] protected mode activated
+00213405262d[CPU0  ] inhibit interrupts mask = 3
+00213413965d[CPU0  ] inhibit interrupts mask = 3
+00213413982d[CPU0  ] real mode activated
+00213413986d[CPU0  ] inhibit interrupts mask = 3
+00213413986d[CPU0  ] inhibit interrupts mask = 1
+00213414005d[CPU0  ] interrupt(): vector = 10, TYPE = 4, EXT = 0
+00213414066d[CPU0  ] protected mode activated
+00213414074d[CPU0  ] inhibit interrupts mask = 3
+00214123004d[CPU0  ] inhibit interrupts mask = 3
+00214123021d[CPU0  ] real mode activated
+00214123025d[CPU0  ] inhibit interrupts mask = 3
+00214123025d[CPU0  ] inhibit interrupts mask = 1
+00214123044d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00214123397d[CPU0  ] protected mode activated
+00214123405d[CPU0  ] inhibit interrupts mask = 3
+00214123630d[CPU0  ] inhibit interrupts mask = 3
+00214123647d[CPU0  ] real mode activated
+00214123651d[CPU0  ] inhibit interrupts mask = 3
+00214123651d[CPU0  ] inhibit interrupts mask = 1
+00214123670d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00214124023d[CPU0  ] protected mode activated
+00214124031d[CPU0  ] inhibit interrupts mask = 3
+00214124256d[CPU0  ] inhibit interrupts mask = 3
+00214124273d[CPU0  ] real mode activated
+00214124277d[CPU0  ] inhibit interrupts mask = 3
+00214124277d[CPU0  ] inhibit interrupts mask = 1
+00214124296d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00214124660d[CPU0  ] protected mode activated
+00214124668d[CPU0  ] inhibit interrupts mask = 3
+00214124893d[CPU0  ] inhibit interrupts mask = 3
+00214124910d[CPU0  ] real mode activated
+00214124914d[CPU0  ] inhibit interrupts mask = 3
+00214124914d[CPU0  ] inhibit interrupts mask = 1
+00214124933d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00214125296d[CPU0  ] protected mode activated
+00214125304d[CPU0  ] inhibit interrupts mask = 3
+00214125529d[CPU0  ] inhibit interrupts mask = 3
+00214125546d[CPU0  ] real mode activated
+00214125550d[CPU0  ] inhibit interrupts mask = 3
+00214125550d[CPU0  ] inhibit interrupts mask = 1
+00214125569d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00214125930d[CPU0  ] protected mode activated
+00214125938d[CPU0  ] inhibit interrupts mask = 3
+00214126163d[CPU0  ] inhibit interrupts mask = 3
+00214126180d[CPU0  ] real mode activated
+00214126184d[CPU0  ] inhibit interrupts mask = 3
+00214126184d[CPU0  ] inhibit interrupts mask = 1
+00214126203d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00214126577d[CPU0  ] protected mode activated
+00214126585d[CPU0  ] inhibit interrupts mask = 3
+00214127185d[CPU0  ] inhibit interrupts mask = 3
+00214127202d[CPU0  ] real mode activated
+00214127206d[CPU0  ] inhibit interrupts mask = 3
+00214127206d[CPU0  ] inhibit interrupts mask = 1
+00214127225d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00214127578d[CPU0  ] protected mode activated
+00214127586d[CPU0  ] inhibit interrupts mask = 3
+00214127849d[CPU0  ] inhibit interrupts mask = 3
+00214127866d[CPU0  ] real mode activated
+00214127870d[CPU0  ] inhibit interrupts mask = 3
+00214127870d[CPU0  ] inhibit interrupts mask = 1
+00214127889d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00214128242d[CPU0  ] protected mode activated
+00214128250d[CPU0  ] inhibit interrupts mask = 3
+00214128513d[CPU0  ] inhibit interrupts mask = 3
+00214128530d[CPU0  ] real mode activated
+00214128534d[CPU0  ] inhibit interrupts mask = 3
+00214128534d[CPU0  ] inhibit interrupts mask = 1
+00214128553d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00214128917d[CPU0  ] protected mode activated
+00214128925d[CPU0  ] inhibit interrupts mask = 3
+00214129188d[CPU0  ] inhibit interrupts mask = 3
+00214129205d[CPU0  ] real mode activated
+00214129209d[CPU0  ] inhibit interrupts mask = 3
+00214129209d[CPU0  ] inhibit interrupts mask = 1
+00214129228d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00214129591d[CPU0  ] protected mode activated
+00214129599d[CPU0  ] inhibit interrupts mask = 3
+00214129862d[CPU0  ] inhibit interrupts mask = 3
+00214129879d[CPU0  ] real mode activated
+00214129883d[CPU0  ] inhibit interrupts mask = 3
+00214129883d[CPU0  ] inhibit interrupts mask = 1
+00214129902d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00214130263d[CPU0  ] protected mode activated
+00214130271d[CPU0  ] inhibit interrupts mask = 3
+00214130534d[CPU0  ] inhibit interrupts mask = 3
+00214130551d[CPU0  ] real mode activated
+00214130555d[CPU0  ] inhibit interrupts mask = 3
+00214130555d[CPU0  ] inhibit interrupts mask = 1
+00214130574d[CPU0  ] interrupt(): vector = 15, TYPE = 4, EXT = 0
+00214130948d[CPU0  ] protected mode activated
+00214130956d[CPU0  ] inhibit interrupts mask = 3
+00214231399d[CPU0  ] inhibit interrupts mask = 3
+00214231503d[CPU0  ] RDMSR: read 00000000:00000000 from MSR c0000080
+00214231505d[CPU0  ] WRMSR: write 00000000:00000100 to MSR c0000080
+00214231507d[CPU0  ] compatibility mode activated
+00214231510d[CPU0  ] page walk for address 0x0000000000101155
+00214231510d[CPU0  ] page walk for address 0x0000000000105022
+00214231510d[CPU0  ] page walk for address 0x000000000010500d
+00214231510d[CPU0  ] long mode activated
+00214231512d[CPU0  ] inhibit interrupts mask = 3
+00214231512d[CPU0  ] page walk for address 0x0000000000109000
+00214231526d[CPU0  ] page walk for address 0x000000000010a000
+00214237592d[CPU0  ] page walk for address 0x0000000000107ff0
+00214237592d[CPU0  ] page walk for address 0x0000000000106ff8
+00214239211d[CPU0  ] page walk for address 0xffffffff8010143d
+00214239211d[CPU0  ] page walk for address 0xffffffff8010501a
+00214239211d[CPU0  ] page walk for address 0xffffffff80104004
+00214239211d[CPU0  ] page walk for address 0xffffffff80104004
+00214239211d[CPU0  ] page walk for address 0xffffffff8011bff8
+00214239221d[CPU0  ] page walk for address 0xffffffff80102530
+00214239227d[CPU0  ] page walk for address 0xffffffff800b8000
+00214250005d[CPU0  ] page walk for address 0xffffffff800b9000
+00214250005d[CPU0  ] page walk for address 0xffffffff8011ccd8
+00214251714d[CPU0  ] page walk for address 0xffffffff801038f9
+00214267802d[CPU0  ] page walk for address 0xffffffff8012d360
+00214274749d[CPU0  ] page walk for address 0x000000000012d357
+00214354583d[CPU0  ] page walk for address 0x000000000012e000
+00214470002d[CPU0  ] page walk for address 0x000000000012f000
+00214580002d[CPU0  ] page walk for address 0x0000000000130000
+00214694587d[CPU0  ] page walk for address 0x0000000000131000
+00214804587d[CPU0  ] page walk for address 0x0000000000132000
+00214920001d[CPU0  ] page walk for address 0x0000000000133000
+00215030001d[CPU0  ] page walk for address 0x0000000000134000
+00215144591d[CPU0  ] page walk for address 0x0000000000135000
+00215254591d[CPU0  ] page walk for address 0x0000000000136000
+00215370005d[CPU0  ] page walk for address 0x0000000000137000
+00215480005d[CPU0  ] page walk for address 0x0000000000138000
+00215594595d[CPU0  ] page walk for address 0x0000000000139000
+00215709187d[CPU0  ] page walk for address 0x000000000013a000
+00215820003d[CPU0  ] page walk for address 0x000000000013b000
+00215934593d[CPU0  ] page walk for address 0x000000000013c000
+00216044593d[CPU0  ] page walk for address 0x000000000013d000
+00216160001d[CPU0  ] page walk for address 0x000000000013e000
+00216270001d[CPU0  ] page walk for address 0x000000000013f000
+00216384591d[CPU0  ] page walk for address 0x0000000000140000
+00216494591d[CPU0  ] page walk for address 0x0000000000141000
+00216610001d[CPU0  ] page walk for address 0x0000000000142000
+00216720001d[CPU0  ] page walk for address 0x0000000000143000
+00216834595d[CPU0  ] page walk for address 0x0000000000144000
+00216944595d[CPU0  ] page walk for address 0x0000000000145000
+00217060003d[CPU0  ] page walk for address 0x0000000000146000
+00217170003d[CPU0  ] page walk for address 0x0000000000147000
+00217284595d[CPU0  ] page walk for address 0x0000000000148000
+00217394595d[CPU0  ] page walk for address 0x0000000000149000
+00217510001d[CPU0  ] page walk for address 0x000000000014a000
+00217620001d[CPU0  ] page walk for address 0x000000000014b000
+00217734591d[CPU0  ] page walk for address 0x000000000014c000
+00217849173d[CPU0  ] page walk for address 0x000000000014d000
+00217960005d[CPU0  ] page walk for address 0x000000000014e000
+00218074589d[CPU0  ] page walk for address 0x000000000014f000
+00218184589d[CPU0  ] page walk for address 0x0000000000150000
+00218300000d[CPU0  ] page walk for address 0x0000000000151000
+00218411053d[CPU0  ] page walk for address 0x0000000000152000
+00218524575d[CPU0  ] page walk for address 0x0000000000153000
+00218634575d[CPU0  ] page walk for address 0x0000000000154000
+00218750001d[CPU0  ] page walk for address 0x0000000000155000
+00218860001d[CPU0  ] page walk for address 0x0000000000156000
+00218974583d[CPU0  ] page walk for address 0x0000000000157000
+00219084583d[CPU0  ] page walk for address 0x0000000000158000
+00219200002d[CPU0  ] page walk for address 0x0000000000159000
+00219310002d[CPU0  ] page walk for address 0x000000000015a000
+00219424587d[CPU0  ] page walk for address 0x000000000015b000
+00219539179d[CPU0  ] page walk for address 0x000000000015c000
+00219650001d[CPU0  ] page walk for address 0x000000000015d000
+00219760001d[CPU0  ] page walk for address 0x000000000015e000
+00219874591d[CPU0  ] page walk for address 0x000000000015f000
+00219989181d[CPU0  ] page walk for address 0x0000000000160000
+00220100005d[CPU0  ] page walk for address 0x0000000000161000
+00220214595d[CPU0  ] page walk for address 0x0000000000162000
+00220324681d[CPU0  ] page walk for address 0x0000000000163000
+00220440003d[CPU0  ] page walk for address 0x0000000000164000
+00220550003d[CPU0  ] page walk for address 0x0000000000165000
+00220664593d[CPU0  ] page walk for address 0x0000000000166000
+00220774593d[CPU0  ] page walk for address 0x0000000000167000
+00220890001d[CPU0  ] page walk for address 0x0000000000168000
+00221000001d[CPU0  ] page walk for address 0x0000000000169000
+00221114591d[CPU0  ] page walk for address 0x000000000016a000
+00221224591d[CPU0  ] page walk for address 0x000000000016b000
+00221340001d[CPU0  ] page walk for address 0x000000000016c000
+00221450001d[CPU0  ] page walk for address 0x000000000016d000
+00221564595d[CPU0  ] page walk for address 0x000000000016e000
+00221679179d[CPU0  ] page walk for address 0x000000000016f000
+00221790003d[CPU0  ] page walk for address 0x0000000000170000
+00221903930d[CPU0  ] page walk for address 0x0000000000171000
+00222014595d[CPU0  ] page walk for address 0x0000000000172000
+00222129175d[CPU0  ] page walk for address 0x0000000000173000
+00222240001d[CPU0  ] page walk for address 0x0000000000174000
+00222354591d[CPU0  ] page walk for address 0x0000000000175000
+00222464591d[CPU0  ] page walk for address 0x0000000000176000
+00222580005d[CPU0  ] page walk for address 0x0000000000177000
+00222690005d[CPU0  ] page walk for address 0x0000000000178000
+00222805089d[CPU0  ] page walk for address 0x0000000000179000
+00222914589d[CPU0  ] page walk for address 0x000000000017a000
+00223030000d[CPU0  ] page walk for address 0x000000000017b000
+00223140000d[CPU0  ] page walk for address 0x000000000017c000
+00223254575d[CPU0  ] page walk for address 0x000000000017d000
+00223364575d[CPU0  ] page walk for address 0x000000000017e000
+00223480001d[CPU0  ] page walk for address 0x000000000017f000
+00223590001d[CPU0  ] page walk for address 0x0000000000180000
+00223704583d[CPU0  ] page walk for address 0x0000000000181000
+00223817553d[CPU0  ] page walk for address 0x0000000000182000
+00223930002d[CPU0  ] page walk for address 0x0000000000183000
+00224044587d[CPU0  ] page walk for address 0x0000000000184000
+00224154587d[CPU0  ] page walk for address 0x0000000000185000
+00224270001d[CPU0  ] page walk for address 0x0000000000186000
+00224380001d[CPU0  ] page walk for address 0x0000000000187000
+00224494591d[CPU0  ] page walk for address 0x0000000000188000
+00224604591d[CPU0  ] page walk for address 0x0000000000189000
+00224720005d[CPU0  ] page walk for address 0x000000000018a000
+00224830005d[CPU0  ] page walk for address 0x000000000018b000
+00224944595d[CPU0  ] page walk for address 0x000000000018c000
+00225054595d[CPU0  ] page walk for address 0x000000000018d000
+00225170003d[CPU0  ] page walk for address 0x000000000018e000
+00225280003d[CPU0  ] page walk for address 0x000000000018f000
+00225394593d[CPU0  ] page walk for address 0x0000000000190000
+00225504593d[CPU0  ] page walk for address 0x0000000000191000
+00225620001d[CPU0  ] page walk for address 0x0000000000192000
+00225730001d[CPU0  ] page walk for address 0x0000000000193000
+00225844591d[CPU0  ] page walk for address 0x0000000000194000
+00225959181d[CPU0  ] page walk for address 0x0000000000195000
+00226070001d[CPU0  ] page walk for address 0x0000000000196000
+00226184595d[CPU0  ] page walk for address 0x0000000000197000
+00226294595d[CPU0  ] page walk for address 0x0000000000198000
+00226410003d[CPU0  ] page walk for address 0x0000000000199000
+00226520003d[CPU0  ] page walk for address 0x000000000019a000
+00226634595d[CPU0  ] page walk for address 0x000000000019b000
+00226744595d[CPU0  ] page walk for address 0x000000000019c000
+00226860001d[CPU0  ] page walk for address 0x000000000019d000
+00226970001d[CPU0  ] page walk for address 0x000000000019e000
+00227084591d[CPU0  ] page walk for address 0x000000000019f000
+00227194591d[CPU0  ] page walk for address 0x00000000001a0000
+00227310005d[CPU0  ] page walk for address 0x00000000001a1000
+00227420005d[CPU0  ] page walk for address 0x00000000001a2000
+00227534589d[CPU0  ] page walk for address 0x00000000001a3000
+00227649173d[CPU0  ] page walk for address 0x00000000001a4000
+00227760000d[CPU0  ] page walk for address 0x00000000001a5000
+00227874575d[CPU0  ] page walk for address 0x00000000001a6000
+00227984575d[CPU0  ] page walk for address 0x00000000001a7000
+00228099169d[CPU0  ] page walk for address 0x00000000001a8000
+00228210001d[CPU0  ] page walk for address 0x00000000001a9000
+00228324583d[CPU0  ] page walk for address 0x00000000001aa000
+00228434583d[CPU0  ] page walk for address 0x00000000001ab000
+00228550002d[CPU0  ] page walk for address 0x00000000001ac000
+00228660002d[CPU0  ] page walk for address 0x00000000001ad000
+00228774587d[CPU0  ] page walk for address 0x00000000001ae000
+00228884587d[CPU0  ] page walk for address 0x00000000001af000
+00229000001d[CPU0  ] page walk for address 0x00000000001b0000
+00229110001d[CPU0  ] page walk for address 0x00000000001b1000
+00229224591d[CPU0  ] page walk for address 0x00000000001b2000
+00229334591d[CPU0  ] page walk for address 0x00000000001b3000
+00229450005d[CPU0  ] page walk for address 0x00000000001b4000
+00229560005d[CPU0  ] page walk for address 0x00000000001b5000
+00229674595d[CPU0  ] page walk for address 0x00000000001b6000
+00229789187d[CPU0  ] page walk for address 0x00000000001b7000
+00229900003d[CPU0  ] page walk for address 0x00000000001b8000
+00230014593d[CPU0  ] page walk for address 0x00000000001b9000
+00230124593d[CPU0  ] page walk for address 0x00000000001ba000
+00230240001d[CPU0  ] page walk for address 0x00000000001bb000
+00230350001d[CPU0  ] page walk for address 0x00000000001bc000
+00230464591d[CPU0  ] page walk for address 0x00000000001bd000
+00230574591d[CPU0  ] page walk for address 0x00000000001be000
+00230690001d[CPU0  ] page walk for address 0x00000000001bf000
+00230800001d[CPU0  ] page walk for address 0x00000000001c0000
+00230914595d[CPU0  ] page walk for address 0x00000000001c1000
+00231024595d[CPU0  ] page walk for address 0x00000000001c2000
+00231140003d[CPU0  ] page walk for address 0x00000000001c3000
+00231250003d[CPU0  ] page walk for address 0x00000000001c4000
+00231364595d[CPU0  ] page walk for address 0x00000000001c5000
+00231474595d[CPU0  ] page walk for address 0x00000000001c6000
+00231590001d[CPU0  ] page walk for address 0x00000000001c7000
+00231700001d[CPU0  ] page walk for address 0x00000000001c8000
+00231814591d[CPU0  ] page walk for address 0x00000000001c9000
+00231929173d[CPU0  ] page walk for address 0x00000000001ca000
+00232040005d[CPU0  ] page walk for address 0x00000000001cb000
+00232154589d[CPU0  ] page walk for address 0x00000000001cc000
+00232264589d[CPU0  ] page walk for address 0x00000000001cd000
+00232380000d[CPU0  ] page walk for address 0x00000000001ce000
+00232490000d[CPU0  ] page walk for address 0x00000000001cf000
+00232601053d[CPU0  ] page walk for address 0x00000000001d0000
+00232714575d[CPU0  ] page walk for address 0x00000000001d1000
+00232830001d[CPU0  ] page walk for address 0x00000000001d2000
+00232940001d[CPU0  ] page walk for address 0x00000000001d3000
+00233054583d[CPU0  ] page walk for address 0x00000000001d4000
+00233164583d[CPU0  ] page walk for address 0x00000000001d5000
+00233280002d[CPU0  ] page walk for address 0x00000000001d6000
+00233390002d[CPU0  ] page walk for address 0x00000000001d7000
+00233502211d[CPU0  ] page walk for address 0x00000000001d8000
+00233619179d[CPU0  ] page walk for address 0x00000000001d9000
+00233730001d[CPU0  ] page walk for address 0x00000000001da000
+00233840001d[CPU0  ] page walk for address 0x00000000001db000
+00233954591d[CPU0  ] page walk for address 0x00000000001dc000
+00234069181d[CPU0  ] page walk for address 0x00000000001dd000
+00234180005d[CPU0  ] page walk for address 0x00000000001de000
+00234294595d[CPU0  ] page walk for address 0x00000000001df000
+00234404595d[CPU0  ] page walk for address 0x00000000001e0000
+00234520003d[CPU0  ] page walk for address 0x00000000001e1000
+00234630003d[CPU0  ] page walk for address 0x00000000001e2000
+00234744593d[CPU0  ] page walk for address 0x00000000001e3000
+00234854593d[CPU0  ] page walk for address 0x00000000001e4000
+00234970001d[CPU0  ] page walk for address 0x00000000001e5000
+00235080001d[CPU0  ] page walk for address 0x00000000001e6000
+00235194591d[CPU0  ] page walk for address 0x00000000001e7000
+00235304591d[CPU0  ] page walk for address 0x00000000001e8000
+00235420001d[CPU0  ] page walk for address 0x00000000001e9000
+00235530001d[CPU0  ] page walk for address 0x00000000001ea000
+00235644595d[CPU0  ] page walk for address 0x00000000001eb000
+00235759179d[CPU0  ] page walk for address 0x00000000001ec000
+00235870003d[CPU0  ] page walk for address 0x00000000001ed000
+00235984595d[CPU0  ] page walk for address 0x00000000001ee000
+00236094595d[CPU0  ] page walk for address 0x00000000001ef000
+00236209175d[CPU0  ] page walk for address 0x00000000001f0000
+00236320001d[CPU0  ] page walk for address 0x00000000001f1000
+00236434591d[CPU0  ] page walk for address 0x00000000001f2000
+00236544591d[CPU0  ] page walk for address 0x00000000001f3000
+00236660005d[CPU0  ] page walk for address 0x00000000001f4000
+00236770005d[CPU0  ] page walk for address 0x00000000001f5000
+00236884589d[CPU0  ] page walk for address 0x00000000001f6000
+00236995089d[CPU0  ] page walk for address 0x00000000001f7000
+00237110000d[CPU0  ] page walk for address 0x00000000001f8000
+00237220000d[CPU0  ] page walk for address 0x00000000001f9000
+00237334575d[CPU0  ] page walk for address 0x00000000001fa000
+00237444575d[CPU0  ] page walk for address 0x00000000001fb000
+00237560001d[CPU0  ] page walk for address 0x00000000001fc000
+00237670001d[CPU0  ] page walk for address 0x00000000001fd000
+00237784583d[CPU0  ] page walk for address 0x00000000001fe000
+00237896251d[CPU0  ] page walk for address 0x00000000001ff000
+00238010002d[CPU0  ] page walk for address 0x0000000000200000
+00238124587d[CPU0  ] page walk for address 0x0000000000201000
+00238234587d[CPU0  ] page walk for address 0x0000000000202000
+00238350001d[CPU0  ] page walk for address 0x0000000000203000
+00238460001d[CPU0  ] page walk for address 0x0000000000204000
+00238574591d[CPU0  ] page walk for address 0x0000000000205000
+00238684591d[CPU0  ] page walk for address 0x0000000000206000
+00238800005d[CPU0  ] page walk for address 0x0000000000207000
+00238910005d[CPU0  ] page walk for address 0x0000000000208000
+00239024595d[CPU0  ] page walk for address 0x0000000000209000
+00239134595d[CPU0  ] page walk for address 0x000000000020a000
+00239250003d[CPU0  ] page walk for address 0x000000000020b000
+00239360003d[CPU0  ] page walk for address 0x000000000020c000
+00239474593d[CPU0  ] page walk for address 0x000000000020d000
+00239584593d[CPU0  ] page walk for address 0x000000000020e000
+00239700001d[CPU0  ] page walk for address 0x000000000020f000
+00239810001d[CPU0  ] page walk for address 0x0000000000210000
+00239924591d[CPU0  ] page walk for address 0x0000000000211000
+00240039181d[CPU0  ] page walk for address 0x0000000000212000
+00240150001d[CPU0  ] page walk for address 0x0000000000213000
+00240264595d[CPU0  ] page walk for address 0x0000000000214000
+00240374595d[CPU0  ] page walk for address 0x0000000000215000
+00240490003d[CPU0  ] page walk for address 0x0000000000216000
+00240600003d[CPU0  ] page walk for address 0x0000000000217000
+00240714595d[CPU0  ] page walk for address 0x0000000000218000
+00240824595d[CPU0  ] page walk for address 0x0000000000219000
+00240940001d[CPU0  ] page walk for address 0x000000000021a000
+00241050001d[CPU0  ] page walk for address 0x000000000021b000
+00241164591d[CPU0  ] page walk for address 0x000000000021c000
+00241274591d[CPU0  ] page walk for address 0x000000000021d000
+00241390005d[CPU0  ] page walk for address 0x000000000021e000
+00241500005d[CPU0  ] page walk for address 0x000000000021f000
+00241614589d[CPU0  ] page walk for address 0x0000000000220000
+00241729173d[CPU0  ] page walk for address 0x0000000000221000
+00241840000d[CPU0  ] page walk for address 0x0000000000222000
+00241954575d[CPU0  ] page walk for address 0x0000000000223000
+00242064575d[CPU0  ] page walk for address 0x0000000000224000
+00242179169d[CPU0  ] page walk for address 0x0000000000225000
+00242290293d[CPU0  ] page walk for address 0x0000000000226000
+00242404583d[CPU0  ] page walk for address 0x0000000000227000
+00242514583d[CPU0  ] page walk for address 0x0000000000228000
+00242630002d[CPU0  ] page walk for address 0x0000000000229000
+00242740002d[CPU0  ] page walk for address 0x000000000022a000
+00242854587d[CPU0  ] page walk for address 0x000000000022b000
+00242964587d[CPU0  ] page walk for address 0x000000000022c000
+00243080001d[CPU0  ] page walk for address 0x000000000022d000
+00243190001d[CPU0  ] page walk for address 0x000000000022e000
+00243304591d[CPU0  ] page walk for address 0x000000000022f000
+00243414591d[CPU0  ] page walk for address 0x0000000000230000
+00243530005d[CPU0  ] page walk for address 0x0000000000231000
+00243640005d[CPU0  ] page walk for address 0x0000000000232000
+00243754595d[CPU0  ] page walk for address 0x0000000000233000
+00243869187d[CPU0  ] page walk for address 0x0000000000234000
+00243980003d[CPU0  ] page walk for address 0x0000000000235000
+00244094593d[CPU0  ] page walk for address 0x0000000000236000
+00244204593d[CPU0  ] page walk for address 0x0000000000237000
+00244320001d[CPU0  ] page walk for address 0x0000000000238000
+00244430001d[CPU0  ] page walk for address 0x0000000000239000
+00244544591d[CPU0  ] page walk for address 0x000000000023a000
+00244654591d[CPU0  ] page walk for address 0x000000000023b000
+00244770001d[CPU0  ] page walk for address 0x000000000023c000
+00244880001d[CPU0  ] page walk for address 0x000000000023d000
+00244994595d[CPU0  ] page walk for address 0x000000000023e000
+00245104595d[CPU0  ] page walk for address 0x000000000023f000
+00245220003d[CPU0  ] page walk for address 0x0000000000240000
+00245330003d[CPU0  ] page walk for address 0x0000000000241000
+00245444595d[CPU0  ] page walk for address 0x0000000000242000
+00245554595d[CPU0  ] page walk for address 0x0000000000243000
+00245670001d[CPU0  ] page walk for address 0x0000000000244000
+00245783170d[CPU0  ] page walk for address 0x0000000000245000
+00245894591d[CPU0  ] page walk for address 0x0000000000246000
+00246009173d[CPU0  ] page walk for address 0x0000000000247000
+00246120005d[CPU0  ] page walk for address 0x0000000000248000
+00246234589d[CPU0  ] page walk for address 0x0000000000249000
+00246344589d[CPU0  ] page walk for address 0x000000000024a000
+00246460000d[CPU0  ] page walk for address 0x000000000024b000
+00246570000d[CPU0  ] page walk for address 0x000000000024c000
+00246684329d[CPU0  ] page walk for address 0x000000000024d000
+00246794575d[CPU0  ] page walk for address 0x000000000024e000
+00246910001d[CPU0  ] page walk for address 0x000000000024f000
+00247020001d[CPU0  ] page walk for address 0x0000000000250000
+00247134583d[CPU0  ] page walk for address 0x0000000000251000
+00247244583d[CPU0  ] page walk for address 0x0000000000252000
+00247360002d[CPU0  ] page walk for address 0x0000000000253000
+00247470002d[CPU0  ] page walk for address 0x0000000000254000
+00247584587d[CPU0  ] page walk for address 0x0000000000255000
+00247696793d[CPU0  ] page walk for address 0x0000000000256000
+00247810001d[CPU0  ] page walk for address 0x0000000000257000
+00247920001d[CPU0  ] page walk for address 0x0000000000258000
+00248034591d[CPU0  ] page walk for address 0x0000000000259000
+00248149181d[CPU0  ] page walk for address 0x000000000025a000
+00248260005d[CPU0  ] page walk for address 0x000000000025b000
+00248374595d[CPU0  ] page walk for address 0x000000000025c000
+00248484595d[CPU0  ] page walk for address 0x000000000025d000
+00248600003d[CPU0  ] page walk for address 0x000000000025e000
+00248710003d[CPU0  ] page walk for address 0x000000000025f000
+00248824593d[CPU0  ] page walk for address 0x0000000000260000
+00248934593d[CPU0  ] page walk for address 0x0000000000261000
+00249050001d[CPU0  ] page walk for address 0x0000000000262000
+00249160001d[CPU0  ] page walk for address 0x0000000000263000
+00249274591d[CPU0  ] page walk for address 0x0000000000264000
+00249384591d[CPU0  ] page walk for address 0x0000000000265000
+00249500001d[CPU0  ] page walk for address 0x0000000000266000
+00249610001d[CPU0  ] page walk for address 0x0000000000267000
+00249724595d[CPU0  ] page walk for address 0x0000000000268000
+00249839179d[CPU0  ] page walk for address 0x0000000000269000
+00249950003d[CPU0  ] page walk for address 0x000000000026a000
+00250064595d[CPU0  ] page walk for address 0x000000000026b000
+00250177209d[CPU0  ] page walk for address 0x000000000026c000
+00250289175d[CPU0  ] page walk for address 0x000000000026d000
+00250400001d[CPU0  ] page walk for address 0x000000000026e000
+00250514591d[CPU0  ] page walk for address 0x000000000026f000
+00250624591d[CPU0  ] page walk for address 0x0000000000270000
+00250740005d[CPU0  ] page walk for address 0x0000000000271000
+00250850005d[CPU0  ] page walk for address 0x0000000000272000
+00250964589d[CPU0  ] page walk for address 0x0000000000273000
+00251078329d[CPU0  ] page walk for address 0x0000000000274000
+00251190000d[CPU0  ] page walk for address 0x0000000000275000
+00251300000d[CPU0  ] page walk for address 0x0000000000276000
+00251414575d[CPU0  ] page walk for address 0x0000000000277000
+00251524575d[CPU0  ] page walk for address 0x0000000000278000
+00251640001d[CPU0  ] page walk for address 0x0000000000279000
+00251750001d[CPU0  ] page walk for address 0x000000000027a000
+00251864583d[CPU0  ] page walk for address 0x000000000027b000
+00251979173d[CPU0  ] page walk for address 0x000000000027c000
+00252090002d[CPU0  ] page walk for address 0x000000000027d000
+00252204587d[CPU0  ] page walk for address 0x000000000027e000
+00252314587d[CPU0  ] page walk for address 0x000000000027f000
+00252430001d[CPU0  ] page walk for address 0x0000000000280000
+00252540001d[CPU0  ] page walk for address 0x0000000000281000
+00252654591d[CPU0  ] page walk for address 0x0000000000282000
+00252764591d[CPU0  ] page walk for address 0x0000000000283000
+00252880005d[CPU0  ] page walk for address 0x0000000000284000
+00252990005d[CPU0  ] page walk for address 0x0000000000285000
+00253104595d[CPU0  ] page walk for address 0x0000000000286000
+00253214595d[CPU0  ] page walk for address 0x0000000000287000
+00253330003d[CPU0  ] page walk for address 0x0000000000288000
+00253440003d[CPU0  ] page walk for address 0x0000000000289000
+00253554593d[CPU0  ] page walk for address 0x000000000028a000
+00253664593d[CPU0  ] page walk for address 0x000000000028b000
+00253780001d[CPU0  ] page walk for address 0x000000000028c000
+00253890001d[CPU0  ] page walk for address 0x000000000028d000
+00254004591d[CPU0  ] page walk for address 0x000000000028e000
+00254119181d[CPU0  ] page walk for address 0x000000000028f000
+00254230001d[CPU0  ] page walk for address 0x0000000000290000
+00254344595d[CPU0  ] page walk for address 0x0000000000291000
+00254454595d[CPU0  ] page walk for address 0x0000000000292000
+00254570003d[CPU0  ] page walk for address 0x0000000000293000
+00254680003d[CPU0  ] page walk for address 0x0000000000294000
+00254794595d[CPU0  ] page walk for address 0x0000000000295000
+00254904595d[CPU0  ] page walk for address 0x0000000000296000
+00255020001d[CPU0  ] page walk for address 0x0000000000297000
+00255130001d[CPU0  ] page walk for address 0x0000000000298000
+00255244591d[CPU0  ] page walk for address 0x0000000000299000
+00255354591d[CPU0  ] page walk for address 0x000000000029a000
+00255470005d[CPU0  ] page walk for address 0x000000000029b000
+00255580005d[CPU0  ] page walk for address 0x000000000029c000
+00255694589d[CPU0  ] page walk for address 0x000000000029d000
+00255809173d[CPU0  ] page walk for address 0x000000000029e000
+00255920000d[CPU0  ] page walk for address 0x000000000029f000
+00256034575d[CPU0  ] page walk for address 0x00000000002a0000
+00256144575d[CPU0  ] page walk for address 0x00000000002a1000
+00256259169d[CPU0  ] page walk for address 0x00000000002a2000
+00256370001d[CPU0  ] page walk for address 0x00000000002a3000
+00256484883d[CPU0  ] page walk for address 0x00000000002a4000
+00256594583d[CPU0  ] page walk for address 0x00000000002a5000
+00256710002d[CPU0  ] page walk for address 0x00000000002a6000
+00256820002d[CPU0  ] page walk for address 0x00000000002a7000
+00256934587d[CPU0  ] page walk for address 0x00000000002a8000
+00257044587d[CPU0  ] page walk for address 0x00000000002a9000
+00257160001d[CPU0  ] page walk for address 0x00000000002aa000
+00257270001d[CPU0  ] page walk for address 0x00000000002ab000
+00257386033d[CPU0  ] page walk for address 0x00000000002ac000
+00257494591d[CPU0  ] page walk for address 0x00000000002ad000
+00257610005d[CPU0  ] page walk for address 0x00000000002ae000
+00257720005d[CPU0  ] page walk for address 0x00000000002af000
+00257834595d[CPU0  ] page walk for address 0x00000000002b0000
+00257949187d[CPU0  ] page walk for address 0x00000000002b1000
+00258060003d[CPU0  ] page walk for address 0x00000000002b2000
+00258174593d[CPU0  ] page walk for address 0x00000000002b3000
+00258284593d[CPU0  ] page walk for address 0x00000000002b4000
+00258400001d[CPU0  ] page walk for address 0x00000000002b5000
+00258510001d[CPU0  ] page walk for address 0x00000000002b6000
+00258624591d[CPU0  ] page walk for address 0x00000000002b7000
+00258734591d[CPU0  ] page walk for address 0x00000000002b8000
+00258850001d[CPU0  ] page walk for address 0x00000000002b9000
+00258960001d[CPU0  ] page walk for address 0x00000000002ba000
+00259074595d[CPU0  ] page walk for address 0x00000000002bb000
+00259184595d[CPU0  ] page walk for address 0x00000000002bc000
+00259300003d[CPU0  ] page walk for address 0x00000000002bd000
+00259410003d[CPU0  ] page walk for address 0x00000000002be000
+00259524595d[CPU0  ] page walk for address 0x00000000002bf000
+00259634595d[CPU0  ] page walk for address 0x00000000002c0000
+00259750001d[CPU0  ] page walk for address 0x00000000002c1000
+00259860001d[CPU0  ] page walk for address 0x00000000002c2000
+00259974591d[CPU0  ] page walk for address 0x00000000002c3000
+00260089173d[CPU0  ] page walk for address 0x00000000002c4000
+00260200005d[CPU0  ] page walk for address 0x00000000002c5000
+00260314589d[CPU0  ] page walk for address 0x00000000002c6000
+00260424589d[CPU0  ] page walk for address 0x00000000002c7000
+00260540000d[CPU0  ] page walk for address 0x00000000002c8000
+00260650000d[CPU0  ] page walk for address 0x00000000002c9000
+00260764575d[CPU0  ] page walk for address 0x00000000002ca000
+00260874329d[CPU0  ] page walk for address 0x00000000002cb000
+00260990001d[CPU0  ] page walk for address 0x00000000002cc000
+00261100001d[CPU0  ] page walk for address 0x00000000002cd000
+00261214583d[CPU0  ] page walk for address 0x00000000002ce000
+00261324583d[CPU0  ] page walk for address 0x00000000002cf000
+00261440002d[CPU0  ] page walk for address 0x00000000002d0000
+00261550002d[CPU0  ] page walk for address 0x00000000002d1000
+00261664587d[CPU0  ] page walk for address 0x00000000002d2000
+00261775449d[CPU0  ] page walk for address 0x00000000002d3000
+00261890001d[CPU0  ] page walk for address 0x00000000002d4000
+00262000001d[CPU0  ] page walk for address 0x00000000002d5000
+00262114591d[CPU0  ] page walk for address 0x00000000002d6000
+00262229181d[CPU0  ] page walk for address 0x00000000002d7000
+00262340005d[CPU0  ] page walk for address 0x00000000002d8000
+00262454595d[CPU0  ] page walk for address 0x00000000002d9000
+00262564595d[CPU0  ] page walk for address 0x00000000002da000
+00262680003d[CPU0  ] page walk for address 0x00000000002db000
+00262790003d[CPU0  ] page walk for address 0x00000000002dc000
+00262904593d[CPU0  ] page walk for address 0x00000000002dd000
+00263014593d[CPU0  ] page walk for address 0x00000000002de000
+00263130001d[CPU0  ] page walk for address 0x00000000002df000
+00263240001d[CPU0  ] page walk for address 0x00000000002e0000
+00263354591d[CPU0  ] page walk for address 0x00000000002e1000
+00263464591d[CPU0  ] page walk for address 0x00000000002e2000
+00263580001d[CPU0  ] page walk for address 0x00000000002e3000
+00263690001d[CPU0  ] page walk for address 0x00000000002e4000
+00263804595d[CPU0  ] page walk for address 0x00000000002e5000
+00263919179d[CPU0  ] page walk for address 0x00000000002e6000
+00264030003d[CPU0  ] page walk for address 0x00000000002e7000
+00264144595d[CPU0  ] page walk for address 0x00000000002e8000
+00264254595d[CPU0  ] page walk for address 0x00000000002e9000
+00264369175d[CPU0  ] page walk for address 0x00000000002ea000
+00264480001d[CPU0  ] page walk for address 0x00000000002eb000
+00264594591d[CPU0  ] page walk for address 0x00000000002ec000
+00264704591d[CPU0  ] page walk for address 0x00000000002ed000
+00264820005d[CPU0  ] page walk for address 0x00000000002ee000
+00264930005d[CPU0  ] page walk for address 0x00000000002ef000
+00265044589d[CPU0  ] page walk for address 0x00000000002f0000
+00265154589d[CPU0  ] page walk for address 0x00000000002f1000
+00265270000d[CPU0  ] page walk for address 0x00000000002f2000
+00265380000d[CPU0  ] page walk for address 0x00000000002f3000
+00265494575d[CPU0  ] page walk for address 0x00000000002f4000
+00265604575d[CPU0  ] page walk for address 0x00000000002f5000
+00265720001d[CPU0  ] page walk for address 0x00000000002f6000
+00265830001d[CPU0  ] page walk for address 0x00000000002f7000
+00265944583d[CPU0  ] page walk for address 0x00000000002f8000
+00266059173d[CPU0  ] page walk for address 0x00000000002f9000
+00266170002d[CPU0  ] page walk for address 0x00000000002fa000
+00266284587d[CPU0  ] page walk for address 0x00000000002fb000
+00266394587d[CPU0  ] page walk for address 0x00000000002fc000
+00266510001d[CPU0  ] page walk for address 0x00000000002fd000
+00266620001d[CPU0  ] page walk for address 0x00000000002fe000
+00266734591d[CPU0  ] page walk for address 0x00000000002ff000
+00266844591d[CPU0  ] page walk for address 0x0000000000300000
+00266960005d[CPU0  ] page walk for address 0x0000000000301000
+00267070005d[CPU0  ] page walk for address 0x0000000000302000
+00267184595d[CPU0  ] page walk for address 0x0000000000303000
+00267294595d[CPU0  ] page walk for address 0x0000000000304000
+00267410003d[CPU0  ] page walk for address 0x0000000000305000
+00267520003d[CPU0  ] page walk for address 0x0000000000306000
+00267634593d[CPU0  ] page walk for address 0x0000000000307000
+00267744593d[CPU0  ] page walk for address 0x0000000000308000
+00267860001d[CPU0  ] page walk for address 0x0000000000309000
+00267970001d[CPU0  ] page walk for address 0x000000000030a000
+00268084591d[CPU0  ] page walk for address 0x000000000030b000
+00268199181d[CPU0  ] page walk for address 0x000000000030c000
+00268310001d[CPU0  ] page walk for address 0x000000000030d000
+00268424595d[CPU0  ] page walk for address 0x000000000030e000
+00268534595d[CPU0  ] page walk for address 0x000000000030f000
+00268650003d[CPU0  ] page walk for address 0x0000000000310000
+00268760003d[CPU0  ] page walk for address 0x0000000000311000
+00268874595d[CPU0  ] page walk for address 0x0000000000312000
+00268984595d[CPU0  ] page walk for address 0x0000000000313000
+00269100001d[CPU0  ] page walk for address 0x0000000000314000
+00269210001d[CPU0  ] page walk for address 0x0000000000315000
+00269324591d[CPU0  ] page walk for address 0x0000000000316000
+00269434591d[CPU0  ] page walk for address 0x0000000000317000
+00269550005d[CPU0  ] page walk for address 0x0000000000318000
+00269662369d[CPU0  ] page walk for address 0x0000000000319000
+00269774589d[CPU0  ] page walk for address 0x000000000031a000
+00269889173d[CPU0  ] page walk for address 0x000000000031b000
+00270000000d[CPU0  ] page walk for address 0x000000000031c000
+00270114575d[CPU0  ] page walk for address 0x000000000031d000
+00270224575d[CPU0  ] page walk for address 0x000000000031e000
+00270339169d[CPU0  ] page walk for address 0x000000000031f000
+00270450001d[CPU0  ] page walk for address 0x0000000000320000
+00270563530d[CPU0  ] page walk for address 0x0000000000321000
+00270674583d[CPU0  ] page walk for address 0x0000000000322000
+00270790002d[CPU0  ] page walk for address 0x0000000000323000
+00270900002d[CPU0  ] page walk for address 0x0000000000324000
+00271014587d[CPU0  ] page walk for address 0x0000000000325000
+00271124587d[CPU0  ] page walk for address 0x0000000000326000
+00271240001d[CPU0  ] page walk for address 0x0000000000327000
+00271350001d[CPU0  ] page walk for address 0x0000000000328000
+00271464591d[CPU0  ] page walk for address 0x0000000000329000
+00271576033d[CPU0  ] page walk for address 0x000000000032a000
+00271690005d[CPU0  ] page walk for address 0x000000000032b000
+00271800005d[CPU0  ] page walk for address 0x000000000032c000
+00271914595d[CPU0  ] page walk for address 0x000000000032d000
+00271940362i[CPU0  ] WARNING: HLT instruction with IF=0!
+19405240000p[WINGUI] >>PANIC<< POWER button turned off.
+19405240000i[CPU0  ] CPU is in long mode (halted)
+19405240000i[CPU0  ] CS.mode = 64 bit
+19405240000i[CPU0  ] SS.mode = 64 bit
+19405240000i[CPU0  ] EFER   = 0x00000500
+19405240000i[CPU0  ] | RAX=0000000000080000  RBX=000000000032d357
+19405240000i[CPU0  ] | RCX=0000000080000000  RDX=0000000000080000
+19405240000i[CPU0  ] | RSP=ffffffff8011bfc0  RBP=ffffffff8011bfe8
+19405240000i[CPU0  ] | RSI=0000000080001000  RDI=ffffffff8011c150
+19405240000i[CPU0  ] |  R8=0000000000000002   R9=00000000c1000000
+19405240000i[CPU0  ] | R10=ffffffff8011c150  R11=0000000000000003
+19405240000i[CPU0  ] | R12=ffffffff8011c060  R13=ffffffff8011c0a8
+19405240000i[CPU0  ] | R14=ffffffff8011c090  R15=0000000000000000
+19405240000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
+19405240000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+19405240000i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 0
+19405240000i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+19405240000i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+19405240000i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+19405240000i[CPU0  ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+19405240000i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+19405240000i[CPU0  ] |  MSR_FS_BASE:0000000000000000
+19405240000i[CPU0  ] |  MSR_GS_BASE:0000000000000000
+19405240000i[CPU0  ] | RIP=ffffffff8010100c (ffffffff8010100c)
+19405240000i[CPU0  ] | CR0=0xe0000011 CR2=0x0000000000000000
+19405240000i[CPU0  ] | CR3=0x0000000000106000 CR4=0x00000020
+19405240000i[CPU0  ] 0xffffffff8010100c>> jmp .-3 (0xffffffff8010100b) : EBFD
+19405240000i[CMOS  ] Last time is 1624419075 (Tue Jun 22 23:31:15 2021)
+19405240000i[      ] restoring default signal behavior
+19405240000i[SIM   ] quit_sim called with exit code 1

@@ -39,13 +39,13 @@ AXON_CPARAMS += -c -I $(AXON_INCLUDE_PATH_PRIVATE) -I $(AXON_INCLUDE_PATH_PUBLIC
 
 ################################################# x86_64 Specific Paths #################################################
 
-AXON_X86_64_PATH = axon/arch_x86_64/
+AXON_X86_64_PATH = axon/arch_x86/
 AXON_X86_64_BUILD_PATH = axon/build/x86_64/
 
-LIBC_X86_64_PATH = libc/arch_x86_64/
+LIBC_X86_64_PATH = libc/arch_x86/
 LIBC_X86_64_BUILD_PATH = libc/build/x86_64/
 
-LIBK_X86_64_PATH = libk/arch_x86_64/
+LIBK_X86_64_PATH = libk/arch_x86/
 LIBK_X86_64_BUILD_PATH = libk/build/x86_64/
 
 ################################################# x86_64 Compilation Parameters #################################################
@@ -68,7 +68,7 @@ ARCHIVER = ar
 
 AXON_LPARAMS ?= -n
 AXON_LPARAMS +=
-AXON_LINKFILE = axon/arch_x86_64/linker.ld
+AXON_LINKFILE = axon/arch_x86/linker.ld
 
 LIBC_ARCPARAMS ?= 
 LIBC_ARCPARAMS := rcs $(LIBC_ARCPARAMS)

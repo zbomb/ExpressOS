@@ -7,6 +7,12 @@
 #pragma once
 #include <stdint.h>
 
-extern uint64_t axk_disable_interrupts( void );
-extern void axk_restore_interrupts( uint64_t );
-extern uint64_t axk_enable_interrupts( void );
+/*
+    Arch Functions
+    * Implemented by ASM/C in arch_*\
+*/
+uint64_t axk_disable_interrupts( void );
+void axk_restore_interrupts( uint64_t );
+uint64_t axk_enable_interrupts( void );
+__attribute__((noreturn)) void axk_halt( void );
+uint32_t axk_get_processor_id( void );
