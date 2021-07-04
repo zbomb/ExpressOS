@@ -14,12 +14,19 @@
 #include "axon/memory/kheap.h"
 #include "axon/arch.h"
 #include "axon/system/interrupts_mgr.h"
+#include "axon/system/timers_mgr.h"
+#include "axon/system/timers.h"
+#include "axon/system/time.h"
 
 #ifdef _X86_64_
 #include "axon/arch_x86/acpi_info.h"
 #endif
 
 
+void test_callback( void )
+{
+    axk_terminal_prints( "========> CALLBACK\n" );
+}
 
 void ax_c_main_bsp( void* ptr_info )
 {
@@ -67,6 +74,13 @@ void ax_c_main_bsp( void* ptr_info )
         axk_panic( "Kernel: failed to initialize interrupt driver" );
     }
 
+    /*
+        Load timer system
+    */
+    if( !axk_timers_init() )
+    {
+        axk_panic( "Kernel: failed to initialize timer drivers" );
+    }
 
     while( 1 ) { __asm__( "hlt" ); }
 

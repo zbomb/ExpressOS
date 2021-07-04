@@ -6,7 +6,7 @@
 
 #ifdef _X86_64_
 #include "axon/system/interrupts_mgr.h"
-#include "axon/arch_x86/xapic_driver.h"
+#include "axon/arch_x86/drivers/xapic_driver.h"
 #include "axon/arch_x86/util.h"
 #include "axon/debug_print.h"
 #include "axon/panic.h"

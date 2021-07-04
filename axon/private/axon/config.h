@@ -89,3 +89,15 @@ typedef uint64_t AXK_MAP_FLAGS;
 #define AXK_SET_FLAG( _bf_, _flag_ )            ( _bf_ |= ( _flag_ ) )
 #define AXK_CLEAR_FLAG( _bf_, _flag_ )          ( _bf_ &= ~( _flag_ ) )
 
+/*
+    Timer Driver IDs
+*/
+#define AXK_TIMER_ID_NONE           0
+#define AXK_TIMER_ID_PIT            1
+#define AXK_TIMER_ID_HPET           2
+#define AXK_TIMER_ID_LAPIC          3
+#define AXK_TIMER_ID_ACPI_PM        4
+#define AXK_TIMER_ID_TSC            5
+#define AXK_TIMER_ID_ARM_LOCAL      6
+#define AXK_TIMER_ID_ARM_GENERIC    7
+#define AXK_TIMER_ID_ARM_SYSTEM     8

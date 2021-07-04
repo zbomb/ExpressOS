@@ -57,16 +57,23 @@ void axk_interrupts_invoke( uint8_t vec )
 
     // Find the current callback bound to this vector
     void* vcallback = axk_atomic_load_pointer( &( g_handlers[ vec ].callback ), MEMORY_ORDER_SEQ_CST );
+    bool b_sent_eoi = false;
+
     if( vcallback != NULL )
     {
         // Invoke the callback
-        void( *fcallback )(uint8_t) = (void(*)(uint8_t))( vcallback );
-        fcallback( vec );
+        bool( *fcallback )(uint8_t) = (bool(*)(uint8_t))( vcallback );
+        b_sent_eoi = fcallback( vec );
+    }
+
+    if( !b_sent_eoi )
+    {
+        axk_interrupts_signal_eoi();
     }
 }
 
 
-bool axk_interrupts_acquire_handler( uint32_t process, void( *func_ptr )( uint8_t ), uint8_t* out_vec )
+bool axk_interrupts_acquire_handler( uint32_t process, bool( *func_ptr )( uint8_t ), uint8_t* out_vec )
 {
     // Validate parameters
     if( out_vec == NULL || process == AXK_PROCESS_INVALID ) { return false; }
@@ -97,6 +104,7 @@ bool axk_interrupts_acquire_handler( uint32_t process, void( *func_ptr )( uint8_
 
     // Update entry and release lock
     ptr_entry->process = process;
+
     axk_atomic_store_pointer( &( ptr_entry->callback ), (void*)func_ptr, MEMORY_ORDER_SEQ_CST );
     axk_spinlock_release( &g_lock );
 
@@ -105,7 +113,7 @@ bool axk_interrupts_acquire_handler( uint32_t process, void( *func_ptr )( uint8_
 }
 
 
-bool axk_interrupts_lock_handler( uint32_t process, void( *func_ptr )( uint8_t ), uint8_t vec )
+bool axk_interrupts_lock_handler( uint32_t process, bool( *func_ptr )( uint8_t ), uint8_t vec )
 {
     // Validate parameters
     if( process == AXK_PROCESS_INVALID || vec >= AXK_MAX_INTERRUPT_HANDLERS ) { return false; }
@@ -147,7 +155,7 @@ void axk_interrupts_release_handler( uint8_t vec )
 }
 
 
-bool axk_interrupts_update_handler( uint8_t vec, void( *func_ptr )( uint8_t ) )
+bool axk_interrupts_update_handler( uint8_t vec, bool( *func_ptr )( uint8_t ) )
 {
     // Validate parameters
     if( vec >= AXK_MAX_INTERRUPT_HANDLERS ) { return false; }
@@ -194,7 +202,7 @@ uint8_t axk_interrupts_release_process_handlers( uint32_t process )
 }
 
 
-bool axk_interrupts_get_handler_info( uint8_t vec, void( **out_func )( uint8_t ), uint32_t* out_process )
+bool axk_interrupts_get_handler_info( uint8_t vec, bool( **out_func )( uint8_t ), uint32_t* out_process )
 {
     // Validate parameters
     if( vec >= AXK_MAX_INTERRUPT_HANDLERS || out_func == NULL || out_process == NULL ) { return false; }
@@ -209,7 +217,7 @@ bool axk_interrupts_get_handler_info( uint8_t vec, void( **out_func )( uint8_t )
         return false;
     }
 
-    *out_func       = (void(*)(uint8_t))( axk_atomic_load_pointer( &( ptr_entry->callback ), MEMORY_ORDER_SEQ_CST ) );
+    *out_func       = (bool(*)(uint8_t))( axk_atomic_load_pointer( &( ptr_entry->callback ), MEMORY_ORDER_SEQ_CST ) );
     *out_process    = ptr_entry->process;
 
     axk_spinlock_release( &g_lock );
@@ -231,10 +239,10 @@ bool axk_interrupts_send_ipi( struct axk_interprocessor_interrupt_t* ipi )
 }
 
 
-bool axk_interrupts_set_ext_routing( uint32_t ext_num, struct axk_external_interrupt_routing_t* routing )
+bool axk_interrupts_set_ext_routing( struct axk_external_interrupt_routing_t* routing )
 {
     struct axk_interrupt_driver_t* driver = axk_interrupts_get();
-    return driver->set_external_routing( driver, ext_num, routing );
+    return driver->set_external_routing( driver, routing );
 }
 
 

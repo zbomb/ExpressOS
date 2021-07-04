@@ -30,7 +30,7 @@ struct axk_interrupt_driver_t
     bool( *aux_init )( struct axk_interrupt_driver_t* );
     void( *signal_eoi )( struct axk_interrupt_driver_t* );
     bool( *send_ipi )( struct axk_interrupt_driver_t*, struct axk_interprocessor_interrupt_t* );
-    bool( *set_external_routing )( struct axk_interrupt_driver_t*, uint32_t, struct axk_external_interrupt_routing_t* );
+    bool( *set_external_routing )( struct axk_interrupt_driver_t*, struct axk_external_interrupt_routing_t* );
     bool ( *get_external_routing )( struct axk_interrupt_driver_t*, uint32_t, struct axk_external_interrupt_routing_t* );
     uint32_t( *get_error )( struct axk_interrupt_driver_t* );
     void( *clear_error )( struct axk_interrupt_driver_t* );

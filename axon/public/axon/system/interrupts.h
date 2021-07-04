@@ -52,14 +52,14 @@ struct axk_external_interrupt_routing_t
     * Finds an available handler to acquire ownership of
     * Will not allow existing handlers to be overwritten
 */
-bool axk_interrupts_acquire_handler( uint32_t process, void( *func_ptr )( uint8_t ), uint8_t* out_vec );
+bool axk_interrupts_acquire_handler( uint32_t process, bool( *func_ptr )( uint8_t ), uint8_t* out_vec );
 
 /*
     axk_interrupts_lock_handler
     * Locks a specific interrupt handler number
     * Should be used sparingly, by the kernel systems
 */
-bool axk_interrupts_lock_handler( uint32_t process, void( *func_ptr )( uint8_t ), uint8_t vec );
+bool axk_interrupts_lock_handler( uint32_t process, bool( *func_ptr )( uint8_t ), uint8_t vec );
 
 /*
     axk_interrupts_release_handler
@@ -72,7 +72,7 @@ void axk_interrupts_release_handler( uint8_t vec );
     axk_interrupts_update_handler
     * Updates the callback associated with a handler
 */
-bool axk_interrupts_update_handler( uint8_t vec, void( *func_ptr )( uint8_t ) );
+bool axk_interrupts_update_handler( uint8_t vec, bool( *func_ptr )( uint8_t ) );
 
 /* 
     axk_interrupts_release_process_handlers
@@ -85,7 +85,7 @@ uint8_t axk_interrupts_release_process_handlers( uint32_t process );
     axk_interrupts_get_handler_info
     * Gets information about a specific handler
 */
-bool axk_interrupts_get_handler_info( uint8_t vec, void( **out_func )( uint8_t ), uint32_t* out_process );
+bool axk_interrupts_get_handler_info( uint8_t vec, bool( **out_func )( uint8_t ), uint32_t* out_process );
 
 /*
     axk_interrupts_signal_eoi
@@ -103,7 +103,7 @@ bool axk_interrupts_send_ipi( struct axk_interprocessor_interrupt_t* ipi );
     axk_interrupts_set_ext_routing
     * Sets extenral interrupt routing through the interrupt driver
 */
-bool axk_interrupts_set_ext_routing( uint32_t ext_num, struct axk_external_interrupt_routing_t* routing );
+bool axk_interrupts_set_ext_routing( struct axk_external_interrupt_routing_t* routing );
 
 /*
     axk_interrupts_get_ext_routing

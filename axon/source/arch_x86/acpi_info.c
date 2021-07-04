@@ -22,6 +22,9 @@
 #define ACPI_ENTRY_IOAPIC_NMI           0x03
 #define ACPI_ENTRY_LAPIC_NMI            0x04
 #define ACPI_ENTRY_LAPIC_ADDRESS        0x05
+#define ACPI_ENTRY_IOSAPIC              0x06
+#define ACPI_ENTRY_LSAPIC               0x07
+#define ACPI_ENTRY_PLATFORM_INTS        0x08
 #define ACPI_ENTRY_X2_LAPIC             0x09
 
 /*
@@ -186,6 +189,7 @@ bool parse_madt( uint64_t address )
                 ptr_info->processor     = *( list_pos + 0x02UL );
                 ptr_info->id            = *( list_pos + 0x03UL );
                 ptr_info->flags         = *( (uint32_t*)( list_pos + 0x04UL ) );
+
                 break;
             }
             case ACPI_ENTRY_IOAPIC:
@@ -195,6 +199,7 @@ bool parse_madt( uint64_t address )
                 ptr_info->id                = *( list_pos + 0x02UL );
                 ptr_info->address           = *( (uint32_t*)( list_pos + 0x04UL ) );
                 ptr_info->interrupt_base    = *( (uint32_t*)( list_pos + 0x08UL ) );
+
                 break;
             }
             case ACPI_ENTRY_INT_SOURCE_OVERRIDE:
@@ -230,8 +235,27 @@ bool parse_madt( uint64_t address )
                 g_acpi.lapic_addr = *( (uint64_t*)( list_pos + 0x04UL ) );
                 break;
             }
+            
             case ACPI_ENTRY_X2_LAPIC:
             {
+                break;
+            }
+
+            case ACPI_ENTRY_IOSAPIC:
+            {
+                axk_terminal_prints( "[DEBUG] ACPI: Found an I/O SAPIC Entry\n" );
+                break;
+            }
+
+            case ACPI_ENTRY_LSAPIC:
+            {
+                axk_terminal_prints( "[DEBUG] ACPI: Found a Local SAPIC Entry\n" );
+                break;
+            }
+
+            case ACPI_ENTRY_PLATFORM_INTS:
+            {
+                axk_terminal_prints( "[DEBUG] ACPI: Found Platform Interrupt Source Entry\n" );
                 break;
             }
         }
@@ -245,7 +269,7 @@ bool parse_madt( uint64_t address )
 
 bool parse_fadt( uint64_t address )
 {
-    // TODO: We dont actually need anything from this table yet
+    g_acpi.fadt = (struct axk_x86_acpi_fadt_t*)( address + sizeof( struct axk_x86_acpi_header_t ) );
     return true;
 }
 
