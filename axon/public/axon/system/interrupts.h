@@ -75,11 +75,12 @@ void axk_interrupts_release_handler( uint8_t vec );
 bool axk_interrupts_update_handler( uint8_t vec, bool( *func_ptr )( uint8_t ) );
 
 /* 
-    axk_interrupts_release_process_handlers
+    axk_interrupts_release_process_resources
     * Releases all handlers associated with the specified process
+    * Also releases all external routings set by the process
     * Returns the number of released handlers
 */
-uint8_t axk_interrupts_release_process_handlers( uint32_t process );
+uint8_t axk_interrupts_release_process_resources( uint32_t process );
 
 /*
     axk_interrupts_get_handler_info
@@ -100,16 +101,50 @@ void axk_interrupts_signal_eoi( void );
 bool axk_interrupts_send_ipi( struct axk_interprocessor_interrupt_t* ipi );
 
 /*
-    axk_interrupts_set_ext_routing
-    * Sets extenral interrupt routing through the interrupt driver
+    axk_interrupts_acquire_external
+    * Acquires an available external interrupt vector to assign a routing to
+    * If you need the assigned vector, its stored in 'routing.global_interrupt'
 */
-bool axk_interrupts_set_ext_routing( struct axk_external_interrupt_routing_t* routing );
+bool axk_interrupts_acquire_external( uint32_t process, struct axk_external_interrupt_routing_t* routing );
 
 /*
-    axk_interrupts_get_ext_routing
-    * Gets external interrupt routing through the interrupt driver
+    axk_interrupt_acquire_external_clamped
+    * Acquires an available external interrupt vector in the provided range, to assign routing to
+    * If you need the assigned vector, its stored in 'routing.global_interrupt'
 */
-bool axk_interrupts_get_ext_routing( uint32_t ext_num, struct axk_external_interrupt_routing_t* out_routing );
+bool axk_interrupts_acquire_external_clamped( uint32_t process, struct axk_external_interrupt_routing_t* routing, uint32_t* allowed, uint32_t allowed_count );
+
+/*
+    axk_interrupts_lock_external
+    * Locks a specific external interrupt vector to assign routing to
+    * Will overwrite any existing owner of this vector if 'b_overwrite' is true
+*/
+bool axk_interrupts_lock_external( uint32_t process, struct axk_external_interrupt_routing_t* routing, bool b_overwrite );
+
+/*
+    axk_interrupts_release_external
+    * Releases ownership of an external interrupt vector previously acquired using any of the following:
+        'axk_interrupts_acquire_external'
+        'axk_interrupts_acquire_external_clamped'
+        'axk_interrupts_lock_external'
+    * Will also clear the stored routing
+*/
+void axk_interrupts_release_external( uint32_t vector );
+
+/*
+    axk_interrupts_update_external
+    * Updates an external interrupt routing with new information
+    * Ensure this interrupt vector is already 'owned' by the calling process!
+    * You can clear the current routing by passing 'routing' as NULL
+    * The global vector is determined based on 'uint32_t vector', and NOT 'routing.global_interrupt'
+*/
+bool axk_interrupts_update_external( uint32_t vector, struct axk_external_interrupt_routing_t* routing );
+
+/*
+    axk_interrupts_get_external
+    * Gets information about an external interrupt routing, including the process that holds ownership
+*/
+bool axk_interrupts_get_external( uint32_t vector, uint32_t* out_process, struct axk_external_interrupt_routing_t* out_routing );
 
 /*
     axk_interrupts_get_error
@@ -121,7 +156,7 @@ uint32_t axk_interrupts_get_error( void );
     axk_interrupts_clear_error
     * Clears any pending errors from the interrupt driver
 */
-void axk_interrupt_clear_error( void );
+void axk_interrupts_clear_error( void );
 
 /*
     axk_interrupts_get_ext_number

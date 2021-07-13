@@ -14,6 +14,17 @@
 struct axk_x86_lapic_timer_driver_t
 {
     struct axk_timer_driver_t func_table;
+
+    bool b_init;
+    bool b_deadline_mode;
+    bool b_constant;
+    
+    struct axk_x86_xapic_driver_t* ptr_xapic;
+    struct axk_x86_x2apic_driver_t* ptr_x2apic;
+
+    uint64_t frequency;
+
+    bool( **callback_list )( void );
 };
 
 

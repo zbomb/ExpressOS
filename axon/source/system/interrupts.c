@@ -5,10 +5,11 @@
 ==============================================================*/
 
 #include "axon/system/interrupts.h"
-#include "axon/system/interrupts_mgr.h"
+#include "axon/system/interrupts_private.h"
 #include "axon/library/spinlock.h"
 #include "axon/memory/atomics.h"
 #include "axon/panic.h"
+#include "stdlib.h"
 
 /*
     Structures
@@ -23,19 +24,27 @@ struct axk_interrupt_handler_t
     // to be acquired when calling an interrupt callback. Although the lock wont be held often, so it might be overkill
 };
 
+struct axk_interrupt_external_t
+{
+    uint32_t process;
+    uint32_t global_interrupt;
+};
+
 /*
     State
 */
 static struct axk_interrupt_handler_t g_handlers[ AXK_MAX_INTERRUPT_HANDLERS ];
 static bool g_init = false;
 static struct axk_spinlock_t g_lock;
+static struct axk_interrupt_external_t* g_external_routings;
+static uint32_t g_external_routings_count;
 
 /*
     Function Implementations
 */
 void axk_interrupts_init_state( void )
 {
-    // Initialize the spinlock
+    // Initialize the spinlocks
     axk_spinlock_init( &g_lock );
 
     // Loop through, and initialize handler entries
@@ -44,6 +53,31 @@ void axk_interrupts_init_state( void )
         g_handlers[ i ].process = AXK_PROCESS_INVALID;
         axk_atomic_store_pointer( &( g_handlers[ i ].callback ), NULL, MEMORY_ORDER_SEQ_CST );
     }
+
+    // Get the list of available external interrupt routings
+    struct axk_interrupt_driver_t* ptr_driver = axk_interrupts_get();
+
+    g_external_routings_count = ptr_driver->get_available_external_routings( ptr_driver, NULL );
+    if( g_external_routings_count == 0U )
+    {
+        g_external_routings = NULL;
+    }
+    else
+    {
+        g_external_routings     = (struct axk_interrupt_external_t*) calloc( g_external_routings_count, sizeof( struct axk_interrupt_external_t ) );
+        uint32_t* list          = (uint32_t*) calloc( g_external_routings_count, sizeof( uint32_t) );
+
+        ptr_driver->get_available_external_routings( ptr_driver, list );
+
+        for( uint32_t i = 0; i < g_external_routings_count; i++ )
+        {
+            g_external_routings[ i ].process            = AXK_PROCESS_INVALID;
+            g_external_routings[ i ].global_interrupt   = list[ i ];
+        }
+
+        free( list );
+    }
+
 }
 
 
@@ -177,7 +211,7 @@ bool axk_interrupts_update_handler( uint8_t vec, bool( *func_ptr )( uint8_t ) )
 }
 
 
-uint8_t axk_interrupts_release_process_handlers( uint32_t process )
+uint8_t axk_interrupts_release_process_resources( uint32_t process )
 {
     // Validate parameter
     if( process == AXK_PROCESS_INVALID ) { return 0; }
@@ -194,6 +228,14 @@ uint8_t axk_interrupts_release_process_handlers( uint32_t process )
             axk_atomic_store_pointer( &( g_handlers[ i ].callback ), NULL, MEMORY_ORDER_SEQ_CST );
 
             count++;
+        }
+    }
+
+    for( uint32_t i = 0; i < g_external_routings_count; i++ )
+    {
+        if( g_external_routings[ i ].process == process )
+        {
+            g_external_routings[ i ].process = AXK_PROCESS_INVALID;
         }
     }
 
@@ -239,17 +281,183 @@ bool axk_interrupts_send_ipi( struct axk_interprocessor_interrupt_t* ipi )
 }
 
 
-bool axk_interrupts_set_ext_routing( struct axk_external_interrupt_routing_t* routing )
+bool axk_interrupts_acquire_external( uint32_t process, struct axk_external_interrupt_routing_t* routing )
 {
+    if( process == AXK_PROCESS_INVALID || routing == NULL ) { return false; }
+
+    // Acquire spinlock
+    axk_spinlock_acquire( &g_lock );
+
+    // Look for an available external interrupt
+    bool b_valid    = false;
+
+    for( uint32_t i = 0; i < g_external_routings_count; i++ )
+    {
+        if( g_external_routings[ i ].process == AXK_PROCESS_INVALID )
+        {
+            b_valid                         = true;
+            routing->global_interrupt    = g_external_routings[ i ].global_interrupt;
+
+            g_external_routings[ i ].process = process;
+            break;
+        }
+    }
+
+    axk_spinlock_release( &g_lock );
+    if( !b_valid )
+    {
+        // DEBUG
+        axk_panic( "Interrupts: Ran out of external interrupt routings" );
+        return false;
+    }
+
     struct axk_interrupt_driver_t* driver = axk_interrupts_get();
-    return driver->set_external_routing( driver, routing );
+    if( !driver->set_external_routing( driver, routing ) )
+    {
+        axk_panic( "Interrupts: Driver wouldnt allow external interrupt routing to be updated" );
+    }
+
+    return true;
 }
 
 
-bool axk_interrupts_get_ext_routing( uint32_t ext_num, struct axk_external_interrupt_routing_t* out_routing )
+bool axk_interrupts_acquire_external_clamped( uint32_t process, struct axk_external_interrupt_routing_t* routing, uint32_t* allowed, uint32_t allowed_count )
+{
+    if( process == AXK_PROCESS_INVALID || routing == NULL || allowed == NULL || allowed_count == 0U ) { return false; }
+
+    // Acquire spinlock to modify state
+    axk_spinlock_acquire( &g_lock );
+
+    // Loop through allowed vectors, then find the corresponding entry and check if we can acquire them
+    bool b_valid = false;
+
+    for( uint32_t i = 0; i < allowed_count; i++ )
+    {
+        for( uint32_t j = 0; j < g_external_routings_count; j++ )
+        {
+            if( g_external_routings[ j ].process == AXK_PROCESS_INVALID )
+            {
+                g_external_routings[ j ].process    = process;
+                routing->global_interrupt           = g_external_routings[ j ].global_interrupt;
+
+                b_valid = true;
+                break;
+            }
+        }
+    }
+
+    // Release lock and check for success
+    axk_spinlock_release( &g_lock );
+    if( !b_valid ) 
+    {
+        return false;
+    }
+
+    // Update the external routing in the driver
+    struct axk_interrupt_driver_t* driver = axk_interrupts_get();
+    if( !driver->set_external_routing( driver, routing ) )
+    {
+        axk_panic( "Interrupts: Driver wouldnt allow external interrupt routing to be updated" );
+    }
+
+    return true;
+}
+
+
+bool axk_interrupts_lock_external( uint32_t process, struct axk_external_interrupt_routing_t* routing, bool b_overwrite )
+{
+    if( process == AXK_PROCESS_INVALID || routing == NULL ) { return false; }
+
+    // Acquire lock
+    axk_spinlock_acquire( &g_lock );
+    
+    bool b_valid = false;
+    for( uint32_t i = 0; i < g_external_routings_count; i++ )
+    {
+        if( g_external_routings[ i ].global_interrupt == routing->global_interrupt )
+        {
+            b_valid                             = true;
+            g_external_routings[ i ].process    = process;
+            break;
+        }
+    }
+
+    axk_spinlock_release( &g_lock );
+    if( !b_valid )
+    {
+        return false;
+    }
+
+    struct axk_interrupt_driver_t* driver = axk_interrupts_get();
+    if( !driver->set_external_routing( driver, routing ) )
+    {
+        axk_panic( "Interrupts: Driver wouldnt allow external interrupt routing to be updated" );
+    }
+    return true;
+}
+
+
+void axk_interrupts_release_external( uint32_t vector )
+{
+    // Acquire spinlock
+    axk_spinlock_acquire( &g_lock );
+
+    // Look for this global interrupt
+    struct axk_interrupt_driver_t* driver = axk_interrupts_get();
+
+    for( uint32_t i = 0; i < g_external_routings_count; i++ )
+    {
+        if( g_external_routings[ i ].global_interrupt == vector )
+        {
+            driver->clear_external_routing( driver, vector );
+            g_external_routings[ i ].process = AXK_PROCESS_INVALID;
+
+            break;
+        }
+    }
+
+    axk_spinlock_release( &g_lock );
+}
+
+
+bool axk_interrupts_update_external( uint32_t vector, struct axk_external_interrupt_routing_t* routing )
 {
     struct axk_interrupt_driver_t* driver = axk_interrupts_get();
-    return driver->get_external_routing( driver, ext_num, out_routing );
+    return( routing == NULL ?   driver->clear_external_routing( driver, vector ) : 
+                                driver->set_external_routing( driver, routing ) );
+}
+
+
+bool axk_interrupts_get_external( uint32_t vector, uint32_t* out_process, struct axk_external_interrupt_routing_t* out_routing )
+{
+    // Some of the info needed is from the driver, and some of the info needed is from our state
+    if( out_process == NULL || out_routing == NULL ) { return false; }
+
+    // Lock state
+    axk_spinlock_acquire( &g_lock );
+    
+    bool b_valid = false;
+    for( uint32_t i = 0; i < g_external_routings_count; i++ )
+    {
+        if( g_external_routings[ i ].global_interrupt == vector )
+        {
+            *out_process = g_external_routings[ i ].process;
+            b_valid = true;
+            break;
+        }
+    }
+
+    axk_spinlock_release( &g_lock );
+
+    if( b_valid )
+    {
+        struct axk_interrupt_driver_t* driver = axk_interrupts_get();
+        return driver->get_external_routing( driver, vector, out_routing );
+    }
+    else
+    {
+        return false;
+    }
 }
 
 

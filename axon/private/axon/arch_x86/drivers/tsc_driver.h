@@ -6,6 +6,7 @@
 
 #pragma once
 #include "axon/system/timers.h"
+#include "axon/memory/atomics.h"
 
 /*
     TSC Driver State
@@ -13,6 +14,7 @@
 struct axk_x86_tsc_driver_t
 {
     struct axk_timer_driver_t func_table;
+    uint64_t frequency;
 };
 
 

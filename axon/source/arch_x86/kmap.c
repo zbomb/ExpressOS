@@ -5,14 +5,14 @@
 
     * Contains definitions for functions in:
         axon/public/axon/memory/kmap.h
-        axon/private/axon/memory/map_mgr.h
+        axon/private/axon/memory/kmap_private.h
 ==============================================================*/
 
 #ifdef _X86_64_
 #include "axon/panic.h"
 #include "axon/memory/kmap.h"
-#include "axon/memory/map_mgr.h"
-#include "axon/memory/page_mgr.h"
+#include "axon/memory/kmap_private.h"
+#include "axon/memory/page_alloc_private.h"
 #include "axon/memory/page_alloc.h"
 #include "axon/library/spinlock.h"
 #include "axon/memory/atomics.h"

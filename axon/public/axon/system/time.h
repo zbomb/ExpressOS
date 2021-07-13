@@ -158,5 +158,20 @@ bool axk_date_is_valid_time( struct axk_date_t* in_date );
 */
 bool axk_date_add( struct axk_date_t* in_date, struct axk_duration_t* in_dur );
 
+/*
+    axk_time_get
+    * Gets the current system time
+*/
+void axk_time_get( struct axk_time_t* out_time );
 
+/*
+    axk_time_get_since_boot
+    * Gets the amount of time that has passed since boot in nanoseconds
+*/
+uint64_t axk_time_get_since_boot( void );
 
+/*
+    axk_date_get
+    * Gets the current date
+*/
+void axk_date_get( struct axk_date_t* out_date );

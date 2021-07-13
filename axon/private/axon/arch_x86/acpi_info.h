@@ -87,7 +87,7 @@ struct axk_x86_lapic_nmi_t
     uint8_t processor;
     uint16_t flags;
     uint8_t lint;
-};
+}; 
 
 struct axk_x86_hpet_info_t
 {
@@ -177,7 +177,6 @@ struct axk_x86_acpi_info_t
 {
     char system_mfgr[ 7 ];
     uint64_t lapic_addr;
-    uint32_t max_cpuid;
     uint32_t bsp_id;
     char cpu_vendor[ 12 ];
     uint32_t cpu_count;

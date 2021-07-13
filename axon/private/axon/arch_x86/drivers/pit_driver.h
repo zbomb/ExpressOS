@@ -7,7 +7,6 @@
 #pragma once
 #include "axon/system/timers.h"
 #include "axon/library/spinlock.h"
-#include "axon/memory/atomics.h"
 
 
 /*
@@ -18,7 +17,10 @@ struct axk_x86_pit_driver_t
     struct axk_timer_driver_t func_table;
 
     uint32_t global_interrupt;
-    struct axk_atomic_flag_t b_running;
+    bool b_running;
+    bool b_running_periodic;
+    bool( *callback )( void );
+    struct axk_spinlock_t lock;
 };
 
 

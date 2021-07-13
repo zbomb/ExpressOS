@@ -42,11 +42,12 @@ struct axk_timer_driver_t
     bool( *query_features )( struct axk_timer_driver_t*, enum axk_timer_features_t );
     uint32_t( *get_id )( void );
     uint64_t( *get_frequency )( struct axk_timer_driver_t* );
-    uint32_t( *start )( struct axk_timer_driver_t*, enum axk_timer_mode_t, uint64_t, bool, void(*)(void) );
+    uint32_t( *start )( struct axk_timer_driver_t*, enum axk_timer_mode_t, uint64_t, bool, bool(*)(void) );
     bool( *stop )( struct axk_timer_driver_t* );
     bool( *is_running )( struct axk_timer_driver_t* );
     uint64_t( *get_counter )( struct axk_timer_driver_t* );
     uint64_t( *get_max_value )( struct axk_timer_driver_t* );
+    bool( *invoke )( struct axk_timer_driver_t* );
 };
 
 
@@ -89,6 +90,13 @@ struct axk_timer_driver_t* axk_timer_get_external( void );
 struct axk_timer_driver_t* axk_timer_get_counter( void );
 
 /*
+    axk_delay
+    * Pauses the current processor core for the specified number of nanoseconds
+*/
+void axk_delay( uint64_t in_nano );
+
+
+/*
     axk_timer_query_features
     * Queries a timer for a list (or a single) of features
     * Returns true if ALL features specified are supported
@@ -113,7 +121,7 @@ uint64_t axk_timer_get_frequency( struct axk_timer_driver_t* timer );
     * Returns error code (AXK_TIMER_ERROR_*)
     * If successful, returns AXK_TIMER_ERROR_NONE
 */
-uint32_t axk_timer_start( struct axk_timer_driver_t* timer, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, void( *callback )( void ) );
+uint32_t axk_timer_start( struct axk_timer_driver_t* timer, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, bool( *callback )( void ) );
 
 /*
     axk_timer_stop

@@ -5,7 +5,7 @@
 ==============================================================*/
 
 #ifdef _X86_64_
-#include "axon/system/interrupts_mgr.h"
+#include "axon/system/interrupts_private.h"
 #include "axon/arch_x86/drivers/xapic_driver.h"
 #include "axon/arch_x86/util.h"
 #include "axon/debug_print.h"
@@ -22,10 +22,7 @@ static enum axk_interrupt_driver_type g_int_type;
     Functions
 */
 bool axk_interrupts_init( void )
-{
-    // Initialize global state
-    axk_interrupts_init_state();
-    
+{    
     // Determine the interrupt driver(s) we support on this system
     uint32_t eax, ebx, ecx, edx;
     eax = 0x01; 
@@ -66,6 +63,9 @@ bool axk_interrupts_init( void )
         return false;
     }
 
+    // Initialize global state
+    axk_interrupts_init_state();
+    
     return true;
 }
 
@@ -77,13 +77,7 @@ bool axk_interrupts_init_aux( void )
         axk_panic( "x86: Attempt to initialize interrupts on AP, but the interrupt driver was null" );
     }
 
-    if( g_int_driver->aux_init( g_int_driver ) )
-    {
-        axk_terminal_lock();
-        axk_terminal_prints( "Interrupts: Initialized interrupts on AP (x86) \n" );
-        axk_terminal_unlock();
-    }
-    else
+    if( !g_int_driver->aux_init( g_int_driver ) )
     {
         return false;
     }

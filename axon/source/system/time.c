@@ -5,7 +5,185 @@
 ==============================================================*/
 
 #include "axon/system/time.h"
+#include "axon/library/spinlock.h"
+#include "axon/system/timers.h"
+#include "axon/system/time_private.h"
+#include "axon/panic.h"
 #include "big_math.h"
+#include "string.h"
+
+/*
+    axk_time_sync_point_t
+    * Private Structure
+    * Used to store info about the last time the external timer 'ticked'
+*/
+struct axk_time_sync_point_t
+{
+    uint64_t counter_value;
+    uint64_t counter_rate;
+    uint64_t since_boot;
+};
+
+/*
+    State
+*/
+static struct axk_spinlock_t g_sync_lock;
+static struct axk_time_sync_point_t g_sync_point;
+static uint64_t g_sync_history[ 6 ];
+static uint64_t g_utc_offset;
+static struct axk_atomic_uint64_t g_last_time;
+static uint64_t g_timer_period;
+static uint64_t g_ext_tick_counter;
+
+/*
+    Function Implementations
+*/
+void axk_time_init( uint64_t ext_tick_period )
+{
+    // Setup the initial state
+    memset( (void*) g_sync_history, 0, sizeof( uint64_t ) * 6UL );
+    axk_spinlock_init( &g_sync_lock );
+    axk_atomic_store_uint64( &g_last_time, 0UL, MEMORY_ORDER_SEQ_CST );
+
+    g_utc_offset        = 0UL;
+    g_timer_period      = ext_tick_period;
+    g_ext_tick_counter  = 0UL;
+
+    g_sync_point.counter_value  = 0UL;
+    g_sync_point.counter_rate   = 0UL;
+    g_sync_point.since_boot     = 0UL;
+
+    // Initialize the persistent hardware clock (arch-specific)
+    axk_time_init_persistent_clock();
+}
+
+
+bool axk_time_ext_tick( void )
+{
+    // This is directly called by the external timer
+    // Ignore the first couple ticks, since they might not be perfectly timed
+    if( g_ext_tick_counter > 2UL )
+    {
+        struct axk_timer_driver_t* ptr_counter = axk_timer_get_counter();
+        uint64_t new_counter = axk_timer_get_counter_value( ptr_counter );
+
+        // Update the system clock
+        axk_spinlock_acquire( &g_sync_lock );
+
+        // Calculate average frequency over the last 6 ticks (0.25s)
+        g_sync_history[ 5 ] = g_sync_history[ 4 ];
+        g_sync_history[ 4 ] = g_sync_history[ 3 ];
+        g_sync_history[ 3 ] = g_sync_history[ 2 ];
+        g_sync_history[ 2 ] = g_sync_history[ 1 ];
+        g_sync_history[ 1 ] = g_sync_history[ 0 ];
+        g_sync_history[ 0 ] = new_counter;
+        
+        // Ensure the history table is filled before we start re-calculating frequency
+        if( g_ext_tick_counter > 8UL )
+        {
+            uint64_t counter_diff       = g_sync_history[ 0 ] - g_sync_history[ 5 ];
+            g_sync_point.counter_rate   = ( counter_diff > ( 0xFFFFFFFFFFFFFFFFUL / 1000000000UL ) ) ? 
+                _muldiv64( counter_diff, 1000000000UL, 5UL * g_timer_period ) :
+                ( counter_diff * 1000000000UL ) / ( 5UL * g_timer_period );
+        }
+
+        g_sync_point.counter_value  = g_sync_history[ 0 ];
+        g_sync_point.since_boot     += g_timer_period;
+
+        axk_spinlock_release( &g_sync_lock );
+    }
+    else if( g_ext_tick_counter == 2UL )
+    {
+        // Syncronize with persistent hardware clock to get the 'UTC Offset'
+        struct axk_timer_driver_t* ptr_counter  = axk_timer_get_counter();
+        uint64_t counter_tick                   = axk_timer_get_counter_value( ptr_counter );
+
+        uint64_t counter_read;
+        struct axk_date_t utc_date;
+        struct axk_time_t utc_time;
+
+        if( !axk_time_read_persistent_clock( &utc_date, &counter_read ) || !axk_date_to_time( &utc_date, &utc_time ) )
+        {
+            // TODO: We dont actually need to panic here...
+            axk_panic( "Time: failed to read the persistent hardware clock" );
+        }
+
+        g_sync_point.counter_value  = counter_tick;
+        g_sync_point.counter_rate   = axk_timer_get_frequency( ptr_counter );
+        g_sync_point.since_boot     = 0UL;
+
+        // Convert the difference between reading the clock, and the start of the tick to nanoseconds to get a more accurate UTC offset
+        g_utc_offset = utc_time.raw - ( ( ( counter_read - counter_tick ) * 1000000000UL ) / g_sync_point.counter_rate );
+    }
+
+    g_ext_tick_counter++;
+    return false;
+}
+
+
+void axk_time_wait_for_sync( void )
+{
+    // Wait for the external tick counter to hit at least 3, so we know UTC sync is complete
+    while( g_ext_tick_counter < 3UL ) { __asm__( "pause" ); }
+}
+
+
+uint64_t axk_time_get_since_boot( void )
+{
+    // Get the current counter driver
+    struct axk_timer_driver_t* ptr_counter = axk_timer_get_counter();
+    
+    // Read last sync point
+    struct axk_time_sync_point_t last_sync;
+    axk_spinlock_acquire( &g_sync_lock );
+    memcpy( (void*)( &last_sync ), (void*)( &g_sync_point ), sizeof( struct axk_time_sync_point_t ) );
+    axk_spinlock_release( &g_sync_lock );
+
+    // Calculate the counter change since the last sync point, taking into account wrap around
+    uint64_t new_value = ptr_counter->get_counter( ptr_counter );
+    uint64_t delta_value = ( new_value < last_sync.counter_value ) ? 
+        ( ptr_counter->get_max_value( ptr_counter ) - last_sync.counter_value ) + new_value :
+        new_value - last_sync.counter_value;
+
+    // Convert this to nanoseconds...
+    uint64_t counter_freq = last_sync.counter_rate == 0UL ? ptr_counter->get_frequency( ptr_counter ) : last_sync.counter_rate;
+    uint64_t out_nano = ( delta_value > ( 0xFFFFFFFFFFFFFFFFUL / 1000000000UL ) ) ? 
+        _muldiv64( delta_value, 1000000000UL, counter_freq ) :
+        ( delta_value * 1000000000UL ) / counter_freq;
+
+    // Calculate the final value
+    out_nano += last_sync.since_boot;
+
+    // Now, were going to ensure this function returns a monotonic value even when a 'sync' happens 
+    // To do this, we track the last value output by this function and ensure we are at least one greater than it
+    uint64_t min_output = axk_atomic_fetch_add_uint64( &g_last_time, 1UL, MEMORY_ORDER_SEQ_CST ) + 1UL;
+    if( min_output >= out_nano ) { return min_output; }
+
+    while( !axk_atomic_cmpexchg_uint64( &g_last_time, &min_output, out_nano, true, MEMORY_ORDER_SEQ_CST, MEMORY_ORDER_SEQ_CST ) )
+    {
+        min_output = axk_atomic_fetch_add_uint64( &g_last_time, 1UL, MEMORY_ORDER_SEQ_CST ) + 1UL;
+        if( min_output >= out_nano ) { return min_output; }
+    }
+
+    return out_nano;
+}
+
+
+void axk_time_get( struct axk_time_t* out_time )
+{
+    if( out_time == NULL ) { return; }
+    out_time->raw = axk_time_get_since_boot() + g_utc_offset;
+}
+
+
+void axk_date_get( struct axk_date_t* out_date )
+{
+    if( out_date == NULL ) { return; }
+
+    struct axk_time_t t;
+    axk_time_get( &t );
+    axk_time_to_date( &t, out_date );
+}
 
 
 void axk_time_convert_duration( struct axk_duration_t* in_value, enum axk_time_unit_t out_unit, struct axk_duration_t* out_value )

@@ -5,7 +5,7 @@
 ==============================================================*/
 
 #include "axon/debug_print.h"
-#include "axon/memory/heap_mgr.h"
+#include "axon/memory/kheap_private.h"
 #include "axon/memory/kheap.h"
 #include "axon/memory/page_alloc.h"
 #include "axon/memory/kmap.h"

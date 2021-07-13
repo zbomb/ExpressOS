@@ -13,7 +13,6 @@ global axk_halt
 global axk_get_return_address
 global axk_get_kernel_offset
 global axk_get_kernel_size
-global axk_get_processor_id
 
 extern ax_kernel_begin
 extern ax_kernel_end
@@ -75,17 +74,4 @@ axk_get_kernel_size:
     mov rax, ax_kernel_end - AXK_VIRTUAL_OFFSET
     mov rcx, ax_kernel_begin
     sub rax, rcx
-    ret
-
-axk_get_processor_id:
-
-    ; Parameters:   None
-    ; Returns:      Local processor identifier (in eax)
-    
-    push rbx
-    mov eax, 0x0B
-    cpuid
-    xor rax, rax
-    mov eax, edx
-    pop rbx
     ret

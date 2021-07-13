@@ -5,10 +5,10 @@
 
     * Contains definitions for functions in:
         axon/public/axon/memory/page_alloc.h
-        axon/private/axon/memory/page_mgr.h
+        axon/private/axon/memory/page_alloc_private.h
 ==============================================================*/
 
-#include "axon/memory/page_mgr.h"
+#include "axon/memory/page_alloc_private.h"
 #include "axon/boot/boot_params.h"
 #include "axon/library/spinlock.h"
 #include "axon/panic.h"

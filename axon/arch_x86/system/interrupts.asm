@@ -29,8 +29,10 @@ extern axk_x86_handle_exception_alignmentcheck
 extern axk_x86_handle_exception_machinecheck
 extern axk_x86_handle_exception_virtualization
 extern axk_x86_handle_exception_security
+
 extern axk_interrupts_invoke
-extern axk_x86_handle_local_timer_tick
+extern axk_invoke_external_timer
+extern axk_invoke_local_timer
 extern axk_x86_handle_lapic_error
 
 
@@ -493,9 +495,9 @@ _isr_46:
 _isr_47:
     _ignore_interrupt
 _isr_48:
-    _call_static_func axk_x86_handle_lapic_error
+    _call_static_func axk_invoke_external_timer
 _isr_49:
-    _call_static_func axk_x86_handle_local_timer_tick
+    _call_static_func axk_invoke_local_timer
 _isr_50:
 _isr_51:
 _isr_52:

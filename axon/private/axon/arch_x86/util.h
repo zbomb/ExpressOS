@@ -13,6 +13,7 @@
     Constants
 */
 #define AXK_X86_MSR_APIC 0x1B
+#define AXK_X86_MSR_TSC 0x10
 
 /*
     Structures
@@ -50,6 +51,15 @@ struct axk_x86_exception_frame_t
     * Calls the 'cpuid' instruction
 */
 void axk_x86_cpuid( uint32_t* eax, uint32_t* ebx, uint32_t* ecx, uint32_t* edx );
+
+/*
+    axk_x86_cpuid_s
+    * Private Function
+    * Checks if the leaf is supported, if not, returns false
+    * Otherwise, writes the result from CPUID into the provided uint32_t's
+    * If the leaf wasnt supported, 0 is written to all parameters as well
+*/
+bool axk_x86_cpuid_s( uint32_t* eax, uint32_t* ebx, uint32_t* ecx, uint32_t* edx );
 
 /*
     axk_x86_read_msr

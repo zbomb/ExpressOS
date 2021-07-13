@@ -10,6 +10,7 @@
 #include "axon/memory/kmap.h"
 #include "axon/arch.h"
 #include "axon/debug_print.h"
+#include "axon/system/processor_info.h"
 #include "string.h"
 #include "stdlib.h"
 
@@ -196,12 +197,12 @@ bool xapic_driver_send_ipi( struct axk_interrupt_driver_t* this_generic, struct 
             target_lapic = ptr_acpi->lapic_list[ i ].id;
             b_valid_target = true;
 
-            if( params->target_processor == axk_get_processor_id() )
+            if( params->target_processor == axk_processor_get_id() )
             {
                 b_self_target = true;
             }
 
-            break;
+            break; 
         }
     }
 
@@ -212,12 +213,12 @@ bool xapic_driver_send_ipi( struct axk_interrupt_driver_t* this_generic, struct 
     switch( params->delivery_mode )
     {
         case AXK_IPI_DELIVERY_MODE_INIT:
-        ipi_parameters |= 0b01000000000U;
+        ipi_parameters |= 0b1000010100000000U;
         break;
         case AXK_IPI_DELIVERY_MODE_START:
         ipi_parameters |= 0b11000000000U;
-
-        // Fallthrough intentional
+        ipi_parameters |= ( 0x000000FFU & params->interrupt_vector );
+        break;
         default:
         ipi_parameters |= ( 0x000000FFU & params->interrupt_vector );
         break;
@@ -314,7 +315,7 @@ bool xapic_driver_set_external_routing( struct axk_interrupt_driver_t* this_gene
 
     // Determine what register we need to write to, and build values to actually write
     uint32_t reg_addr   = ( ( ext_number - target_ioapic->interrupt_base ) * 0x02U ) + 0x10U;
-    uint32_t reg_low    = (uint32_t)( routing->local_interrupt + 64 );
+    uint32_t reg_low    = (uint32_t)( routing->local_interrupt );
     uint32_t reg_high   = ( ( lapic_id & 0xFFU ) << 24U );
 
     if( routing->b_low_priority )       { reg_low |= ( 1U << 8U ); }
@@ -385,6 +386,76 @@ bool xapic_driver_get_external_routing( struct axk_interrupt_driver_t* this_gene
 }
 
 
+bool xapic_driver_clear_external_routing( struct axk_interrupt_driver_t* self, uint32_t global_interrupt )
+{
+    struct axk_x86_xapic_driver_t* this = (struct axk_x86_xapic_driver_t*)( self );
+    if( this == NULL ) { return false; }
+
+    // Find the target IOAPIC
+    struct axk_x86_ioapic_info_t* target_ioapic = NULL;
+    for( uint32_t i = 0; i < this->ioapic_count; i++ )
+    {
+        if( this->ioapic_list[ i ].interrupt_base <= global_interrupt && 
+            ( this->ioapic_list[ i ].interrupt_base + this->ioapic_list[ i ].interrupt_count ) > global_interrupt )
+        {
+            target_ioapic = this->ioapic_list + i;
+            break;
+        }
+    }
+
+    if( target_ioapic == NULL )
+    {
+        axk_terminal_prints( "xAPIC Driver: [Warning] Attempt to clear external routing for an out-of-bounds external interrupt vector\n" );
+        return false;
+    }
+
+    // Get register address and acquire lock
+    uint32_t reg_addr   = ( ( global_interrupt - target_ioapic->interrupt_base ) * 0x02U ) + 0x10U;
+    axk_spinlock_acquire( &(this->ioapic_lock) );
+
+    // Were going to set the mask, the rest of the values dont really matter
+    axk_x86_xapic_write_ioapic( this, target_ioapic->id, reg_addr, ( 1U << 16 ) );  // Low 32-bits
+    axk_x86_xapic_write_ioapic( this, target_ioapic->id, reg_addr + 0x1U, 0U );     // High 32-bits
+
+    axk_spinlock_release( &(this->ioapic_lock) );
+    return true;
+}
+
+
+uint32_t xapic_driver_get_available_external_routings( struct axk_interrupt_driver_t* self, uint32_t* out_list )
+{
+    struct axk_x86_xapic_driver_t* this = (struct axk_x86_xapic_driver_t*)( self );
+    
+    if( out_list == NULL )
+    {
+        // Output the total number of external interrupts when 'out_list' is null
+        uint32_t count = 0;
+        for( uint32_t i = 0; i < this->ioapic_count; i++ )
+        {
+            count += this->ioapic_list[ i ].interrupt_count;
+        }
+
+        return count;
+    }
+    else
+    {
+        uint32_t index = 0;
+
+        // Return a list of available entries when 'out_list' is not null
+        for( uint32_t i = 0; i < this->ioapic_count; i++ )
+        {
+            uint32_t base = this->ioapic_list[ i ].interrupt_base;
+            for( uint8_t j = 0; j < this->ioapic_list[ i ].interrupt_count; j++ )
+            {
+                out_list[ index++ ] = (uint32_t)j + base;
+            }
+        }
+
+        return index;
+    }
+}
+
+
 uint32_t xapic_driver_get_error( struct axk_interrupt_driver_t* this_generic )
 {
     uint64_t rflags = axk_disable_interrupts();
@@ -428,15 +499,17 @@ struct axk_interrupt_driver_t* axk_x86_create_xapic_driver( void )
     struct axk_x86_xapic_driver_t* out_driver = (struct axk_x86_xapic_driver_t*) malloc( sizeof( struct axk_x86_xapic_driver_t) );
     
     // Load function table
-    out_driver->func_table.init                     = xapic_driver_init;
-    out_driver->func_table.aux_init                 = xapic_driver_aux_init;
-    out_driver->func_table.signal_eoi               = xapic_driver_signal_eoi;
-    out_driver->func_table.send_ipi                 = xapic_driver_send_ipi;
-    out_driver->func_table.set_external_routing     = xapic_driver_set_external_routing;
-    out_driver->func_table.get_external_routing     = xapic_driver_get_external_routing;
-    out_driver->func_table.get_error                = xapic_driver_get_error;
-    out_driver->func_table.clear_error              = xapic_driver_clear_error;
-    out_driver->func_table.get_ext_int              = xapic_driver_get_ext_int;
+    out_driver->func_table.init                             = xapic_driver_init;
+    out_driver->func_table.aux_init                         = xapic_driver_aux_init;
+    out_driver->func_table.signal_eoi                       = xapic_driver_signal_eoi;
+    out_driver->func_table.send_ipi                         = xapic_driver_send_ipi;
+    out_driver->func_table.set_external_routing             = xapic_driver_set_external_routing;
+    out_driver->func_table.get_external_routing             = xapic_driver_get_external_routing;
+    out_driver->func_table.clear_external_routing           = xapic_driver_clear_external_routing;
+    out_driver->func_table.get_available_external_routings  = xapic_driver_get_available_external_routings;
+    out_driver->func_table.get_error                        = xapic_driver_get_error;
+    out_driver->func_table.clear_error                      = xapic_driver_clear_error;
+    out_driver->func_table.get_ext_int                      = xapic_driver_get_ext_int;
 
     return (struct axk_interrupt_driver_t*)( out_driver );
 }

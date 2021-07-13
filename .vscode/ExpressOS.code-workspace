@@ -7,7 +7,9 @@
 	"settings": {
 		"files.associations": {
 			"map_mgr.h": "c",
-			"kheap.h": "c"
+			"kheap.h": "c",
+			"page_alloc_private.h": "c",
+			"boot_params.h": "c"
 		}
 	}
 }

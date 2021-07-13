@@ -5,7 +5,7 @@
 ==============================================================*/
 
 #pragma once
-#include "axon/system/interrupts_mgr.h"
+#include "axon/system/interrupts_private.h"
 #include "axon/arch_x86/acpi_info.h"
 #include "axon/library/spinlock.h"
 

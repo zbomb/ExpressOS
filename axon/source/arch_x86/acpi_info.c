@@ -10,6 +10,7 @@
 #include "axon/arch_x86/util.h"
 #include "axon/debug_print.h"
 #include "axon/panic.h"
+#include "axon/system/processor_info.h"
 #include "string.h"
 #include "stdlib.h"
 
@@ -40,11 +41,16 @@ static struct axk_x86_acpi_info_t g_acpi;
 bool parse_cpuid( void )
 {
     // Get the manufacturer from CPUID
+    // Also, ensure the required CPUID leafs are present
     uint32_t eax, ebx, ecx, edx;
     eax = 0U; ebx = 0; ecx = 0; edx = 0;
     axk_x86_cpuid( &eax, &ebx, &ecx, &edx );
 
-    g_acpi.max_cpuid = eax;
+    if( eax < 0x0B ) 
+    {
+        axk_panic( "x86: CPUID doesnt support the required functionality needed! This system is not supported" );
+    }
+
     memcpy( (void*) g_acpi.cpu_vendor, (void*) &ebx, 4 );
     memcpy( (void*) g_acpi.cpu_vendor + 4, (void*) &edx, 4 );
     memcpy( (void*) g_acpi.cpu_vendor + 8, (void*) &ecx, 4 );
@@ -65,7 +71,11 @@ bool parse_cpuid( void )
     g_acpi.cpu_count = g_acpi.lapic_count;
     
     eax = 0x0B; ebx = 0x00; ecx = 0x00; edx = 0x00;
-    axk_x86_cpuid( &eax, &ebx, &ecx, &edx );
+    if( !axk_x86_cpuid_s( &eax, &ebx, &ecx, &edx ) )
+    {
+        //axk_panic( "ACPI: CPUID doesnt support APIC info leaf" );
+        edx = axk_processor_get_id();
+    }
 
     bool b_found_bsp = false;
     for( uint32_t i = 0; i < g_acpi.lapic_count; i++ )
