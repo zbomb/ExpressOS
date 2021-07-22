@@ -13,9 +13,12 @@ global axk_halt
 global axk_get_return_address
 global axk_get_kernel_offset
 global axk_get_kernel_size
+global axk_cleanup_bootstrap
 
 extern ax_kernel_begin
 extern ax_kernel_end
+extern ax_kernel_page_count
+extern ax_pdt_low
 
 section .text
 bits 64
@@ -75,3 +78,23 @@ axk_get_kernel_size:
     mov rcx, ax_kernel_begin
     sub rax, rcx
     ret
+
+axk_cleanup_bootstrap:
+
+    ; Parameters:   None
+    ; Returns:      None
+
+    ; Remove all the lower memory mappings we no longer need
+    mov rcx, 0
+    mov rax, ax_pdt_low
+    .unmap_loop:
+
+    mov byte [rax], 0
+    inc rcx
+    inc rax
+    cmp rcx, 4096
+    jl .unmap_loop
+
+    ret
+
+

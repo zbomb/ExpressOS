@@ -223,6 +223,7 @@ void* axk_kheap_alloc( size_t sz, bool b_clear )
             bool b_avail = false;
             if( ( ptr_tag->next_entry & 0x0000FFFFFFFFFFF0UL ) == 0UL )
             {
+
                 if( !alloc_helper_expand( sz, ptr_tag ) )
                 {
                     axk_panic( "Kernel Heap: failed to expand the heap" );

@@ -9,7 +9,11 @@
 			"map_mgr.h": "c",
 			"kheap.h": "c",
 			"page_alloc_private.h": "c",
-			"boot_params.h": "c"
+			"boot_params.h": "c",
+			"interrupts.h": "c",
+			"timers_private.h": "c",
+			"debug_print.h": "c",
+			"panic.h": "c"
 		}
 	}
 }

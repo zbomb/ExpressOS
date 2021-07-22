@@ -27,12 +27,11 @@ struct axk_x86_hpet_driver_t
     bool b_timer_fsb;
     uint8_t timer_index;
     uint32_t global_interrupt;
+    uint32_t target_processor;
+    uint8_t target_interrupt;
 
     // State
-    bool b_running;
-    bool b_running_periodic;
     struct axk_spinlock_t lock;
-    bool( *callback )( void );
 };
 
 

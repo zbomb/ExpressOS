@@ -11,6 +11,7 @@
 #include "axon/memory/page_alloc_private.h"
 #include "axon/boot/boot_params.h"
 #include "axon/library/spinlock.h"
+#include "axon/system/sysinfo_private.h"
 #include "axon/panic.h"
 #include "axon/config.h"
 #include "axon/arch.h"
@@ -113,21 +114,25 @@ bool axk_pagemgr_init( void )
                     case MEMORYMAP_ENTRY_STATUS_KERNEL:
                     {
                         page_info = ( AXK_PROCESS_KERNEL | AXK_FLAG_PAGE_IN_USE | AXK_FLAG_PAGE_KERNEL | AXK_FLAG_PAGE_TYPE_IMAGE );
+                        axk_counter_increment( AXK_COUNTER_KERNEL_PAGES, 1UL );
                         break;
                     }
                     case MEMORYMAP_ENTRY_STATUS_RESERVED:
                     {
                         page_info = ( AXK_FLAG_PAGE_IN_USE | AXK_FLAG_PAGE_RESERVED );
+                        axk_counter_increment( AXK_COUNTER_RESERVED_PAGES, 1UL );
                         break;
                     }
                     case MEMORYMAP_ENTRY_STATUS_ACPI:
                     {
                         page_info = ( AXK_FLAG_PAGE_IN_USE | AXK_FLAG_PAGE_RESERVED | AXK_FLAG_PAGE_TYPE_ACPI );
+                        axk_counter_increment( AXK_COUNTER_RESERVED_PAGES, 1UL );
                         break;
                     }
                     case MEMORYMAP_ENTRY_STATUS_RAMDISK:
                     {
                         page_info = ( AXK_FLAG_PAGE_IN_USE | AXK_FLAG_PAGE_RESERVED | AXK_FLAG_PAGE_TYPE_RAMDISK );
+                        axk_counter_increment( AXK_COUNTER_RESERVED_PAGES, 1UL );
                         break;
                     }
                 }
@@ -136,12 +141,19 @@ bool axk_pagemgr_init( void )
 
         // Write entry to memory
         g_table[ i ] = page_info;
+
+        if( page_info == 0 )
+        {
+            axk_counter_increment( AXK_COUNTER_AVAILABLE_PAGES, 1UL );
+        }
     }
 
     // Now, we need to mark the pages we actually used to write the table
     for( uint64_t i = table_offset / AXK_PAGE_SIZE; i <= ( table_offset + table_size ) / AXK_PAGE_SIZE; i++ )
     {
         g_table[ i ] = ( AXK_FLAG_PAGE_IN_USE | AXK_FLAG_PAGE_RESERVED );
+        axk_counter_decrement( AXK_COUNTER_AVAILABLE_PAGES, 1UL );
+        axk_counter_increment( AXK_COUNTER_RESERVED_PAGES, 1UL );
     }
 
     // We also want to reserve a single page for processor init code
@@ -150,6 +162,9 @@ bool axk_pagemgr_init( void )
     {
         axk_panic( "Page Manager: Page that should be reserved for process init, is in use by the system" );
     }
+
+    axk_counter_decrement( AXK_COUNTER_AVAILABLE_PAGES, 1UL );
+    axk_counter_increment( AXK_COUNTER_RESERVED_PAGES, 1UL );
 
     ap_code_page = ( AXK_FLAG_PAGE_IN_USE | AXK_FLAG_PAGE_RESERVED );
     g_table[ AXK_AP_INIT_PAGE ] = ap_code_page;
@@ -185,10 +200,14 @@ void axk_pagemgr_reclaim( void )
         if( AXK_CHECK_ANY_FLAG( page_info, AXK_FLAG_PAGE_TYPE_ACPI | AXK_FLAG_PAGE_TYPE_RAMDISK ) )
         {
             g_table[ i ] = 0;
+            axk_counter_decrement( AXK_COUNTER_RESERVED_PAGES, 1UL );
+            axk_counter_increment( AXK_COUNTER_AVAILABLE_PAGES, 1UL );
         }
     }
 
     g_table[ AXK_AP_INIT_PAGE ] = 0;
+    axk_counter_decrement( AXK_COUNTER_RESERVED_PAGES, 1UL );
+    axk_counter_increment( AXK_COUNTER_AVAILABLE_PAGES, 1UL );
 
     // Release the lock
     axk_spinlock_release( &g_lock );
@@ -253,6 +272,9 @@ bool axk_page_acquire( uint64_t count, AXK_PAGE_ID* out_list, uint32_t process, 
     // Release the lock
     axk_spinlock_release( &g_lock );
 
+    axk_counter_decrement( AXK_COUNTER_AVAILABLE_PAGES, count );
+    axk_counter_increment( AXK_COUNTER_KERNEL_PAGES, count );
+
     // Check if we need to clear the pages
     if( b_clear )
     {
@@ -308,6 +330,9 @@ bool axk_page_lock( uint64_t count, AXK_PAGE_ID* in_list, uint32_t process, AXK_
 
     // Release the lock
     axk_spinlock_release( &g_lock );
+
+    axk_counter_decrement( AXK_COUNTER_AVAILABLE_PAGES, count );
+    axk_counter_increment( AXK_COUNTER_KERNEL_PAGES, count );
 
     // Clear the pages if requested
     if( b_clear )
@@ -366,6 +391,9 @@ bool axk_page_release( uint64_t count, AXK_PAGE_ID* in_list, bool b_allowkernel 
 
     // Release lock
     axk_spinlock_release( &g_lock );
+
+    axk_counter_increment( AXK_COUNTER_AVAILABLE_PAGES, count );
+    axk_counter_decrement( AXK_COUNTER_KERNEL_PAGES, count );
 
     return true;
 }

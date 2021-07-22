@@ -21,7 +21,7 @@ void axk_time_init( uint64_t ext_tick_period );
     * Private Function
     * Callback for the external timer used to keep system time
 */
-bool axk_time_ext_tick( void );
+//void axk_time_ext_tick( void );
 
 /*
     axk_time_wait_for_sync

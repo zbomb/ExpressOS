@@ -8,6 +8,8 @@ global axk_x86_cpuid
 global axk_x86_read_msr
 global axk_x86_write_msr
 global axk_x86_cpuid_s
+global axk_x86_write_gs
+global axk_x86_read_gs
 
 section .data
 align 8
@@ -154,7 +156,7 @@ axk_x86_read_msr:
     ; 
     ; Returns
     ; edx:eax
-
+    
     mov ecx, edi
     rdmsr
 
@@ -176,4 +178,25 @@ axk_x86_write_msr:
     mov edx, esi
 
     wrmsr
+    ret
+
+axk_x86_write_gs:
+
+    ; Parameters: Value (rdi)
+    ; Returns: None
+
+    mov ecx, 0xc0000102
+    mov eax, edi
+    shr rdi, 32
+    mov edx, edi
+    wrmsr
+    swapgs
+    ret
+
+axk_x86_read_gs:
+
+    ; Parameters: None
+    ; Returns: GS Address (rax)
+
+    mov rax, qword [gs:0]
     ret

@@ -172,6 +172,7 @@ void* axk_mapmgr_get_table( void )
     return (void*) g_ptr_kpml4;
 }
 
+
 bool axk_kmap( AXK_PAGE_ID page, uint64_t virt_addr, AXK_MAP_FLAGS flags )
 {
     // Validate the parameters

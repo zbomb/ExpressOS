@@ -8,7 +8,6 @@
 #include "axon/arch_x86/util.h"
 #include "axon/debug_print.h"
 #include "axon/arch.h"
-#include "axon/system/processor_info.h"
 #include "axon/system/interrupts.h"
 
 
@@ -37,7 +36,7 @@ void axk_x86_handle_exception_divbyzero( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -74,7 +73,7 @@ void axk_x86_handle_exception_debug( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -112,7 +111,7 @@ void axk_x86_handle_exception_nmi( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_halt();
 }
@@ -143,7 +142,7 @@ void axk_x86_handle_exception_breakpoint( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -180,7 +179,7 @@ void axk_x86_handle_exception_overflow( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -217,7 +216,7 @@ void axk_x86_handle_exception_boundrange( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -254,7 +253,7 @@ void axk_x86_handle_exception_invalidop( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -292,7 +291,7 @@ void axk_x86_handle_exception_devicenotavailable( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_halt();
 }
@@ -323,7 +322,7 @@ void axk_x86_handle_exception_doublefault( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_halt();
 }
@@ -354,7 +353,7 @@ void axk_x86_handle_exception_invalidtss( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -394,7 +393,7 @@ void axk_x86_handle_exception_segnotpresent( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -434,7 +433,7 @@ void axk_x86_handle_exception_segfault( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -474,7 +473,7 @@ void axk_x86_handle_exception_generalprotection( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -514,7 +513,7 @@ void axk_x86_handle_exception_pagefault( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -559,7 +558,7 @@ void axk_x86_handle_exception_floatingpoint( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -595,7 +594,7 @@ void axk_x86_handle_exception_alignmentcheck( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
     
@@ -631,7 +630,7 @@ void axk_x86_handle_exception_machinecheck( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_terminal_prints( "\n\n" );
 
@@ -664,7 +663,7 @@ void axk_x86_handle_exception_virtualization( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_halt();
 }
@@ -695,7 +694,7 @@ void axk_x86_handle_exception_security( void )
     axk_terminal_prints( "\t\t\tR9: " ); axk_terminal_printh64_lz( ptr_frame->r9, true ); axk_terminal_printtab();
     axk_terminal_prints( " R10: " ); axk_terminal_printh64_lz( ptr_frame->r10, true ); axk_terminal_printnl();
     axk_terminal_prints( "\t\t\tR11: " ); axk_terminal_printh64_lz( ptr_frame->r11, true );  
-    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_processor_get_id() );
+    axk_terminal_prints( "\tCPU ID: "); axk_terminal_printu32( axk_get_cpu_id() );
     
     axk_halt();
 }

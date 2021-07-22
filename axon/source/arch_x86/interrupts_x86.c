@@ -86,6 +86,20 @@ bool axk_interrupts_init_aux( void )
 }
 
 
+uint32_t axk_interrupts_cpu_id( void )
+{
+    switch( g_int_type )
+    {
+        case INTERRUPT_DRIVER_X86_XAPIC:
+        return( ( axk_x86_xapic_read_lapic( (struct axk_x86_xapic_driver_t*) g_int_driver, 0x20 ) & 0xFF000000U ) >> 24 );
+
+        case INTERRUPT_DRIVER_X86_X2APIC:
+        // TODO
+        return 0U;
+    }
+}
+
+
 struct axk_interrupt_driver_t* axk_interrupts_get( void )
 {
     return g_int_driver;

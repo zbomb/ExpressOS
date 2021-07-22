@@ -47,10 +47,10 @@ uint64_t axk_timer_get_frequency( struct axk_timer_driver_t* timer )
 }
 
 
-uint32_t axk_timer_start( struct axk_timer_driver_t* timer, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, bool( *callback )( void ) )
+uint32_t axk_timer_start( struct axk_timer_driver_t* timer, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, uint32_t processor, uint8_t vector )
 {
     if( timer == NULL ) { return AXK_TIMER_ERROR_INVALID_PARAMS; }
-    return timer->start( timer, mode, delay, b_delay_in_ticks, callback );
+    return timer->start( timer, mode, delay, b_delay_in_ticks, processor, vector );
 }
 
 
@@ -80,40 +80,3 @@ uint64_t axk_timer_get_max_value( struct axk_timer_driver_t* timer )
     if( timer == NULL ) { return 0UL; }
     return timer->get_max_value( timer );
 }
-
-/*
-    Timer Handlers
-*/
-void axk_invoke_local_timer( void )
-{
-    struct axk_timer_driver_t* ptr_timer = axk_timer_get_local();
-    bool b_eoi_sent = false;
-
-    if( ptr_timer != NULL )
-    {
-        b_eoi_sent = ptr_timer->invoke( ptr_timer );
-    }
-
-    if( !b_eoi_sent )
-    {
-        axk_interrupts_signal_eoi();
-    }
-}
-
-
-void axk_invoke_external_timer( void )
-{
-    struct axk_timer_driver_t* ptr_timer = axk_timer_get_external();
-    bool b_eoi_sent = false;
-
-    if( ptr_timer != NULL )
-    {
-        b_eoi_sent = ptr_timer->invoke( ptr_timer );
-    }
-
-    if( !b_eoi_sent )
-    {
-        axk_interrupts_signal_eoi();
-    }
-}
-

@@ -83,7 +83,12 @@ ax_bsp_main:
     or rax, AX_HIGH_KERNEL_OFFSET
     mov rsp, rax
 
-    ; Reload the GST using the high pointer
+    ; Ensure CR4 is configured
+    mov rax, cr4
+    or rax, 1 << 16
+    mov cr4, rax
+
+    ; Reload the GDT using the high pointer
     lgdt [ax_gdt_pointer_high]
 
     ; Fix the multiboot structure pointer

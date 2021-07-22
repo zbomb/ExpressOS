@@ -32,8 +32,10 @@ enum axk_timer_mode_t
 
 #define AXK_TIMER_ERROR_NONE                0x00
 #define AXK_TIMER_ERROR_INVALID_MODE        0x01
-#define AXK_TIMER_ERROR_ALREADY_RUNNING     0x02
-#define AXK_TIMER_ERROR_INVALID_PARAMS      0x03
+#define AXK_TIMER_ERROR_INVALID_PROCESSOR   0x02
+#define AXK_TIMER_ERROR_INVALID_DELAY       0x03
+#define AXK_TIMER_ERROR_INVALID_PARAMS      0x04
+#define AXK_TIMER_ERROR_COUNTER_ONLY        0x05
 
 
 struct axk_timer_driver_t
@@ -42,12 +44,13 @@ struct axk_timer_driver_t
     bool( *query_features )( struct axk_timer_driver_t*, enum axk_timer_features_t );
     uint32_t( *get_id )( void );
     uint64_t( *get_frequency )( struct axk_timer_driver_t* );
-    uint32_t( *start )( struct axk_timer_driver_t*, enum axk_timer_mode_t, uint64_t, bool, bool(*)(void) );
+    //uint32_t( *start )( struct axk_timer_driver_t*, enum axk_timer_mode_t, uint64_t, bool, bool(*)(void) );
+    uint32_t( *start )( struct axk_timer_driver_t*, enum axk_timer_mode_t, uint64_t, bool, uint32_t, uint8_t );
     bool( *stop )( struct axk_timer_driver_t* );
     bool( *is_running )( struct axk_timer_driver_t* );
     uint64_t( *get_counter )( struct axk_timer_driver_t* );
     uint64_t( *get_max_value )( struct axk_timer_driver_t* );
-    bool( *invoke )( struct axk_timer_driver_t* );
+    //bool( *invoke )( struct axk_timer_driver_t* );
 };
 
 
@@ -121,7 +124,7 @@ uint64_t axk_timer_get_frequency( struct axk_timer_driver_t* timer );
     * Returns error code (AXK_TIMER_ERROR_*)
     * If successful, returns AXK_TIMER_ERROR_NONE
 */
-uint32_t axk_timer_start( struct axk_timer_driver_t* timer, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, bool( *callback )( void ) );
+uint32_t axk_timer_start( struct axk_timer_driver_t* timer, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, uint32_t processor, uint8_t vector );
 
 /*
     axk_timer_stop

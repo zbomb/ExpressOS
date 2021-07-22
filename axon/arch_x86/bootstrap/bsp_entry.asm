@@ -21,6 +21,7 @@ global ax_pdt_high_1
 global ax_pdt_high_2
 global ax_pdt_low
 global ax_mb_info_pointer
+global ax_kernel_page_count
 
 extern ax_kernel_begin
 extern ax_kernel_end

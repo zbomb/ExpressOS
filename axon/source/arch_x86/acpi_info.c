@@ -8,9 +8,9 @@
 #include "axon/arch_x86/acpi_info.h"
 #include "axon/arch_x86/boot_params.h"
 #include "axon/arch_x86/util.h"
+#include "axon/arch.h"
 #include "axon/debug_print.h"
 #include "axon/panic.h"
-#include "axon/system/processor_info.h"
 #include "string.h"
 #include "stdlib.h"
 
@@ -74,7 +74,7 @@ bool parse_cpuid( void )
     if( !axk_x86_cpuid_s( &eax, &ebx, &ecx, &edx ) )
     {
         //axk_panic( "ACPI: CPUID doesnt support APIC info leaf" );
-        edx = axk_processor_get_id();
+        edx = axk_get_cpu_id();
     }
 
     bool b_found_bsp = false;

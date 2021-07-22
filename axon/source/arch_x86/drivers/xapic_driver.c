@@ -10,7 +10,6 @@
 #include "axon/memory/kmap.h"
 #include "axon/arch.h"
 #include "axon/debug_print.h"
-#include "axon/system/processor_info.h"
 #include "string.h"
 #include "stdlib.h"
 
@@ -83,7 +82,7 @@ bool xapic_driver_init( struct axk_interrupt_driver_t* this_generic )
     bool b_x2apic_enabled   = AXK_CHECK_FLAG( apic_msr, 1 << 10 );
     bool b_bsp              = AXK_CHECK_FLAG( apic_msr, 1 << 8 );
 
-    if( !b_bsp || b_x2apic_enabled || !b_xapic_enabled ) { return false; }
+    if( !b_bsp || b_x2apic_enabled ) { return false; }
 
     // Read ACPI tables
     struct axk_x86_acpi_info_t* ptr_acpi = axk_x86_acpi_get();
@@ -103,7 +102,10 @@ bool xapic_driver_init( struct axk_interrupt_driver_t* this_generic )
     memcpy( (void*) this->source_override_list, (void*) ptr_acpi->source_override_list, sizeof( struct axk_x86_int_source_override_t ) * this->source_override_count );
 
     // Ensure APIC is enabled
-    axk_x86_write_msr( AXK_X86_MSR_APIC, ptr_acpi->lapic_addr | 0x800UL );
+    if( !b_xapic_enabled )
+    {
+        axk_x86_write_msr( AXK_X86_MSR_APIC, ptr_acpi->lapic_addr | 0x800UL );
+    }
 
     // Map the address range used by the local APIC so we can access it
     uint64_t lstart_page     = ptr_acpi->lapic_addr / 0x1000UL;
@@ -163,6 +165,27 @@ bool xapic_driver_aux_init( struct axk_interrupt_driver_t* this_generic )
     // Cast 'this'
     struct axk_x86_xapic_driver_t* this = (struct axk_x86_xapic_driver_t*)( this_generic );
 
+    // Ensure were in XAPIC mode and were not BSP
+    uint64_t apic_msr       = axk_x86_read_msr( AXK_X86_MSR_APIC );
+    bool b_xapic_enabled    = AXK_CHECK_FLAG( apic_msr, 1 << 11 );
+    bool b_x2apic_enabled   = AXK_CHECK_FLAG( apic_msr, 1 << 10 );
+    bool b_bsp              = AXK_CHECK_FLAG( apic_msr, 1 << 8 );
+
+    if( b_bsp || b_x2apic_enabled ) { return false; }
+
+    // Get ACPI pointer
+    struct axk_x86_acpi_info_t* ptr_acpi = axk_x86_acpi_get();
+    if( ptr_acpi == NULL ) { return false; }
+
+    // Ensure XAPIC mode is enabled
+    if( !b_xapic_enabled )
+    {
+        axk_x86_write_msr( AXK_X86_MSR_APIC, ptr_acpi->lapic_addr | 0x800UL );
+    }
+
+    // Initialize the LAPIC
+    axk_x86_xapic_init_lapic( this, ptr_acpi->lapic_nmi_list, ptr_acpi->lapic_nmi_count );
+
     // Load the IDT
     axk_x86_load_idt_aux();
 
@@ -184,29 +207,25 @@ bool xapic_driver_send_ipi( struct axk_interrupt_driver_t* this_generic, struct 
     struct axk_x86_xapic_driver_t* this = (struct axk_x86_xapic_driver_t*)( this_generic );
 
     // Validate the request
-    bool b_self_target      = false;
-    bool b_valid_target     = false;
-    uint8_t target_lapic    = 0;
+    bool b_self_target;
+    uint32_t target_lapic;
 
-    struct axk_x86_acpi_info_t* ptr_acpi = axk_x86_acpi_get();
-    for( uint8_t i = 0; i < ptr_acpi->lapic_count; i++ )
+    if( params->delivery_mode == AXK_IPI_DELIVERY_MODE_INIT || params->delivery_mode == AXK_IPI_DELIVERY_MODE_START )
     {
-        // Ensure the target processor is valid
-        if( ptr_acpi->lapic_list[ i ].processor == params->target_processor )
+        // Theres a slight quirk, we cant actually use OS-based identifiers with INIT or START, because those processors havent been assigned
+        // an OS-based identifier yet! So, if the IPI is an INIT or START, we treat the 'target_processor' as the LAPIC ID of the target CPU
+        b_self_target   = false;
+        target_lapic    = params->target_processor;
+    }
+    else
+    {
+        b_self_target = ( params->target_processor == axk_get_cpu_id() );
+
+        if( !axk_x86_convert_cpu_id( params->target_processor, &target_lapic ) )
         {
-            target_lapic = ptr_acpi->lapic_list[ i ].id;
-            b_valid_target = true;
-
-            if( params->target_processor == axk_processor_get_id() )
-            {
-                b_self_target = true;
-            }
-
-            break; 
+            return false;
         }
     }
-
-    if( !b_valid_target ) { return false; }
 
     // Now we need to start building the request
     uint32_t ipi_parameters;
@@ -264,22 +283,12 @@ bool xapic_driver_set_external_routing( struct axk_interrupt_driver_t* this_gene
     uint32_t ext_number = routing->global_interrupt;
 
     // Ensure the target processor is valid
-    uint8_t lapic_id    = 0;
-    bool b_found_lapic  = false;
-
-    for( uint32_t i = 0; i < this->lapic_count; i++ )
-    {
-        if( this->lapic_list[ i ].processor == routing->target_processor )
-        {
-            b_found_lapic = true;
-            lapic_id = this->lapic_list[ i ].id;
-            break;
-        }
-    }
-
-    if( !b_found_lapic )
+    uint32_t lapic_id;
+    if( !axk_x86_convert_cpu_id( routing->target_processor, &lapic_id ) )
     {
         axk_terminal_prints( "xAPIC Driver: [Warning] Attempt to set external routing with an invalid processor ID\n" );
+        axk_terminal_prints( "====> " ); axk_terminal_printu32( routing->target_processor );
+        axk_halt();
         return false;
     }
 
@@ -580,7 +589,7 @@ void axk_x86_xapic_init_lapic( struct axk_x86_xapic_driver_t* this, struct axk_x
     axk_x86_xapic_write_lapic( this, LAPIC_REGISTER_LVT_ERROR, (uint32_t) AXK_INT_ERROR );
 
     // Timer: Setup the initial state, the local timer driver will actually perform all timer functions
-    axk_x86_xapic_write_lapic( this, LAPIC_REGISTER_LVT_TIMER, (uint32_t) AXK_INT_LOCAL_TIMER );
+    axk_x86_xapic_write_lapic( this, LAPIC_REGISTER_LVT_TIMER, (uint32_t) AXK_INT_IGNORED );
 
     // SIV: Write to this register will direct spurious interrupts and enable the LAPIC
     axk_x86_xapic_write_lapic( this, LAPIC_REGISTER_SPURIOUS_VECTOR, 0x1FFU );

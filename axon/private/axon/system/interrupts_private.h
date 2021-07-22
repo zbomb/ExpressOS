@@ -65,6 +65,14 @@ bool axk_interrupts_init_aux( void );
 void axk_interrupts_init_state( void );
 
 /*
+    axk_interrupts_cpu_id
+    * Private Function
+    * Gets the CPU identifier used for interrupts
+    * Arch-Specific implementatoin
+*/
+uint32_t axk_interrupts_cpu_id( void );
+
+/*
     axk_interrupts_invoke
     * Private function
     * Invokes the execution of an interrupt handler

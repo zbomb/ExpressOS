@@ -9,6 +9,17 @@
 #include <stdbool.h>
 
 /*
+    Structures
+*/
+struct axk_cpu_local_storage_t
+{
+    void* this_address;
+    uint32_t os_identifier;
+    uint32_t arch_identifier;
+    void* local_scheduler;
+};
+
+/*
     Arch Functions
     * Implemented by ASM/C in arch_*\
 */
@@ -24,4 +35,10 @@ uint64_t axk_enable_interrupts( void );
 __attribute__((noreturn)) void axk_halt( void );
 
 
-bool axk_start_aux_processors( uint32_t* out_cpu_count );
+struct axk_cpu_local_storage_t* axk_get_cpu_local_storage( void );
+
+
+static inline uint32_t axk_get_cpu_id( void )
+{
+    return axk_get_cpu_local_storage()->os_identifier;
+}

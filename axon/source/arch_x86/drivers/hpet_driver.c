@@ -9,7 +9,6 @@
 #include "axon/memory/kmap.h"
 #include "axon/system/interrupts.h"
 #include "axon/debug_print.h"
-#include "axon/system/processor_info.h"
 #include "axon/arch.h"
 #include "stdlib.h"
 #include "big_math.h"
@@ -40,13 +39,11 @@ bool hpet_init( struct axk_timer_driver_t* self );
 bool hpet_query_features( struct axk_timer_driver_t* self, enum axk_timer_features_t feats );
 uint32_t hpet_get_id( void );
 uint64_t hpet_get_frequency( struct axk_timer_driver_t* self );
-uint32_t hpet_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, bool( *callback )( void ) );
+uint32_t hpet_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, uint32_t processor, uint8_t vector );
 bool hpet_stop( struct axk_timer_driver_t* self );
 bool hpet_is_running( struct axk_timer_driver_t* self );
 uint64_t hpet_get_counter( struct axk_timer_driver_t* self );
 uint64_t hpet_get_max_value( struct axk_timer_driver_t* self );
-bool hpet_invoke( struct axk_timer_driver_t* self );
-
 
 struct axk_timer_driver_t* axk_x86_create_hpet_driver( struct axk_x86_hpet_info_t* ptr_info )
 {
@@ -63,7 +60,6 @@ struct axk_timer_driver_t* axk_x86_create_hpet_driver( struct axk_x86_hpet_info_
     output->func_table.is_running       = hpet_is_running;
     output->func_table.get_counter      = hpet_get_counter;
     output->func_table.get_max_value    = hpet_get_max_value;
-    output->func_table.invoke           = hpet_invoke;
 
     output->info = ptr_info;
 
@@ -147,7 +143,6 @@ bool hpet_init( struct axk_timer_driver_t* self )
 
     this->min_tick      = this->info->min_tick;
     this->base_address  = this->info->address;
-    this->callback      = NULL;
 
     uint64_t begin_addr     = this->base_address;
     uint64_t end_addr       = this->base_address + 0x517UL;
@@ -256,12 +251,12 @@ bool hpet_init( struct axk_timer_driver_t* self )
 
     // Acquire global interrupt routing vector
     struct axk_external_interrupt_routing_t routing;
-    routing.local_interrupt     = AXK_INT_EXTERNAL_TIMER;
+    routing.local_interrupt     = AXK_INT_IGNORED;
     routing.b_low_priority      = false;
     routing.b_active_low        = false;
     routing.b_level_triggered   = false;
     routing.b_masked            = false;
-    routing.target_processor    = axk_processor_get_id();
+    routing.target_processor    = axk_get_cpu_id();
 
     // Build a list of allowed external routings so we can acquire one we can actually use
     uint32_t count = 0;
@@ -294,8 +289,10 @@ bool hpet_init( struct axk_timer_driver_t* self )
     hpet_write_timer_config( this, this->timer_index, ( (uint64_t)( routing.global_interrupt ) << 9 ) | ( 1UL << 8 ) );
     hpet_write_timer_config( this, this->timer_index, ( (uint64_t)( routing.global_interrupt ) << 9 ) );
 
-    this->global_interrupt = routing.global_interrupt;
-    this->b_running = false;
+    this->global_interrupt  = routing.global_interrupt;
+    this->target_processor  = axk_get_cpu_id();
+    this->target_interrupt  = AXK_INT_IGNORED;
+
     axk_spinlock_init( &( this->lock ) );
 
     axk_terminal_prints( "HPET (x86): Initialized. 64-bit? " );
@@ -334,13 +331,13 @@ uint64_t hpet_get_frequency( struct axk_timer_driver_t* self )
 }
 
 
-uint32_t hpet_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, bool( *callback )( void ) )
+uint32_t hpet_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, uint32_t processor, uint8_t vector )
 {
     struct axk_x86_hpet_driver_t* this = (struct axk_x86_hpet_driver_t*)( self );
 
     // Validate parameters
-    if( this == NULL || callback == NULL || delay == 0UL ) { return AXK_TIMER_ERROR_INVALID_PARAMS; }
-    if( mode == AXK_TIMER_MODE_DEADLINE || mode == AXK_TIMER_MODE_DIVISOR ) { return AXK_TIMER_ERROR_INVALID_MODE; }
+    if( this == NULL || delay == 0UL || vector < AXK_INT_MINIMUM )            { return AXK_TIMER_ERROR_INVALID_PARAMS; }
+    if( mode == AXK_TIMER_MODE_DEADLINE || mode == AXK_TIMER_MODE_DIVISOR )     { return AXK_TIMER_ERROR_INVALID_MODE; }
 
     // Convert delay to ticks
     uint64_t ticks;
@@ -355,26 +352,32 @@ uint32_t hpet_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode
 
     // Check if the delay is too small?
     // TODO: Is this correct?
-    if( ticks < (uint64_t) this->min_tick )
+    if( ( ticks > 0xFFFFFFFFUL && !this->b_timer_long ) || ticks < (uint64_t)this->min_tick )
     {
-        callback();
-        return AXK_TIMER_ERROR_NONE;
-    }
-    else if( ticks > 0xFFFFFFFFUL && !this->b_timer_long )
-    {
-        return AXK_TIMER_ERROR_INVALID_PARAMS;
+        return AXK_TIMER_ERROR_INVALID_DELAY;
     }
 
     // Acquire lock and check if were running
     axk_spinlock_acquire( &( this->lock ) );
-    if( this->b_running )
-    {
-        axk_spinlock_release( &( this->lock ) );
-        return AXK_TIMER_ERROR_ALREADY_RUNNING;
-    }
 
-    this->b_running = true;
-    this->callback = callback;
+    // Update external routing to send an interrupt to the desired processor using the desired vector
+    if( processor != this->target_processor || vector != this->target_interrupt )
+    {
+        struct axk_external_interrupt_routing_t routing;
+
+        routing.global_interrupt        = this->global_interrupt;
+        routing.local_interrupt         = vector;
+        routing.b_low_priority          = false;
+        routing.b_level_triggered       = false;
+        routing.b_masked                = false;
+        routing.target_processor        = processor;
+
+        if( !axk_interrupts_update_external( this->global_interrupt, &routing ) )
+        {
+            axk_spinlock_release( &( this->lock ) );
+            return AXK_TIMER_ERROR_INVALID_PROCESSOR;
+        }
+    }
 
     // Disable the global counter, and disable the timer
     hpet_write_general_register( this, HPET_REGISTER_CONFIG, 0UL );
@@ -389,7 +392,6 @@ uint32_t hpet_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode
     else
     {
         // Periodic Timer Mode
-        this->b_running_periodic = true;
         uint64_t timer_config = ( (uint64_t)( this->global_interrupt ) << 9 ) | ( 1UL << 2 ) | ( 1UL << 3 ) | ( 1UL << 6 );
         hpet_write_timer_config( this, this->timer_index, timer_config );
         hpet_write_comparator_low( this, this->timer_index, (uint32_t)( ticks & 0x00000000FFFFFFFFUL ) );
@@ -416,10 +418,6 @@ bool hpet_stop( struct axk_timer_driver_t* self )
         hpet_read_timer_config( this, this->timer_index ) & 0xFFFFFFFFFFFFFFFBUL
     );
 
-    this->b_running = false;
-    this->b_running_periodic = false;
-    this->callback = NULL;
-
     axk_spinlock_release( &( this->lock ) );
     return true;
 }
@@ -429,7 +427,12 @@ bool hpet_is_running( struct axk_timer_driver_t* self )
 {
     struct axk_x86_hpet_driver_t* this = (struct axk_x86_hpet_driver_t*)( self );
     if( this == NULL ) { return false; }
-    return this->b_running;
+
+    axk_spinlock_acquire( &( this->lock ) );
+    uint64_t config = hpet_read_timer_config( this, this->timer_index );
+    axk_spinlock_release( &( this->lock ) );
+
+    return( ( config & ( 1UL << 2UL ) ) != 0UL );
 }
 
 
@@ -440,9 +443,7 @@ uint64_t hpet_get_counter( struct axk_timer_driver_t* self )
 
     // Acquire lock, read mian counter
     axk_spinlock_acquire( &( this->lock ) );
-
     uint64_t counter = hpet_read_general_register( this, HPET_REGISTER_COUNTER );
-
     axk_spinlock_release( &( this->lock ) );
 
     return counter;
@@ -454,21 +455,3 @@ uint64_t hpet_get_max_value( struct axk_timer_driver_t* self )
     struct axk_x86_hpet_driver_t* this = (struct axk_x86_hpet_driver_t*)( self );
     return this->b_long_counter ? 0xFFFFFFFFFFFFFFFFUL : 0xFFFFFFFFUL;
 } 
-
-
-bool hpet_invoke( struct axk_timer_driver_t* self )
-{
-    struct axk_x86_hpet_driver_t* this = (struct axk_x86_hpet_driver_t*)( self );
-
-    axk_spinlock_acquire( &( this->lock ) );
-    void* callback = this != NULL ? this->callback : NULL;
-    if( !this->b_running_periodic ) { this->b_running = false; this->callback = NULL; }
-    axk_spinlock_release( &( this->lock ) );
-
-    if( callback != NULL )
-    {
-        return ( (bool(*)(void))( callback ) )();
-    }
-
-    return false; // Didnt send EOI
-}

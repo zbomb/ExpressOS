@@ -12,8 +12,12 @@
 /*
     Constants
 */
-#define AXK_X86_MSR_APIC 0x1B
-#define AXK_X86_MSR_TSC 0x10
+#define AXK_X86_MSR_APIC    0x1B
+#define AXK_X86_MSR_TSC     0x10
+#define AXK_X86_MSR_EFFER   0xC0000080
+#define AXK_X86_MSR_FS_BASE 0xC0000100
+#define AXK_X86_MSR_GS_BASE 0xC0000101
+
 
 /*
     Structures
@@ -79,6 +83,20 @@ uint64_t axk_x86_read_msr( uint32_t reg );
 void axk_x86_write_msr( uint32_t reg, uint64_t value );
 
 /*
+    axk_x86_write_gs
+    * Private Function
+    * Writes a value into the GS register
+*/
+void axk_x86_write_gs( uint64_t value );
+
+/*
+    axk_x86_read_gs
+    * Private Function
+    * Reads the GS address
+*/
+uint64_t axk_x86_read_gs( void );
+
+/*
     axk_x86_inb
     * Private Function
     * Reads a byte from the specified port
@@ -123,19 +141,6 @@ inline static uint64_t axk_x86_read_timestamp( void )
 }
 
 /*
-    axk_x86_get_proc_id
-    * Private Function
-    * Gets the processor ID of the local processor
-*/
-inline static uint32_t axk_x86_get_proc_id( void )
-{
-    uint32_t eax, ebx, ecx, edx;
-    eax = 0x0B;
-    axk_x86_cpuid( &eax, &ebx, &ecx, &edx );
-    return edx;
-}
-
-/*
     axk_x86_read_cr4
     * Private Function
     * Reads the value in the CR4 control register
@@ -157,6 +162,13 @@ inline static void axk_x86_write_cr4( uint64_t value )
     __asm__ volatile( "movq %0, %%cr4" : : "r"( value ) );
 }
 
+/*
+    axk_x86_convert_cpu_id
+    * Private Function
+    * Converts the OS assigned processor identifier to an X86 interrupt identifier
+    * Defined in entry point code file
+*/
+bool axk_x86_convert_cpu_id( uint32_t os_id, uint32_t* out_id );
 
 
 #endif

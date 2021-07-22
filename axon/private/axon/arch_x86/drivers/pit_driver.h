@@ -17,9 +17,8 @@ struct axk_x86_pit_driver_t
     struct axk_timer_driver_t func_table;
 
     uint32_t global_interrupt;
-    bool b_running;
-    bool b_running_periodic;
-    bool( *callback )( void );
+    uint32_t target_processor;
+    uint8_t target_interrupt;
     struct axk_spinlock_t lock;
 };
 

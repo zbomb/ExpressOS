@@ -8,6 +8,8 @@
 #include "axon/library/spinlock.h"
 #include "axon/system/timers.h"
 #include "axon/system/time_private.h"
+#include "axon/system/interrupts.h"
+#include "axon/system/sysinfo_private.h"
 #include "axon/panic.h"
 #include "big_math.h"
 #include "string.h"
@@ -58,7 +60,7 @@ void axk_time_init( uint64_t ext_tick_period )
 }
 
 
-bool axk_time_ext_tick( void )
+void axk_time_ext_tick( void )
 {
     // This is directly called by the external timer
     // Ignore the first couple ticks, since they might not be perfectly timed
@@ -91,6 +93,7 @@ bool axk_time_ext_tick( void )
         g_sync_point.since_boot     += g_timer_period;
 
         axk_spinlock_release( &g_sync_lock );
+        axk_counter_increment( AXK_COUNTER_EXT_CLOCK_TICKS, 1UL );
     }
     else if( g_ext_tick_counter == 2UL )
     {
@@ -117,7 +120,7 @@ bool axk_time_ext_tick( void )
     }
 
     g_ext_tick_counter++;
-    return false;
+    axk_interrupts_signal_eoi();
 }
 
 

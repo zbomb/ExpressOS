@@ -8,7 +8,6 @@
 #include "axon/system/interrupts_private.h"
 #include "axon/arch_x86/drivers/xapic_driver.h"
 #include "axon/arch_x86/util.h"
-#include "axon/system/processor_info.h"
 #include "axon/arch.h"
 #include "axon/debug_print.h"
 #include "stdlib.h"
@@ -17,6 +16,7 @@
 /*
     Constants
 */
+#define LAPIC_REGISTER_ID                       0x20
 #define LAPIC_REGISTER_LVT_TIMER                0x320
 #define LAPIC_REGISTER_TIMER_INIT_COUNT         0x380
 #define LAPIC_REGISTER_TIMER_CURRENT_COUNT      0x390
@@ -27,12 +27,11 @@ bool lapic_timer_init( struct axk_timer_driver_t* self );
 bool lapic_timer_query_features( struct axk_timer_driver_t* self, enum axk_timer_features_t feats );
 uint32_t lapic_timer_get_id( void );
 uint64_t lapic_timer_get_frequency( struct axk_timer_driver_t* self );
-uint32_t lapic_timer_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, bool( *callback )( void ) );
+uint32_t lapic_timer_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, uint32_t processor, uint8_t vector );
 bool lapic_timer_stop( struct axk_timer_driver_t* self );
 bool lapic_timer_is_running( struct axk_timer_driver_t* self );
 uint64_t lapic_timer_get_counter( struct axk_timer_driver_t* self );
 uint64_t lapic_timer_get_max_value( struct axk_timer_driver_t* self );
-bool lapic_timer_invoke( struct axk_timer_driver_t* self );
 
 /*
     Create Driver Function
@@ -50,7 +49,6 @@ struct axk_timer_driver_t* axk_x86_create_lapic_timer_driver( void )
     output->func_table.is_running       = lapic_timer_is_running;
     output->func_table.get_counter      = lapic_timer_get_counter;
     output->func_table.get_max_value    = lapic_timer_get_max_value;
-    output->func_table.invoke           = lapic_timer_invoke;
 
     return (struct axk_timer_driver_t*)( output );
 }
@@ -61,7 +59,7 @@ static uint32_t calibrate_ticks;
 static struct axk_interrupt_driver_t* calibrate_int_driver;
 static bool calibrate_use_x2apic;
 
-static bool calibrate_callback( void )
+static bool calibrate_callback( uint8_t _unused_ )
 {
     if( calibrate_ticks == 1 )
     {
@@ -135,8 +133,16 @@ bool axk_x86_calibrate_lapic_timer( struct axk_timer_driver_t* self )
     calibrate_use_x2apic = ( this->ptr_x2apic != NULL );
     calibrate_int_driver = (struct axk_interrupt_driver_t*)( calibrate_use_x2apic ? (struct axk_interrupt_driver_t*)this->ptr_x2apic : (struct axk_interrupt_driver_t*)this->ptr_xapic );
 
+    // Acquire a local interrupt handler 
+    uint8_t int_vector;
+    if( !axk_interrupts_acquire_handler( AXK_PROCESS_KERNEL, calibrate_callback, &int_vector ) )
+    {
+        return false;
+    }
+
     // Start the local APIC timer with a huge starting count
     uint64_t rflags = axk_disable_interrupts();
+    uint32_t local_processor;
 
     if( this->ptr_x2apic != NULL )
     {
@@ -145,8 +151,11 @@ bool axk_x86_calibrate_lapic_timer( struct axk_timer_driver_t* self )
     else
     {
         axk_x86_xapic_write_lapic( (struct axk_x86_xapic_driver_t*) this->ptr_xapic, LAPIC_REGISTER_TIMER_DIVIDE_CONFIG, 0b0011 );                  // Divisor is 16
-        axk_x86_xapic_write_lapic( (struct axk_x86_xapic_driver_t*) this->ptr_xapic, LAPIC_REGISTER_LVT_TIMER, (uint32_t) AXK_INT_LOCAL_TIMER );    // Set one shot mode
+        axk_x86_xapic_write_lapic( (struct axk_x86_xapic_driver_t*) this->ptr_xapic, LAPIC_REGISTER_LVT_TIMER, (uint32_t) AXK_INT_IGNORED );  // Set one shot mode
         axk_x86_xapic_write_lapic( (struct axk_x86_xapic_driver_t*) this->ptr_xapic, LAPIC_REGISTER_TIMER_INIT_COUNT, 0xFFFFFFFF );                 // Initial count is high
+
+        // Read current processor ID
+        local_processor = ( ( axk_x86_xapic_read_lapic( (struct axk_x86_xapic_driver_t*) this->ptr_xapic, LAPIC_REGISTER_ID ) & 0xFF000000U ) >> 24 );
     }
 
     axk_restore_interrupts( rflags );
@@ -155,19 +164,22 @@ bool axk_x86_calibrate_lapic_timer( struct axk_timer_driver_t* self )
     {
         // 20 ticks, at ~0.05s each
         calibrate_target = 21;
-        uint32_t result = axk_timer_start( ptr_timer, AXK_TIMER_MODE_DIVISOR, 59659, false, calibrate_callback );
+        uint32_t result = axk_timer_start( ptr_timer, AXK_TIMER_MODE_DIVISOR, 59659, false, local_processor, int_vector );
         if( result != AXK_TIMER_ERROR_NONE ) { return false; }
     }
     else
     {
         // 4 ticks, at ~0.25s each
         calibrate_target = 5;
-        uint32_t result = axk_timer_start( ptr_timer, AXK_TIMER_MODE_PERIODIC, 250000000, false, calibrate_callback );
+        uint32_t result = axk_timer_start( ptr_timer, AXK_TIMER_MODE_PERIODIC, 250000000, false, local_processor, int_vector );
         if( result != AXK_TIMER_ERROR_NONE ) { return false; }
     }
 
     // Now, we are going to wait for calibration to complete
     while( calibrate_ticks <= calibrate_target ) { __asm__( "pause" ); }
+
+    // Release the interrupt handler, we dont need it anymore
+    axk_interrupts_release_handler( int_vector );
 
     if( this->ptr_x2apic != NULL )
     {
@@ -258,10 +270,6 @@ bool lapic_timer_init( struct axk_timer_driver_t* self )
     axk_x86_cpuid( &eax, &ebx, &ecx, &edx );
 
     this->b_constant = ( ( eax & ( 1U << 2 ) ) != 0U );
-
-    // Allocate callback list
-    this->callback_list = (bool(**)(void))calloc( axk_processor_get_count(), sizeof( void* ) );
-
     axk_terminal_prints( "LAPIC Timer (x86): Initialized successfully. Constant? " );
     axk_terminal_prints( this->b_constant ? "YES" : "NO" );
     axk_terminal_prints( "  Deadline Mode? " );
@@ -297,10 +305,10 @@ uint64_t lapic_timer_get_frequency( struct axk_timer_driver_t* self )
 }
 
 
-uint32_t lapic_timer_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, bool( *callback )( void ) )
+uint32_t lapic_timer_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, uint32_t processor, uint8_t vector )
 {
     struct axk_x86_lapic_timer_driver_t* this = (struct axk_x86_lapic_timer_driver_t*)( self );
-    if( this == NULL || delay == 0UL || callback == NULL ) { return AXK_TIMER_ERROR_INVALID_PARAMS; }
+    if( this == NULL || delay == 0UL || vector < AXK_INT_MINIMUM) { return AXK_TIMER_ERROR_INVALID_PARAMS; }
     if( mode == AXK_TIMER_MODE_DIVISOR ) { return AXK_TIMER_ERROR_INVALID_MODE; }
     if( mode == AXK_TIMER_MODE_DEADLINE && !this->b_deadline_mode ) { return AXK_TIMER_ERROR_INVALID_MODE; }
 
@@ -388,7 +396,7 @@ uint32_t lapic_timer_start( struct axk_timer_driver_t* self, enum axk_timer_mode
 
     // Stop existing timer (caller needs to ensure timer isnt already running)
     // Then, set the proper mode
-    uint32_t lvt_value = (uint32_t) AXK_INT_LOCAL_TIMER;
+    uint32_t lvt_value = (uint32_t) vector;
     switch( mode )
     {
         case AXK_TIMER_MODE_ONE_SHOT:
@@ -411,9 +419,6 @@ uint32_t lapic_timer_start( struct axk_timer_driver_t* self, enum axk_timer_mode
         axk_x86_xapic_write_lapic( this->ptr_xapic, LAPIC_REGISTER_TIMER_DIVIDE_CONFIG, divisor );
         axk_x86_xapic_write_lapic( this->ptr_xapic, LAPIC_REGISTER_LVT_TIMER, lvt_value ); 
     }
-
-    // Store pointer to callback function
-    this->callback_list[ axk_processor_get_id() ] = callback;
 
     // Start the timer
     if( mode == AXK_TIMER_MODE_ONE_SHOT || mode == AXK_TIMER_MODE_PERIODIC )
@@ -531,18 +536,3 @@ uint64_t lapic_timer_get_max_value( struct axk_timer_driver_t* self )
 {
     return 0xFFFFFFFFUL;
 }
-
-
-bool lapic_timer_invoke( struct axk_timer_driver_t* self )
-{
-    struct axk_x86_lapic_timer_driver_t* this = (struct axk_x86_lapic_timer_driver_t*)( self );
-    
-    void* callback = this != NULL ? this->callback_list[ axk_processor_get_id() ] : NULL;
-    if( callback != NULL )
-    {
-        return ( (bool(*)(void))( callback ) )();
-    }
-
-    return false;
-}
-

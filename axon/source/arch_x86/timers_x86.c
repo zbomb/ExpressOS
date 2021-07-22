@@ -14,10 +14,11 @@
 #include "axon/arch_x86/drivers/lapic_timer_driver.h"
 #include "axon/debug_print.h"
 #include "axon/panic.h"
-#include "axon/system/processor_info.h"
 #include "axon/memory/atomics.h"
 #include "axon/system/time.h"
 #include "axon/system/time_private.h"
+#include "axon/arch_x86/acpi_info.h"
+#include "axon/arch.h"
 #include "stdlib.h"
 #include "big_math.h"
 
@@ -221,8 +222,11 @@ bool axk_timers_init( void )
 bool axk_timers_bsp_sync( void )
 {
     // Check if we have to do a TSC Sync
-    uint32_t proc_id        = axk_processor_get_id();
-    uint32_t proc_count     = axk_processor_get_count();
+    struct axk_x86_acpi_info_t* ptr_acpi = axk_x86_acpi_get();
+    if( ptr_acpi == NULL ) { return false; }
+
+    uint32_t proc_id        = axk_get_cpu_id();
+    uint32_t proc_count     = ptr_acpi->lapic_count;
     uint32_t sync_count     = proc_count - 1u;
     bool b_require_unlock   = false;
 
@@ -291,15 +295,21 @@ bool axk_timers_bsp_sync( void )
     axk_time_init( 50000000UL );
 
     uint32_t ext_id = axk_timer_get_id( g_external_timer );
+    uint32_t result;
     switch( ext_id )
     {
         case AXK_TIMER_ID_HPET:
-        axk_timer_start( g_external_timer, AXK_TIMER_MODE_PERIODIC, 50000000UL, false, axk_time_ext_tick );
+        result = axk_timer_start( g_external_timer, AXK_TIMER_MODE_PERIODIC, 50000000UL, false, ptr_acpi->bsp_id, AXK_INT_EXT_CLOCK_TICK );
         break;
 
         case AXK_TIMER_ID_PIT:
-        axk_timer_start( g_external_timer, AXK_TIMER_MODE_DIVISOR, 59659UL, true, axk_time_ext_tick );
+        result = axk_timer_start( g_external_timer, AXK_TIMER_MODE_DIVISOR, 59659UL, true, ptr_acpi->bsp_id, AXK_INT_EXT_CLOCK_TICK );
         break;
+    }
+
+    if( result != AXK_TIMER_ERROR_NONE )
+    {
+        axk_panic( "Timers (x86): Failed to start external timer used to keep track of system time" );
     }
 
     // Wait for syncronization to occur before continuing...
@@ -323,7 +333,7 @@ bool axk_timers_ap_sync( void )
     // Determine if we need to perform TSC syncronization
     if( g_counter->get_id() == AXK_TIMER_ID_TSC )
     {
-        uint32_t proc_id = axk_processor_get_id();
+        uint32_t proc_id = axk_get_cpu_id();
 
         // Increment lock and wait for it to be reset
         axk_atomic_fetch_add_uint32( &g_tsc_sync_point, 1, MEMORY_ORDER_SEQ_CST );

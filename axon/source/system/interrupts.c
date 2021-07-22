@@ -142,7 +142,7 @@ bool axk_interrupts_acquire_handler( uint32_t process, bool( *func_ptr )( uint8_
     axk_atomic_store_pointer( &( ptr_entry->callback ), (void*)func_ptr, MEMORY_ORDER_SEQ_CST );
     axk_spinlock_release( &g_lock );
 
-    *out_vec = index;
+    *out_vec = ( index + AXK_MIN_INTERRUPT_HANDLER );
     return true;
 }
 
@@ -150,13 +150,13 @@ bool axk_interrupts_acquire_handler( uint32_t process, bool( *func_ptr )( uint8_
 bool axk_interrupts_lock_handler( uint32_t process, bool( *func_ptr )( uint8_t ), uint8_t vec )
 {
     // Validate parameters
-    if( process == AXK_PROCESS_INVALID || vec >= AXK_MAX_INTERRUPT_HANDLERS ) { return false; }
+    if( process == AXK_PROCESS_INVALID || vec >= AXK_MAX_INTERRUPT_HANDLERS || vec <= AXK_MIN_INTERRUPT_HANDLER ) { return false; }
 
     // Acquire lock
     axk_spinlock_acquire( &g_lock );
 
     // Check if the target handler is already owned
-    struct axk_interrupt_handler_t* ptr_entry = g_handlers + vec;
+    struct axk_interrupt_handler_t* ptr_entry = g_handlers + ( vec - AXK_MIN_INTERRUPT_HANDLER );
     if( ptr_entry->process != AXK_PROCESS_INVALID ) 
     { 
         axk_spinlock_release( &g_lock );
@@ -175,12 +175,12 @@ bool axk_interrupts_lock_handler( uint32_t process, bool( *func_ptr )( uint8_t )
 void axk_interrupts_release_handler( uint8_t vec )
 {
     // Validate parameter
-    if( vec >= AXK_MAX_INTERRUPT_HANDLERS ) { return; }
+    if( vec >= AXK_MAX_INTERRUPT_HANDLERS || vec < AXK_MIN_INTERRUPT_HANDLER ) { return; }
 
     // Acquire lock while modifying state
     axk_spinlock_acquire( &g_lock );
 
-    struct axk_interrupt_handler_t* ptr_entry = g_handlers + vec;
+    struct axk_interrupt_handler_t* ptr_entry = g_handlers + ( vec - AXK_MIN_INTERRUPT_HANDLER );
 
     ptr_entry->process      = AXK_PROCESS_INVALID;
     axk_atomic_store_pointer( &( ptr_entry->callback ), NULL, MEMORY_ORDER_SEQ_CST );
@@ -192,12 +192,12 @@ void axk_interrupts_release_handler( uint8_t vec )
 bool axk_interrupts_update_handler( uint8_t vec, bool( *func_ptr )( uint8_t ) )
 {
     // Validate parameters
-    if( vec >= AXK_MAX_INTERRUPT_HANDLERS ) { return false; }
+    if( vec >= AXK_MAX_INTERRUPT_HANDLERS || vec < AXK_MIN_INTERRUPT_HANDLER ) { return false; }
 
     // Acquire lock whie modifying state
     axk_spinlock_acquire( &g_lock );
 
-    struct axk_interrupt_handler_t* ptr_entry = g_handlers + vec;
+    struct axk_interrupt_handler_t* ptr_entry = g_handlers + ( vec - AXK_MIN_INTERRUPT_HANDLER );
     if( ptr_entry->process == AXK_PROCESS_INVALID )
     {
         axk_spinlock_release( &g_lock );

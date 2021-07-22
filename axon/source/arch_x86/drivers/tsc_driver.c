@@ -7,6 +7,7 @@
 #include "axon/arch_x86/drivers/tsc_driver.h"
 #include "axon/arch_x86/util.h"
 #include "axon/debug_print.h"
+#include "axon/system/interrupts.h"
 #include "axon/arch.h"
 #include "stdlib.h"
 
@@ -17,7 +18,7 @@ bool tsc_init( struct axk_timer_driver_t* self );
 bool tsc_query_features( struct axk_timer_driver_t* self, enum axk_timer_features_t feats );
 uint32_t tsc_get_id( void );
 uint64_t tsc_get_frequency( struct axk_timer_driver_t* self );
-uint32_t tsc_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, bool( *callback )( void ) );
+uint32_t tsc_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, uint32_t processor, uint8_t vector );
 bool tsc_stop( struct axk_timer_driver_t* self );
 bool tsc_is_running( struct axk_timer_driver_t* self );
 uint64_t tsc_get_counter( struct axk_timer_driver_t* self );
@@ -48,7 +49,7 @@ static uint32_t calibrate_ticks;
 static uint64_t calibrate_value;
 static uint32_t calibrate_target;
 
-static bool calibrate_callback( void )
+static bool calibrate_callback( uint8_t _unused_ )
 {
     if( calibrate_ticks == 1 )
     {
@@ -96,19 +97,27 @@ bool axk_x86_calibrate_tsc_driver( struct axk_timer_driver_t* self )
     calibrate_ticks = 0;
     calibrate_value = 0;
 
+    uint32_t processor = axk_get_cpu_id();
+    uint8_t int_vec;
+
+    if( !axk_interrupts_acquire_handler( AXK_PROCESS_KERNEL, calibrate_callback, &int_vec ) )
+    {
+        return false;
+    }
+
     // Determine if were using PIT, or if were using HPET to calibrate
     if( ptr_timer->get_id() == AXK_TIMER_ID_PIT )
     {
         // In this case, we need to select a divisor, and we want to run for a total of 0.5s, so, to achieve ~0.05s per tick, the divisor should be 59659
         calibrate_target = 21;
-        uint32_t result = axk_timer_start( ptr_timer, AXK_TIMER_MODE_DIVISOR, 59659, false, calibrate_callback );
+        uint32_t result = axk_timer_start( ptr_timer, AXK_TIMER_MODE_DIVISOR, 59659, false, processor, int_vec );
         if( result != AXK_TIMER_ERROR_NONE ) { return false; }
     }
     else
     {
         // In this case, we are going to use 0.25s ticks, still targetting 0.5s delta total
         calibrate_target = 5;
-        uint32_t result = axk_timer_start( ptr_timer, AXK_TIMER_MODE_PERIODIC, 250000000, false, calibrate_callback );
+        uint32_t result = axk_timer_start( ptr_timer, AXK_TIMER_MODE_PERIODIC, 250000000, false, processor, int_vec );
         if( result != AXK_TIMER_ERROR_NONE ) { return false; }
     }
 
@@ -151,6 +160,7 @@ bool axk_x86_calibrate_tsc_driver( struct axk_timer_driver_t* self )
         axk_terminal_prints( " Hz \n" );
     }
 
+    axk_interrupts_release_handler( int_vec );
     return true;
 }
 
@@ -183,9 +193,9 @@ uint64_t tsc_get_frequency( struct axk_timer_driver_t* self )
 }
 
 
-uint32_t tsc_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, bool( *callback )( void ) )
+uint32_t tsc_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, uint32_t processor, uint8_t vector )
 {
-    return 0;
+    return AXK_TIMER_ERROR_COUNTER_ONLY;
 }
 
 

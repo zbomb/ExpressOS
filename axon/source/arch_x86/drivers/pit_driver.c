@@ -5,7 +5,6 @@
 ==============================================================*/
 
 #include "axon/arch_x86/drivers/pit_driver.h"
-#include "axon/system/processor_info.h"
 #include "axon/system/interrupts.h"
 #include "axon/arch.h"
 #include "axon/arch_x86/util.h"
@@ -29,12 +28,11 @@ bool pit_init( struct axk_timer_driver_t* self );
 bool pit_query_features( struct axk_timer_driver_t* self, enum axk_timer_features_t feats );
 uint32_t pit_get_id( void );
 uint64_t pit_get_frequency( struct axk_timer_driver_t* self );
-uint32_t pit_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, bool( *callback )( void ) );
+uint32_t pit_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, uint32_t processor, uint8_t vector );
 bool pit_stop( struct axk_timer_driver_t* self );
 bool pit_is_running( struct axk_timer_driver_t* self );
 uint64_t pit_get_counter( struct axk_timer_driver_t* self );
 uint64_t pit_get_max_value( struct axk_timer_driver_t* self );
-bool pit_invoke( struct axk_timer_driver_t* self );
 
 
 struct axk_timer_driver_t* axk_x86_create_pit_driver( void )
@@ -50,7 +48,6 @@ struct axk_timer_driver_t* axk_x86_create_pit_driver( void )
     output->func_table.is_running       = pit_is_running;
     output->func_table.get_counter      = pit_get_counter;
     output->func_table.get_max_value    = pit_get_max_value;
-    output->func_table.invoke           = pit_invoke;
 
     return (struct axk_timer_driver_t*)( output );
 }
@@ -67,26 +64,24 @@ bool pit_init( struct axk_timer_driver_t* self )
     // Determine the global interrupt were wired to
     this->global_interrupt = axk_interrupts_get_ext_number( 0, 0 );
 
-    // Setup state
-    this->callback              = NULL;
-    this->b_running             = false;
-    this->b_running_periodic    = false;
-
     // Setup the global interrupt mapping, route to this processor for now
     struct axk_external_interrupt_routing_t ext_routing;
 
     ext_routing.global_interrupt    = this->global_interrupt;
-    ext_routing.local_interrupt     = AXK_INT_EXTERNAL_TIMER;
+    ext_routing.local_interrupt     = AXK_INT_IGNORED;
     ext_routing.b_low_priority      = false;
     ext_routing.b_active_low        = false;
     ext_routing.b_level_triggered   = false;
     ext_routing.b_masked            = false;
-    ext_routing.target_processor    = axk_processor_get_id();
+    ext_routing.target_processor    = axk_get_cpu_id();
 
     if( !axk_interrupts_lock_external( AXK_PROCESS_KERNEL, &ext_routing, true ) )
     {
         return false;
     }
+
+    this->target_processor = ext_routing.target_processor;
+    this->target_interrupt = AXK_INT_IGNORED;
 
     // Disable interrupts and setup the timer 
     uint64_t rflags = axk_disable_interrupts();
@@ -128,25 +123,36 @@ uint64_t pit_get_frequency( struct axk_timer_driver_t* self )
 }
 
 
-uint32_t pit_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, bool( *callback )( void ) )
+uint32_t pit_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode, uint64_t delay, bool b_delay_in_ticks, uint32_t processor, uint8_t vector )
 {
     // Validate parameters
-    if( self == NULL || delay == 0UL || callback == NULL ) { return AXK_TIMER_ERROR_INVALID_PARAMS; }
+    if( self == NULL || delay == 0UL || vector < AXK_INT_MINIMUM ) { return AXK_TIMER_ERROR_INVALID_PARAMS; }
     if( mode != AXK_TIMER_MODE_ONE_SHOT && mode != AXK_TIMER_MODE_DIVISOR ) { return AXK_TIMER_ERROR_INVALID_MODE; }
 
     struct axk_x86_pit_driver_t* this = (struct axk_x86_pit_driver_t*)( self );
 
-    // If were already running, then we wont start
+    // Acquire lock to have exclusive access to the hardware
     axk_spinlock_acquire( &( this->lock ) );
-    if( this->b_running )
-    {
-        axk_spinlock_release( &( this->lock ) );
-        return AXK_TIMER_ERROR_ALREADY_RUNNING;
-    }
 
-    // Start settings everything up...
-    this->b_running     = true;
-    this->callback      = callback;
+    // Update external interrupt routing
+    if( processor != this->target_processor || vector != this->target_interrupt )
+    {
+        struct axk_external_interrupt_routing_t routing;
+
+        routing.global_interrupt    = this->global_interrupt;
+        routing.local_interrupt     = vector;
+        routing.b_low_priority      = false;
+        routing.b_active_low        = false;
+        routing.b_level_triggered   = false;
+        routing.b_masked            = false;
+        routing.target_processor    = processor;
+
+        if( !axk_interrupts_update_external( this->global_interrupt, &routing ) )
+        {
+            axk_spinlock_release( &( this->lock ) );
+            return AXK_TIMER_ERROR_INVALID_PARAMS;
+        }
+    }
 
     if( mode == AXK_TIMER_MODE_ONE_SHOT )
     {
@@ -191,8 +197,6 @@ uint32_t pit_start( struct axk_timer_driver_t* self, enum axk_timer_mode_t mode,
             return AXK_TIMER_ERROR_INVALID_PARAMS;
         }
 
-        this->b_running_periodic = true;
-
         axk_x86_outb( PIT_PORT_MODE_COMMAND, 0b00110100 );
         axk_x86_waitio();
         axk_x86_outb( PIT_PORT_CHANNEL_0, (uint8_t)( delay & 0x00FFUL ) );
@@ -213,16 +217,8 @@ bool pit_stop( struct axk_timer_driver_t* self )
 
     // Ensure interrupts are disabled while we do this so we arent preempted
     axk_spinlock_acquire( &( this->lock ) );
-    if( this->b_running )
-    {
-        axk_x86_outb( PIT_PORT_MODE_COMMAND, 0b00110000 );
-        axk_x86_waitio();
-        this->b_running = false;
-    }
-
-    this->callback              = NULL;
-    this->b_running_periodic    = false;
-
+    axk_x86_outb( PIT_PORT_MODE_COMMAND, 0b00110000 );
+    axk_x86_waitio();
     axk_spinlock_release( &( this->lock ) );
     return true;
 }
@@ -233,7 +229,8 @@ bool pit_is_running( struct axk_timer_driver_t* self )
     struct axk_x86_pit_driver_t* this = (struct axk_x86_pit_driver_t*)( self );
     if( this == NULL ) { return false; }
 
-    return this->b_running;
+    // TODO: Is there any good way to determine if the timer is still running without the driver handling the interrupt?
+    return false;
 }
 
 
@@ -248,22 +245,3 @@ uint64_t pit_get_max_value( struct axk_timer_driver_t* self )
 {
     return 0xFFFFUL;
 }
-
-
-bool pit_invoke( struct axk_timer_driver_t* self )
-{
-    struct axk_x86_pit_driver_t* this = (struct axk_x86_pit_driver_t*)( self );
-    
-    axk_spinlock_acquire( &( this->lock ) );
-    void* callback = this->callback;
-    if( !this->b_running_periodic ) { this->b_running = false; this->callback = NULL; }
-    axk_spinlock_release( &( this->lock ) );
-
-    if( callback != NULL )
-    {
-        return ( (bool (*)(void))( callback ) )();
-    }
-
-    return false; // Didnt send EOI
-}
-
