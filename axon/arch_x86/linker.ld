@@ -1,17 +1,13 @@
 
 OUTPUT_FORMAT( elf64-x86-64 )
-ENTRY( ax_x86_bsp_entry )
+ENTRY( axk_x86_bsp_entry )
 
 KERNEL_VA = 0xffffffff80000000;
 
 SECTIONS
 {
     . = 1M;
-    ax_kernel_begin = .;
-    .ax_multiboot_header :
-    {
-        KEEP(*(ax_multiboot_header))
-    }
+    axk_kernel_begin = .;
 
     /* Add our higher-half offset, so everything is linked properly */
     . += KERNEL_VA;
@@ -36,5 +32,5 @@ SECTIONS
         *(.bss)
     }
 
-    ax_kernel_end = .;
+    axk_kernel_end = .;
 }

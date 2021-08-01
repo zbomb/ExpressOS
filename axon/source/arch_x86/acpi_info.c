@@ -11,6 +11,7 @@
 #include "axon/arch.h"
 #include "axon/debug_print.h"
 #include "axon/panic.h"
+#include "axon/library/vector.h"
 #include "string.h"
 #include "stdlib.h"
 
@@ -27,6 +28,10 @@
 #define ACPI_ENTRY_LSAPIC               0x07
 #define ACPI_ENTRY_PLATFORM_INTS        0x08
 #define ACPI_ENTRY_X2_LAPIC             0x09
+
+#define SRAT_ENTRY_PROCESSOR            0x00
+#define SRAT_ENTRY_MEMORY               0x01
+#define SRAT_ENTRY_PROCESSOR_X2APIC     0x02
 
 /*
     State
@@ -74,7 +79,9 @@ bool parse_cpuid( void )
     if( !axk_x86_cpuid_s( &eax, &ebx, &ecx, &edx ) )
     {
         //axk_panic( "ACPI: CPUID doesnt support APIC info leaf" );
-        edx = axk_get_cpu_id();
+        eax = 0x01; ebx = 0x00; ecx = 0x00; edx = 0x00;
+        axk_x86_cpuid( &eax, &ebx, &ecx, &edx );
+        edx = ( ( ebx & 0xFF000000U ) >> 24 );
     }
 
     bool b_found_bsp = false;
@@ -93,6 +100,8 @@ bool parse_cpuid( void )
         axk_terminal_prints( "ACPI: [Warning] Failed to find BSP APIC ID, defaulting to '0'\n" );
         g_acpi.bsp_id = 0;
     }
+
+    // Now were going to finish parsing system topology
 
     return true;
 }
@@ -291,6 +300,178 @@ bool parse_ssdt( uint64_t address )
 }
 
 
+bool parse_srat( uint64_t address )
+{
+    struct axk_x86_acpi_header_t* ptr_header = (struct axk_x86_acpi_header_t*)( address );
+
+    // First, were going to count how many of each entries there are so we can allocate storage
+    uint32_t cpu_num        = 0U;
+    uint32_t mem_num        = 0U;
+    uint32_t cpu_x2_num     = 0U;
+    uint8_t* ptr_pos        = (uint8_t*)( address + 0x30UL );
+    uint8_t* ptr_end        = (uint8_t*)( address + (uint64_t)ptr_header->length );
+
+    while( ptr_pos < ptr_end )
+    {
+        // Read the next entry type
+        switch( *ptr_pos )
+        {
+            case SRAT_ENTRY_PROCESSOR:
+            
+            // Check if this entry is enabled
+            if( AXK_CHECK_FLAG( AXK_READ_UINT8( ptr_pos + 4UL ), 0b1 ) )
+            {
+                cpu_num++;
+            }
+            break;
+
+            case SRAT_ENTRY_MEMORY:
+
+            // Check if this entry is enabled
+            if( AXK_CHECK_FLAG( AXK_READ_UINT8( ptr_pos + 28UL ), 0b1 ) )
+            {
+                mem_num++;
+            }
+            break;
+
+            case SRAT_ENTRY_PROCESSOR_X2APIC:
+
+            // Check if this entry is enabled
+            if( AXK_CHECK_FLAG( AXK_READ_UINT8( ptr_pos + 12UL ), 0b1 ) )
+            {
+                cpu_x2_num++;
+            }
+            break;
+
+            default:
+            break;
+        }
+    }
+
+    // Allocate storage in global ACPI structure
+    g_acpi.srat_cpu_count      = cpu_num > cpu_x2_num ? cpu_num : cpu_x2_num;
+    g_acpi.srat_memory_count   = mem_num;
+    g_acpi.srat_cpu_list       = g_acpi.srat_cpu_count > 0U ? (struct axk_x86_srat_cpu_t*) calloc( g_acpi.srat_cpu_count, sizeof( struct axk_x86_srat_cpu_t ) ) : NULL;
+    g_acpi.srat_memory_list    = g_acpi.srat_memory_count > 0U ? (struct axk_x86_srat_memory_t*) calloc( g_acpi.srat_memory_count, sizeof( struct axk_x86_srat_memory_t ) ) : NULL;
+
+    // If there are no structures to fill, then were finished
+    if( g_acpi.srat_cpu_list == NULL && g_acpi.srat_memory_list == NULL ) { return true; }
+    uint32_t cpu_counter = 0U;
+    uint32_t mem_counter = 0U;
+
+    // Fill the newly allocate structures
+    ptr_pos = (uint8_t*)( address + 0x30UL );
+    while( ptr_pos < ptr_end )
+    {
+        // Read the entry type
+        switch( *ptr_pos )
+        {
+            case SRAT_ENTRY_PROCESSOR:
+            {
+                // Ensure this entry is enabled
+                if( !AXK_CHECK_FLAG( AXK_READ_UINT8( ptr_pos + 4UL ), 0b1 ) ) { continue; }
+
+                // Check if theres an existing processor in the list, because an x2apic entry was read first
+                uint8_t id      = AXK_READ_UINT8( ptr_pos + 3UL );
+                bool b_found    = false;
+
+                for( uint32_t i = 0; i < cpu_counter; i++ )
+                {
+                    if( g_acpi.srat_cpu_list[ i ].x2apic_lapic == (uint32_t)id )
+                    {
+                        // Found an existing entry for this processor, so just update the 8-bit identifier
+                        g_acpi.srat_cpu_list[ i ].xapic_lapic = id;
+                        b_found = true;
+                        break;
+                    }
+                }
+
+                if( !b_found )
+                {
+                    // Create a new entry
+                    struct axk_x86_srat_cpu_t* new_entry = g_acpi.srat_cpu_list + ( cpu_counter++ );
+
+                    // Read the domain identifier
+                    uint8_t domain[ 4 ];
+                    domain[ 0 ] = AXK_READ_UINT8( ptr_pos + 2UL );
+                    domain[ 1 ] = AXK_READ_UINT8( ptr_pos + 9UL );
+                    domain[ 2 ] = AXK_READ_UINT8( ptr_pos + 10UL );
+                    domain[ 3 ] = AXK_READ_UINT8( ptr_pos + 11UL );
+
+                    new_entry->domain           = ( (uint32_t)( domain[ 3 ] ) << 24 ) | ( (uint32_t)( domain[ 2 ] ) << 16 ) | ( (uint32_t)( domain[ 1 ] ) << 8 ) | (uint32_t)( domain[ 0 ] );
+                    new_entry->xapic_lapic      = id;
+                    new_entry->clock_domain     = AXK_READ_UINT32( ptr_pos + 12UL );
+                }
+                break;
+            }
+            case SRAT_ENTRY_MEMORY:
+            {
+                // Ensure this entry is enabled
+                if( !AXK_CHECK_FLAG( AXK_READ_UINT8( ptr_pos + 28UL ), 0b1 ) ) { continue; }
+
+                struct axk_x86_srat_memory_t* new_entry = g_acpi.srat_memory_list + ( mem_counter++ );
+                new_entry->domain = AXK_READ_UINT32( ptr_pos + 2UL );
+                
+                // Read other fields from the table
+                uint32_t base_low       = AXK_READ_UINT32( ptr_pos + 8UL );
+                uint32_t base_high      = AXK_READ_UINT32( ptr_pos + 12UL );
+                uint32_t length_low     = AXK_READ_UINT32( ptr_pos + 16UL );
+                uint32_t length_high    = AXK_READ_UINT32( ptr_pos + 20UL );
+                uint32_t flags          = AXK_READ_UINT32( ptr_pos + 28UL );
+
+                // Write into our structure
+                new_entry->base_address     = ( (uint64_t)( base_high ) << 32 ) | (uint64_t)( base_low );
+                new_entry->length           = ( (uint64_t)( length_high ) << 32 ) | (uint64_t)( length_low );
+                new_entry->b_hotplug        = AXK_CHECK_FLAG( flags, 0b10 );
+                new_entry->b_nonvolatile    = AXK_CHECK_FLAG( flags, 0b100 );
+                break;
+            }
+            case SRAT_ENTRY_PROCESSOR_X2APIC:
+            {
+                // Ensure this entry is enabled
+                if( !AXK_CHECK_FLAG( AXK_READ_UINT8( ptr_pos + 12UL ), 0b1 ) ) { continue; }
+
+                // Check if theres an existing processor in the list
+                uint32_t id = AXK_READ_UINT32( ptr_pos + 8UL );
+                bool b_found    = false;
+
+                if( id <= 0xFFU )
+                {
+                    for( uint32_t i = 0; i < cpu_counter; i++ )
+                    {
+                        if( (uint32_t)( g_acpi.srat_cpu_list[ i ].xapic_lapic ) == id )
+                        {
+                            // Found an existing entry for this processor, so just update the 8-bit identifier
+                            g_acpi.srat_cpu_list[ i ].x2apic_lapic = id;
+                            b_found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if( !b_found )
+                {
+                    // Create a new entry
+                    struct axk_x86_srat_cpu_t* new_entry = g_acpi.srat_cpu_list + ( cpu_counter++ );
+
+                    // Write info
+                    new_entry->domain           = AXK_READ_UINT32( ptr_pos + 4UL );
+                    new_entry->x2apic_lapic     = id;
+                    new_entry->clock_domain     = AXK_READ_UINT32( ptr_pos + 16UL );
+                }
+
+                break;
+            }
+
+            default:
+            break;
+        }
+    }
+
+    return true;
+}
+
+
 bool parse_hpet( uint64_t address )
 {
     struct axk_x86_acpi_header_t* ptr_header = (struct axk_x86_acpi_header_t*)( address );
@@ -362,6 +543,14 @@ bool parse_rsdt( uint64_t address )
             if( !parse_hpet( table_address ) )
             {
                 axk_terminal_prints( "ACPI: Failed to parse HPET table!\n" );
+            }
+        }
+        else if( memcmp( (void*) table_address, "SRAT", 4 ) == 0 )
+        {
+            if( !parse_srat( table_address ) )
+            {
+                axk_terminal_prints( "ACPI: [Warning] Found SRAT, but was unable to parse!\n" );
+                //return false;
             }
         }
     }
@@ -523,9 +712,13 @@ bool axk_x86_acpi_parse( void )
     axk_terminal_printu32( g_acpi.ioapic_nmi_count );
     axk_terminal_prints( " IOAPIC NMIs, " );
     axk_terminal_printu32( g_acpi.lapic_nmi_count );
-    axk_terminal_prints( " LAPIC NMIs, and HPET is " );
+    axk_terminal_prints( " LAPIC NMIs, HPET is " );
     if( g_acpi.hpet_info == NULL ) { axk_terminal_prints( "not " ); }
-    axk_terminal_prints( "present\n" );
+    axk_terminal_prints( "present\n\t SRAT Entries => Processors: " );
+    axk_terminal_printu32( g_acpi.srat_cpu_count );
+    axk_terminal_prints( ", Memory Ranges: " );
+    axk_terminal_printu32( g_acpi.srat_memory_count );
+    axk_terminal_printnl();
     
     return true;
 }

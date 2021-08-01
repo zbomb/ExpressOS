@@ -5,13 +5,13 @@
 ;======================================================================
 
 ; =================== Imports/Exports ====================
-global ax_ap_trampoline
+global axk_ap_trampoline
 global axk_ap_stack
 global axk_ap_counter
 global axk_ap_wait_flag
 
-extern ax_c_main_ap
-extern ax_gdt_pointer_high
+extern axk_c_main_ap
+extern axk_gdt_pointer
 
 
 section .data
@@ -30,7 +30,7 @@ section .text
 bits 64
 align 8
 
-ax_ap_trampoline:
+axk_ap_trampoline:
 
     ; Set segment registers
     mov ax, 0x10
@@ -41,7 +41,7 @@ ax_ap_trampoline:
     mov gs, ax
 
     ; Load the high address GDT pointer
-    lgdt [ax_gdt_pointer_high]
+    lgdt [axk_gdt_pointer]
 
     ; Setup our fixed kernel stack
     mov rbp, qword [axk_ap_stack]
@@ -57,6 +57,6 @@ ax_ap_trampoline:
     jne .wait
 
     ; Now jump into the C code in the higher half
-    mov rax, ax_c_main_ap
+    mov rax, axk_c_main_ap
     jmp rax
     hlt

@@ -186,6 +186,8 @@ struct axk_x86_acpi_info_t
     uint32_t source_override_count;
     uint32_t ioapic_nmi_count;
     uint32_t lapic_nmi_count;
+    uint32_t srat_cpu_count;
+    uint32_t srat_memory_count;
     bool b_legacy_pic;
 
     struct axk_x86_lapic_info_t* lapic_list;
@@ -195,7 +197,27 @@ struct axk_x86_acpi_info_t
     struct axk_x86_lapic_nmi_t* lapic_nmi_list;
     struct axk_x86_hpet_info_t* hpet_info;
     struct axk_x86_acpi_fadt_t* fadt;
+    struct axk_x86_srat_cpu_t* srat_cpu_list;
+    struct axk_x86_srat_memory_t* srat_memory_list;
+};
 
+
+struct axk_x86_srat_cpu_t
+{
+    uint32_t domain;
+    uint8_t xapic_lapic;
+    uint32_t x2apic_lapic;
+    uint32_t clock_domain;
+};
+
+
+struct axk_x86_srat_memory_t
+{
+    uint32_t domain;
+    uint64_t base_address;
+    uint64_t length;
+    bool b_hotplug;
+    bool b_nonvolatile;
 };
 
 /*

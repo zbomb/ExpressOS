@@ -9,6 +9,7 @@
 
 #define AXK_SYSINFO_GENERAL     0x00
 #define AXK_SYSINFO_PROCESSOR   0x01
+#define AXK_SYSINFO_TOPOLOGY    0x02
 
 #define AXK_COUNTER_AVAILABLE_PAGES     0x00
 #define AXK_COUNTER_RESERVED_PAGES      0x01
@@ -27,10 +28,7 @@ struct axk_sysinfo_general_t
     uint64_t total_memory;
     uint32_t cpu_count;
     uint32_t bsp_id;
-
-    uint32_t alt_cpu_count;
-    uint8_t cpu_type;
-    uint8_t alt_cpu_type;
+    uint32_t cache_count;
 
     // TODO: Additional fields?
 };
@@ -39,8 +37,30 @@ struct axk_sysinfo_processor_t
 {
     uint32_t identifier;
     uint8_t type;
+    uint32_t domain;
+    uint32_t clock_domain;
+    uint32_t package_id;
+    uint32_t core_id;
+    uint32_t smt_id;
+    uint32_t cache_l1_id;
+    uint32_t cache_l2_id;
+    uint32_t cache_l3_id;
+    uint32_t cache_l4_id;
+    uint32_t cache_l1_size;
+    uint32_t cache_l2_size;
+    uint32_t cache_l3_size;
+    uint32_t cache_l4_size;
+};
 
-    // TODO: Additional fields?
+struct axk_sysinfo_topology_domain_t
+{
+
+};
+
+struct axk_sysinfo_topology_t
+{
+    uint32_t domain_count;
+    struct axk_sysinfo_topology_domain_t* domain_list;
 };
 
 /*

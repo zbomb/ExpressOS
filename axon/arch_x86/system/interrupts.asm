@@ -117,8 +117,7 @@ bits 64
 align 8
 
 axk_x86_test_idt:
-    mov rax, qword [0xFFFFFFFFFFFFFF]
-    add rax, 100
+
     ret
 
 _write_idt_entry:

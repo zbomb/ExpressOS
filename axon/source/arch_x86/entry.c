@@ -26,6 +26,8 @@
 #include "axon/scheduler/global_scheduler.h"
 #include "axon/scheduler/local_scheduler.h"
 #include "axon/system/interlink_private.h"
+#include "axon/arch_x86/boot_params.h"
+#include "axon/boot/boot_params.h"
 #include "string.h"
 #include "stdlib.h"
 
@@ -34,11 +36,16 @@
     State
 */
 static struct axk_atomic_flag_t g_schd_sync;
+static struct axk_atomic_flag_t g_topology_sync;
 static struct axk_atomic_flag_t g_test_sync;
 static struct axk_atomic_uint32_t g_cpu_id;
 
 static bool g_ap_init                                       = false;
 static struct axk_cpu_local_storage_t* g_cpu_local_storage  = NULL;
+
+// DEBUG
+static uint8_t* g_video_buffer      = NULL;
+static size_t g_video_buffer_size   = 0UL;
 
 /*
     ASM Functions/Variables
@@ -53,27 +60,30 @@ extern uint64_t axk_ap_wait_flag;
 /*
     Forward Decl.
 */
+bool axk_x86_parse_topology( void );
+void axk_x86_get_core_topology( uint32_t* out_smt, uint32_t* out_core, uint32_t* out_package );
+uint32_t axk_x86_get_cache_topology( uint32_t* out_l1_index, uint32_t* out_l2_index, uint32_t* out_l3_index, uint32_t* out_l4_index,
+    uint32_t* out_l1_size, uint32_t* out_l2_size, uint32_t* out_l3_size, uint32_t* out_l4_size );
 bool axk_start_aux_processors( uint32_t* out_cpu_count );
+bool axk_build_system_info_bsp( uint32_t cpu_count );
+bool axk_build_system_info_ap( uint32_t id );
 
 
-void _interlink_callback( struct axk_interlink_message_t* message )
+void axk_x86_c_bsp_entry( void* ptr_info )
 {
-    axk_terminal_lock();
-    axk_terminal_prints( "===> Interlink Callback: " );
-    axk_terminal_printh64( (uint64_t) message->body );
-    axk_terminal_prints( "  From CPU: " );
-    axk_terminal_printu32( message->source_cpu );
-    axk_terminal_prints( "  On CPU " );
-    axk_terminal_printu32( axk_get_cpu_id() );
-    axk_terminal_printnl();
-    axk_terminal_unlock();
-}
+    // Parse the boot parameters
+    if( !axk_x86_bootparams_parse( ptr_info ) )
+    {
+        // TODO: Better way to print error?
+        return;
+    }
 
+    const struct axk_bootparams_framebuffer_t* ptr_buffer = axk_bootparams_get_framebuffer();
+    g_video_buffer          = ptr_buffer->buffer;
+    g_video_buffer_size     = ptr_buffer->size;
 
-
-void ax_c_main_bsp( void* ptr_info )
-{
-    axk_terminal_prints( "Kernel: Initializing...\n" );
+    axk_x86_debug_image();
+    axk_halt();
 
     /*
         Check for required functionality before continuing
@@ -139,14 +149,44 @@ void ax_c_main_bsp( void* ptr_info )
     }
 
     /*
-        Allocate CPU-Local storage for all processors, and fill our own
+        Allocate CPU-Local storage for all processors
     */
-
     g_cpu_local_storage = (struct axk_cpu_local_storage_t*) calloc( axk_x86_acpi_get()->lapic_count, sizeof( struct axk_cpu_local_storage_t ) );
+
+    /*
+        Check for ACPI SRAT information for the BSP
+        Then we fill out our local processor storage
+    */
+    struct axk_x86_srat_cpu_t* srat_bsp     = NULL;
+    struct axk_x86_acpi_info_t* ptr_acpi    = axk_x86_acpi_get();
+    bool b_x2mode                           = axk_interrupts_get_type() == INTERRUPT_DRIVER_X86_X2APIC;
+    uint32_t bsp_lapic_id                   = axk_interrupts_cpu_id();
+
+    for( uint32_t i = 0; i < ptr_acpi->srat_cpu_count; i++ )
+    {
+        if( b_x2mode )
+        {
+            if( ptr_acpi->srat_cpu_list[ i ].x2apic_lapic == bsp_lapic_id )
+            {
+                srat_bsp = ptr_acpi->srat_cpu_list + i;
+                break;
+            }
+        }
+        else
+        {
+            if( ptr_acpi->srat_cpu_list[ i ].xapic_lapic == bsp_lapic_id )
+            {
+                srat_bsp = ptr_acpi->srat_cpu_list + i;
+                break;
+            }
+        }
+    }
 
     g_cpu_local_storage[ 0 ].this_address       = (void*)( g_cpu_local_storage );
     g_cpu_local_storage[ 0 ].os_identifier      = 0U;
     g_cpu_local_storage[ 0 ].arch_identifier    = axk_interrupts_cpu_id();
+    g_cpu_local_storage[ 0 ].domain             = srat_bsp == NULL ? 0U : srat_bsp->domain;
+    g_cpu_local_storage[ 0 ].clock_domain       = srat_bsp == NULL ? 0U : srat_bsp->clock_domain;
 
     axk_x86_write_gs( (uint64_t) g_cpu_local_storage );
     axk_atomic_store_uint32( &g_cpu_id, 1U, MEMORY_ORDER_SEQ_CST );
@@ -163,6 +203,7 @@ void ax_c_main_bsp( void* ptr_info )
         Start the Aux Processors
     */
     axk_atomic_clear_flag( &g_schd_sync, MEMORY_ORDER_RELAXED );
+    axk_atomic_clear_flag( &g_topology_sync, MEMORY_ORDER_RELAXED );
 
     uint32_t proc_count;
     if( !axk_start_aux_processors( &proc_count ) )
@@ -172,25 +213,13 @@ void ax_c_main_bsp( void* ptr_info )
 
     /*
         Setup System Info
-        TODO: Asymetric Multi Processing Support
     */
-    struct axk_sysinfo_general_t general_info;
+    if( !axk_build_system_info_bsp( proc_count ) )
+    {
+        axk_panic( "Kernel: failed to build system info" );
+    }
 
-    general_info.cpu_count      = proc_count;
-    general_info.total_memory   = axk_pagemgr_get_physmem();
-    general_info.bsp_id         = 0;
-    general_info.cpu_type       = AXK_PROCESSOR_TYPE_NORMAL;
-    general_info.alt_cpu_count  = 0U;
-    general_info.alt_cpu_type   = AXK_PROCESSOR_TYPE_NORMAL;
-
-    axk_sysinfo_write( AXK_SYSINFO_GENERAL, 0, (void*) &general_info, sizeof( general_info ) );
-
-    struct axk_sysinfo_processor_t bsp_info;
-
-    bsp_info.identifier     = 0;
-    bsp_info.type           = AXK_PROCESSOR_TYPE_NORMAL;
-
-    axk_sysinfo_write( AXK_SYSINFO_PROCESSOR, general_info.bsp_id, (void*) &bsp_info, sizeof( bsp_info ) );
+    axk_atomic_set_flag( &g_topology_sync, true, MEMORY_ORDER_SEQ_CST );
 
     /*
         Initialize Interlink System
@@ -211,64 +240,64 @@ void ax_c_main_bsp( void* ptr_info )
     /*
         Initialize global scheduler
     */
-    //if( !axk_scheduler_init_global() )
-    //{
-    //    axk_panic( "Kernel: failed to init global scheduler" );
-    //}
+    if( !axk_scheduler_init_global() )
+    {
+        axk_panic( "Kernel: failed to init global scheduler" );
+    }
 
     /*
         Syncronize processors before creating local schedulers
     */
     axk_atomic_clear_flag( &g_test_sync, MEMORY_ORDER_SEQ_CST );
     axk_atomic_set_flag( &g_schd_sync, true, MEMORY_ORDER_SEQ_CST );
-    //if( !axk_scheduler_init_local() )
-    //{
-    //    axk_panic( "Kernel: failed to init local scheduler" );
-    //}
+    if( !axk_scheduler_init_local() )
+    {
+        axk_panic( "Kernel: failed to init local scheduler" );
+    }
     
-    // Test an interlink message
     axk_atomic_set_flag( &g_test_sync, true, MEMORY_ORDER_SEQ_CST );
-
-    struct axk_interlink_message_t message;
-    message.type = 1;
-    message.param = 0;
-    message.flags = AXK_INTERLINK_FLAG_DONT_FREE;
-    message.size = 8UL;
-    message.body = (void*)( 0xFF00FF00FF00FF00UL );
-
-    axk_delay( 100000000UL );
-    //uint32_t res = axk_interlink_send( 1U, &message, true );
-    axk_interlink_set_handler( 1U, _interlink_callback );
-    uint32_t res = axk_interlink_broadcast( &message, true, true );
-
-    if( res != AXK_INTERLINK_ERROR_NONE )
-    {
-        axk_terminal_lock();
-        axk_terminal_prints( "====> Interlink Error: " );
-        axk_terminal_printu32( res );
-        axk_terminal_printnl();
-        axk_terminal_unlock();
-    }
-    else
-    {
-        axk_terminal_lock();
-        axk_terminal_prints( "====> Interlink sent successfully\n" );
-        axk_terminal_unlock();
-    }
 
 
     while( 1 ) { __asm__( "hlt" ); }
 
 }
 
-void ax_c_main_ap( void )
+void axk_c_main_ap( void )
 {
     // Acquire a OS assigned CPU identifier so we can access our cpu-local storage
     uint32_t cpu_id = axk_atomic_fetch_add_uint32( &g_cpu_id, 1U, MEMORY_ORDER_SEQ_CST );
 
+    // Find the local processor in the SRAT list if present
+    struct axk_x86_srat_cpu_t* srat_ap      = NULL;
+    struct axk_x86_acpi_info_t* ptr_acpi    = axk_x86_acpi_get();
+    bool b_x2mode                           = axk_interrupts_get_type() == INTERRUPT_DRIVER_X86_X2APIC;
+    uint32_t ap_lapic_id                    = axk_interrupts_cpu_id();
+
+    for( uint32_t i = 0; i < ptr_acpi->srat_cpu_count; i++ )
+    {
+        if( b_x2mode )
+        {
+            if( ptr_acpi->srat_cpu_list[ i ].x2apic_lapic == ap_lapic_id )
+            {
+                srat_ap = ptr_acpi->srat_cpu_list + i;
+                break;
+            }
+        }
+        else
+        {
+            if( ptr_acpi->srat_cpu_list[ i ].xapic_lapic == ap_lapic_id )
+            {
+                srat_ap = ptr_acpi->srat_cpu_list + i;
+                break;
+            }
+        }
+    }
+
     g_cpu_local_storage[ cpu_id ].this_address      = (void*)( g_cpu_local_storage + cpu_id );
     g_cpu_local_storage[ cpu_id ].os_identifier     = cpu_id;
     g_cpu_local_storage[ cpu_id ].arch_identifier   = axk_interrupts_cpu_id();
+    g_cpu_local_storage[ cpu_id ].domain            = srat_ap == NULL ? 0U : srat_ap->domain;
+    g_cpu_local_storage[ cpu_id ].clock_domain      = srat_ap == NULL ? 0U : srat_ap->clock_domain;
 
     axk_x86_write_gs( (uint64_t)( g_cpu_local_storage + cpu_id ) );
 
@@ -281,15 +310,17 @@ void ax_c_main_ap( void )
     }
 
     /*
-        Setup System Info
-        TODO: Determine if this processor is a 'low power' CPU in a chiplet design
+        Syncronize with BSP
     */
-    struct axk_sysinfo_processor_t ap_info;
+    while( !axk_atomic_test_flag( &g_topology_sync, MEMORY_ORDER_SEQ_CST ) ) { __asm__( "pause" ); }
 
-    ap_info.identifier  = axk_get_cpu_id();
-    ap_info.type        = AXK_PROCESSOR_TYPE_NORMAL;
-
-    axk_sysinfo_write( AXK_SYSINFO_PROCESSOR, ap_info.identifier, (void*) &ap_info, sizeof( ap_info ) );
+    /*
+        Setup System Info
+    */
+    if( !axk_build_system_info_ap( cpu_id ) )
+    {
+        axk_panic( "Kernel: failed to build system info" );
+    }
 
     /*
         Syncronize System Clock
@@ -304,12 +335,10 @@ void ax_c_main_ap( void )
     */
     while( !axk_atomic_test_flag( &g_schd_sync, MEMORY_ORDER_SEQ_CST ) ) { __asm__( "pause" ); }
 
-    axk_interlink_set_handler( 1U, _interlink_callback );
-
-    //if( !axk_scheduler_init_local() )
-    //{
-    //    axk_panic( "Kernel: fialed to init local scheduler" );
-    //}
+    if( !axk_scheduler_init_local() )
+    {
+        axk_panic( "Kernel: fialed to init local scheduler" );
+    }
 
     while( !axk_atomic_test_flag( &g_test_sync, MEMORY_ORDER_SEQ_CST ) ) { __asm__( "pause" ); }
 
@@ -447,6 +476,112 @@ bool axk_start_aux_processors( uint32_t* out_cpu_count )
 }
 
 
+bool axk_build_system_info_bsp( uint32_t cpu_count )
+{
+    if( !axk_x86_parse_topology() ) { return false; }
+
+    struct axk_sysinfo_general_t general_info;
+    struct axk_sysinfo_processor_t bsp_info;
+
+    axk_x86_get_core_topology( &bsp_info.smt_id, &bsp_info.core_id, &bsp_info.package_id );
+    general_info.cache_count = axk_x86_get_cache_topology( &bsp_info.cache_l1_id, &bsp_info.cache_l2_id, &bsp_info.cache_l3_id, &bsp_info.cache_l4_id,
+        &bsp_info.cache_l1_size, &bsp_info.cache_l2_size, &bsp_info.cache_l3_size, &bsp_info.cache_l4_size );
+
+    general_info.cpu_count      = cpu_count;
+    general_info.total_memory   = axk_pagemgr_get_physmem();
+    general_info.bsp_id         = 0;
+
+    axk_sysinfo_write( AXK_SYSINFO_GENERAL, 0, (void*) &general_info, sizeof( general_info ) );
+
+    bsp_info.identifier     = 0;
+    bsp_info.type           = AXK_PROCESSOR_TYPE_NORMAL;
+    bsp_info.domain         = g_cpu_local_storage[ 0 ].domain;
+    bsp_info.clock_domain   = g_cpu_local_storage[ 0 ].clock_domain;
+
+    axk_sysinfo_write( AXK_SYSINFO_PROCESSOR, general_info.bsp_id, (void*) &bsp_info, sizeof( bsp_info ) );
+
+    // DEBUG
+    axk_terminal_lock();
+    axk_terminal_prints( "====> CPU (OSID: 0)  Domain: " );
+    axk_terminal_printu32( bsp_info.domain );
+    axk_terminal_prints( " CDM: " );
+    axk_terminal_printu32( bsp_info.clock_domain );
+    axk_terminal_prints( " Pkg: " );
+    axk_terminal_printu32( bsp_info.package_id );
+    axk_terminal_prints( " Core: " );
+    axk_terminal_printu32( bsp_info.core_id );
+    axk_terminal_prints( " SMT: " );
+    axk_terminal_printu32( bsp_info.smt_id );
+    axk_terminal_printnl();
+    axk_terminal_printtab();
+    axk_terminal_prints( " L1: " );
+    axk_terminal_printu32( bsp_info.cache_l1_id );
+    axk_terminal_prints( " (" );
+    axk_terminal_printu32( bsp_info.cache_l1_size / 1024 );
+    axk_terminal_prints( "KB) L2: " );
+    axk_terminal_printu32( bsp_info.cache_l2_id );
+    axk_terminal_prints( " (" );
+    axk_terminal_printu32( bsp_info.cache_l2_size / 1024 );
+    axk_terminal_prints( "KB) L3: " );
+    axk_terminal_printu32( bsp_info.cache_l3_id );
+    axk_terminal_prints( " (" );
+    axk_terminal_printu32( bsp_info.cache_l3_size / 1024 );
+    axk_terminal_prints( "KB)\n" );
+    axk_terminal_unlock(); 
+
+    return true;
+}
+
+
+bool axk_build_system_info_ap( uint32_t cpu_id )
+{
+    struct axk_sysinfo_processor_t ap_info;
+    axk_x86_get_core_topology( &ap_info.smt_id, &ap_info.core_id, &ap_info.package_id );
+    axk_x86_get_cache_topology( &ap_info.cache_l1_id, &ap_info.cache_l2_id, &ap_info.cache_l3_id, &ap_info.cache_l4_id,
+        &ap_info.cache_l1_size, &ap_info.cache_l2_size, &ap_info.cache_l3_size, &ap_info.cache_l4_size );
+
+    ap_info.identifier      = axk_get_cpu_id();
+    ap_info.type            = AXK_PROCESSOR_TYPE_NORMAL;
+    ap_info.domain          = g_cpu_local_storage[ cpu_id ].domain;
+    ap_info.clock_domain    = g_cpu_local_storage[ cpu_id ].clock_domain;
+
+    axk_sysinfo_write( AXK_SYSINFO_PROCESSOR, ap_info.identifier, (void*) &ap_info, sizeof( ap_info ) );
+
+    // DEBUG
+    axk_terminal_lock();
+    axk_terminal_prints( "====> CPU (OSID: " );
+    axk_terminal_printu32( ap_info.identifier );
+    axk_terminal_prints( ")  Domain: " );
+    axk_terminal_printu32( ap_info.domain );
+    axk_terminal_prints( " CDM: " );
+    axk_terminal_printu32( ap_info.clock_domain );
+    axk_terminal_prints( " Pkg: " );
+    axk_terminal_printu32( ap_info.package_id );
+    axk_terminal_prints( " Core: " );
+    axk_terminal_printu32( ap_info.core_id );
+    axk_terminal_prints( " SMT: " );
+    axk_terminal_printu32( ap_info.smt_id );
+    axk_terminal_printnl();
+    axk_terminal_printtab();
+    axk_terminal_prints( " L1: " );
+    axk_terminal_printu32( ap_info.cache_l1_id );
+    axk_terminal_prints( " (" );
+    axk_terminal_printu32( ap_info.cache_l1_size / 1024 );
+    axk_terminal_prints( "KB) L2: " );
+    axk_terminal_printu32( ap_info.cache_l2_id );
+    axk_terminal_prints( " (" );
+    axk_terminal_printu32( ap_info.cache_l2_size / 1024 );
+    axk_terminal_prints( "KB) L3: " );
+    axk_terminal_printu32( ap_info.cache_l3_id );
+    axk_terminal_prints( " (" );
+    axk_terminal_printu32( ap_info.cache_l3_size / 1024 );
+    axk_terminal_prints( "KB)\n" );
+    axk_terminal_unlock(); 
+
+    return true;
+}
+
+
 struct axk_cpu_local_storage_t* axk_get_cpu_local_storage( void )
 {
     return (struct axk_cpu_local_storage_t*)( axk_x86_read_gs() );
@@ -464,6 +599,15 @@ bool axk_x86_convert_cpu_id( uint32_t os_id, uint32_t* out_id )
 
     *out_id = g_cpu_local_storage[ os_id ].arch_identifier;
     return true;
+}
+
+
+void axk_x86_debug_image( void )
+{
+    for( size_t i = 0; i < g_video_buffer_size; i++ )
+    {
+        g_video_buffer[ i ] = 0xFF;
+    }
 }
 
 

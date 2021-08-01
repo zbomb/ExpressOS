@@ -170,5 +170,12 @@ inline static void axk_x86_write_cr4( uint64_t value )
 */
 bool axk_x86_convert_cpu_id( uint32_t os_id, uint32_t* out_id );
 
+/*
+    axk_x86_debug_image
+    * Temporary Function
+    * Paints the video buffer white
+*/
+void axk_x86_debug_image( void );
+
 
 #endif

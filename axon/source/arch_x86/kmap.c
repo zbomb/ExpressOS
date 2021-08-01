@@ -28,9 +28,9 @@ static struct axk_atomic_uint64_t g_shared_counter;
 /*
     ASM externs
 */
-extern uint8_t ax_pml4;
-extern uint8_t ax_pdpt_low;
-extern uint8_t ax_pdt_low;
+extern uint8_t axk_pml4;
+extern uint8_t axk_pdpt_low;
+extern uint8_t axk_pdt_low;
 
 
 bool axk_mapmgr_init( void )
@@ -49,9 +49,9 @@ bool axk_mapmgr_init( void )
     if( axk_pagemgr_get_count() % 512UL != 0UL ) { huge_count++; }
 
     // Get addresses of the page tables stored in the kernel image
-    g_ptr_kpml4         = (uint64_t) &ax_pml4;
-    uint64_t ptr_kpdpt  = (uint64_t) &ax_pdpt_low;
-    uint64_t ptr_kpdt   = (uint64_t) &ax_pdt_low;
+    g_ptr_kpml4         = (uint64_t) &axk_pml4;
+    uint64_t ptr_kpdpt  = (uint64_t) &axk_pdpt_low;
+    uint64_t ptr_kpdt   = (uint64_t) &axk_pdt_low;
 
     // Write the first 1GB of mappings to AXK_KERNEL_VA_PHYSICAL
     uint64_t* pml4_array    = (uint64_t*) g_ptr_kpml4;

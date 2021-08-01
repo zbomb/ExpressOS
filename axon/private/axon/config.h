@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <string.h>
 
 #define AXK_KERNEL_VA_PHYSICAL  0xFFFF800000000000
 #define AXK_KERNEL_VA_HEAP      0xFFFFC00000000000
@@ -110,3 +111,9 @@ typedef uint64_t AXK_MAP_FLAGS;
 #define AXK_TIMER_ID_ARM_SYSTEM     8
 
 #define AXK_DEFAULT_YEAR            2021
+
+/*
+    Macros
+*/
+#define AXK_ZERO_MEM( _obj_ ) memset( &_obj_, 0, sizeof( _obj_ ) )
+#define AXK_EXTRACT( _BF_, _START_, _END_ ) ( ( _BF_ & ( ( ( 1 << ( _END_ - _START_ ) ) - 1 ) << _START_ ) ) >> _START_ )

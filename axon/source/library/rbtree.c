@@ -413,6 +413,8 @@ void axk_rbtree_create_iterator( struct axk_rbtree_iterator_t* in_iter )
 
     in_iter->node = NULL;
     in_iter->tree = NULL;
+
+    AXK_ZERO_MEM( in_iter->stack );
     axk_vector_create( &( in_iter->stack ), sizeof( void* ), NULL, NULL );
 }
 
@@ -498,6 +500,8 @@ void axk_rbtree_copy( struct axk_rbtree_t* source_handle, struct axk_rbtree_t* d
 
     // Create a 'stack' to keep track of where we have been, with a capacity of the theoretical max height of a balanced RB tree of the current size
     struct axk_vector_t stack;
+    AXK_ZERO_MEM( stack );
+
     int max_height = log2_64( source_handle->count );
     axk_vector_create_with_capacity( &stack, sizeof( void* ), ( max_height <= 1 ? 1UL : (uint64_t)( max_height ) ) * 2UL, NULL, NULL );
     
@@ -608,6 +612,8 @@ void axk_rbtree_clear( struct axk_rbtree_t* in_handle )
     struct axk_rbtree_node_t* node = in_handle->root;
 
     struct axk_vector_t stack;
+    AXK_ZERO_MEM( stack );
+    
     int max_height = log2_64( in_handle->count );
     axk_vector_create_with_capacity( &stack, sizeof( void* ), ( max_height <= 1 ? 1UL : (uint64_t)( max_height ) ) * 2UL, NULL, NULL );
     axk_vector_push_back( &stack, &node );

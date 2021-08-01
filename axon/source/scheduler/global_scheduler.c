@@ -39,7 +39,7 @@ bool axk_scheduler_init_global( void )
     if( !axk_sysinfo_query( AXK_SYSINFO_GENERAL, 0, &general_info, sizeof( general_info ) ) ) { return false; }
 
     // Allocate array to store local scheduler pointers within
-    g_local_schd_count = general_info.cpu_count + general_info.alt_cpu_count;
+    g_local_schd_count = general_info.cpu_count;
     g_local_schd = (struct axk_local_scheduler_t**) calloc( g_local_schd_count, sizeof( void* ) );
 
     // Now, we need to determine what type of local scheduler to create for each thread
@@ -49,6 +49,10 @@ bool axk_scheduler_init_global( void )
         g_local_schd[ i ] = axk_create_smp_scheduler();
     }
 
+    // Ensure the rbtree handle is zero'd before attempting to use it
+    AXK_ZERO_MEM( g_process_list );
+    AXK_ZERO_MEM( g_kernel_process.threads );
+    
     axk_rbtree_create( &g_process_list, sizeof( void* ), NULL, NULL );
     axk_rbtree_create( &( g_kernel_process.threads ), sizeof( void* ), NULL, NULL );
     axk_spinlock_init( &g_process_lock );
@@ -81,12 +85,6 @@ bool axk_scheduler_init_local( void )
     {
         return false;
     } 
-
-    axk_terminal_lock();
-    axk_terminal_prints( "Local Scheduler: Initialized on processor " );
-    axk_terminal_printu32( cpu_id );
-    axk_terminal_prints( "\n" );
-    axk_terminal_unlock();
-
+    
     return true;
 }

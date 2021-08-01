@@ -5,34 +5,35 @@
 ;======================================================================
 
 ; =========== Preprocessor ===========
-%define AX_KERNEL_STACK_SIZE_MB     2
-%define AX_MULTIBOOT_MAGIC_VALUE    0x36D76289
-%define AX_HIGH_KERNEL_OFFSET       0xFFFFFFFF80000000
-%define AX_FIX_ADDR( _PTR_ )        ( _PTR_ - AX_HIGH_KERNEL_OFFSET )
+%define AXK_BSP_STACK_SIZE_PAGES    32
+%define AXK_HIGH_KERNEL_OFFSET      0xFFFFFFFF80000000
+%define AXK_FIX_ADDR( _PTR_ )       ( _PTR_ - AXK_HIGH_KERNEL_OFFSET )
+%define AXK_TZERO_MAGIC_VALUE       0x4C4946544F464621
+%define AXK_MIN_BASIC_CPUID_LEAF    4
+%define AXK_MIN_EXT_CPUID_LEAF      1
 
 ; =========== Globals/Externs ===========
-global ax_x86_bsp_entry
-global ax_gdt_pointer_high
-global ax_gdt_pointer_low
-global ax_pml4
-global ax_pdpt_high
-global ax_pdpt_low
-global ax_pdt_high_1
-global ax_pdt_high_2
-global ax_pdt_low
-global ax_mb_info_pointer
-global ax_kernel_page_count
+global axk_x86_bsp_entry
+global axk_gdt_pointer
+global axk_pml4
+global axk_pdpt_high
+global axk_pdpt_low
+global axk_pdt_high_1
+global axk_pdt_high_2
+global axk_pdt_low
+global axk_x86_get_kernel_begin
+global axk_x86_get_kernel_end
 
-extern ax_kernel_begin
-extern ax_kernel_end
-extern ax_x86_bsp_trampoline
+extern axk_kernel_begin
+extern axk_kernel_end
+extern axk_x86_c_bsp_entry
 
 ; =========== Read-Only Data ===========
 section .rodata
 align 16
 
 ; Global Descriptor Table
-ax_gdt:
+axk_gdt:
 
     ; Null Entry
     dq 0x00
@@ -53,280 +54,255 @@ ax_gdt:
     db 0b11001111           ; Flags & Limit Bits    [16,19]
     db 0x00                 ; Base Address Bits     [24,31]
 
-    ; Higher-Half GDT Pointer
-ax_gdt_pointer_high:
+    ; GDT Pointer
+axk_gdt_pointer:
 
-    dw $ - ax_gdt - 1
-    dq ax_gdt
-
-    ; Lower-Half GDT Pointer
-ax_gdt_pointer_low:
-
-    dw ax_gdt_pointer_high - ax_gdt - 1
-    dq AX_FIX_ADDR( ax_gdt )
+    dw $ - axk_gdt - 1
+    dq axk_gdt
 
 ; ============ Normal Data ============
 section .data
 
-ax_mb_magic_value:
+axk_kernel_page_count:
     dd 0x00
 
-ax_mb_info_pointer:
+axk_tzero_params:
     dq 0x00
-
-ax_kernel_page_count:
-    dd 0x00
 
 ; ============ Uninitialized Data ============
 section .bss
 align 4096
 
 ; Page Tables
-ax_pml4:
+axk_pml4:
     resb 0x1000
 
-ax_pdpt_high:
+axk_pdpt_high:
     resb 0x1000
 
-ax_pdpt_low:
+axk_pdpt_low:
     resb 0x1000
 
-ax_pdt_high_1:
+axk_pdt_high_1:
     resb 0x1000
 
-ax_pdt_high_2:
+axk_pdt_high_2:
     resb 0x1000
 
-ax_pdt_low:
+axk_pdt_low:
     resb 0x1000
 
-; Bootstrap Processor Kernel Stack
-; TODO: Once memory systems are working, ditch this stack for a dynamically allocated one
-ax_bsp_stack_begin:
-    resb 64 * 1024
-ax_bsp_stack_end:
+axk_bsp_stack_begin:
+    resb AXK_BSP_STACK_SIZE_PAGES * 0x1000
+axk_bsp_stack_end:
+
 
 ; =========== Code Section ===========
 section .text
-bits 32
+bits 64
+align 8
 
-ax_x86_bsp_entry:
+axk_x86_get_kernel_begin:
 
-    ; Store values that are left in the registers by multiboot2
-    cli
-    mov dword [AX_FIX_ADDR( ax_mb_info_pointer )], ebx
-    mov dword [AX_FIX_ADDR( ax_mb_magic_value )], eax
-    xor eax, eax
-    xor ebx, ebx
+    mov rax, axk_kernel_begin
+    ret
 
-    ; Set the starting stack
-    mov esp, AX_FIX_ADDR( ax_bsp_stack_end )
-    mov ebp, esp
+axk_x86_get_kernel_end:
 
-    ; Ensure we were booted from a multiboot2 compliant bootloader
-    cmp dword [AX_FIX_ADDR( ax_mb_magic_value )], AX_MULTIBOOT_MAGIC_VALUE
-    jne .no_multiboot
+    mov rax, axk_kernel_end
+    ret
 
-    ; Check if the CPU supports the features we need
-    ; First, check to ensure CPUID instruction is supported, by flipping bit 21 of the EFLAGS register
-    ; pushing it back, and popping back to check if the bit stayed flipped
-    pushfd
-    pop eax
-    mov ecx, eax
-    xor eax, 1 << 21
-    push eax
-    popfd
-    pushfd
-    pop eax
-    push ecx
-    popfd
+check_hardware_support:
+
+    ; Returns 1 in RAX if required features are supported, 0 if not
+    ; First, were going to ensure CPUID is supported
+    ; We can do this by flipping a bit in the flags register, and checking if it stays flipped
+    ; TODO: We can probably assume CPUID is supported, since were booted from UEFI 64-bit enviornment anyway
+
+    xor rax, rax
+    xor rcx, rcx
+
+    pushfq
+    pop rax
+    mov rcx, rax
+    xor rax, 1 << 21
+    push rax
+    popfq
+    pushfq
+    pop rax
+    push rcx
+    popfq
 
     cmp eax, ecx
-    je .no_cpuid
+    je .missing_support
 
-    ; Check for longmode support using CPUID
-    ; First ensure 0x80000001 leaf is supported
+    ; Next up, were going to check the supported CPUID leaves, and ensure we have the required ones
+    mov eax, 0
+    cpuid
+    cmp eax, AXK_MIN_BASIC_CPUID_LEAF
+    jl .missing_support
+
     mov eax, 0x80000000
     cpuid
-    cmp eax, 0x80000001
-    jb .no_longmode
+    cmp eax, 0x80000000 + AXK_MIN_EXT_CPUID_LEAF
+    jl .missing_support
 
-    ; Get the extended info leaf and check longmode bit
+    ; Check to ensure that MSRs are supported
     mov eax, 0x80000001
     cpuid
-    cmp edx, 1 << 29
-    jz .no_longmode
-
-    ; Check to ensure there is a local APIC
-    cmp edx, 1 << 9
-    jz .no_local_apic
-
-    ; Check for model-specific register support
     cmp edx, 1 << 5
-    jz .no_msr
+    jz .missing_support
 
-    ; Next up, we need to identity map the kernel, so we can enable paging
-    ; First, we need to set present and writable flags in the first entry in PML4
-    mov eax, AX_FIX_ADDR( ax_pdpt_low )
-    or eax, 0b11
-    mov [AX_FIX_ADDR( ax_pml4 )], eax
+    ; Finally, check to ensure there is a local APIC
+    cmp edx, 1 << 9
+    jz .missing_support
 
-    ; Next, do the same but to write an entry in the lower-half PDPT to the lower-half PDT
-    mov eax, AX_FIX_ADDR( ax_pdt_low )
-    or eax, 0b11
-    mov [AX_FIX_ADDR( ax_pdpt_low )], eax
+    ; Basic functionality is present
+    mov rax, 1
+    ret
 
-    ; We start by calculating the number of 2MB pages we need to access all of the kernel, and multiboot structure in memory
-    xor edx, edx
-    mov eax, AX_FIX_ADDR( ax_kernel_end )
-    mov ebx, dword [AX_FIX_ADDR( ax_mb_info_pointer )]
-    add ebx, dword [ebx]
-    cmp eax, ebx
-    jg .use_kernel_image_end
-    mov eax, ebx
+    .missing_support:
+    mov rax, 0
+    ret
 
-    .use_kernel_image_end:
-    mov ecx, 0x200000
-    div ecx
-    or edx, edx
-    jz .page_calc_no_remainder
-    inc eax
 
-    .page_calc_no_remainder:
-    inc eax
-    cmp eax, 512
-    jg .page_calc_on_greater
-    mov dword [AX_FIX_ADDR( ax_kernel_page_count )], eax
-    jmp .page_calc_complete
-    .page_calc_on_greater:
-    mov dword [AX_FIX_ADDR( ax_kernel_page_count )], 512
+map_kernel_address_space:
 
-    .page_calc_complete:
-    mov edi, eax
+    hlt
+    
+    ; This requires two PDTs, each with 512 entries
+    mov rcx, 0
+    .map_begin:
 
-    ; Now, we need to loop through the pages needed and actually set up the mapping
-    mov ecx, 0
-    .page_map_loop:
+    mov rax, 0x200000
+    mul rcx
+    or rax, 0b10000011  ; Set 'present', 'writable' and 'huge page' flags for this PDT entry
+    mov r8, rax
+    mov rax, 8
+    mul rcx
+    mov r9, AXK_FIX_ADDR( axk_pdt_high_1 )
+    add rax, r9
+    mov qword [rax], r8
+    mov rax, 0x200000
+    mov rdx, rcx
+    add rdx, 512
+    mul rdx
+    or rax, 0b10000011  ; Set 'present', 'writable' and 'huge page' flags for this PDT entry
+    mov r8, rax
+    mov rax, 8
+    mul rcx
+    mov r9, AXK_FIX_ADDR( axk_pdt_high_2 )
+    add rax, r9
+    mov qword [rax], r8
+    inc rcx
+    cmp rcx, 512
+    jl .map_begin
 
-    mov eax, 0x200000
-    mul ecx ; eax *= ecx (physical page address)
-    or eax, 0b10000011 ; Set 'present' 'writable' and 'huge page' flags
-    mov [AX_FIX_ADDR( ax_pdt_low ) + ( ecx * 8 ) ], eax ; Write entry to ax_pdt_low[ ecx ]
-    inc ecx
-    cmp ecx, edi
-    jl .page_map_loop
+    ; Now we need to setup the PDPT (entries 510, 511) and the PML4 (entry 511)
+    mov rax, AXK_FIX_ADDR( axk_pdt_high_1 )
+    or rax, 0b11    ; Set 'present' and 'writable' flags
+    mov rsi, AXK_FIX_ADDR( axk_pdpt_high ) + ( 510 * 8 )
+    mov qword [rsi], rax
 
-    ; Load the page table, and enter 64-bit mode
-    mov eax, AX_FIX_ADDR( ax_pml4 )
-    mov cr3, eax
-    mov eax, cr4
-    or eax, 1 << 5
-    mov cr4, eax
-    mov ecx, 0xC0000080
-    rdmsr
-    or eax, 1 << 8
-    wrmsr
-    mov eax, cr0
-    or eax, 1 << 31
-    mov cr0, eax
+    mov rax, AXK_FIX_ADDR( axk_pdt_high_2 )
+    or rax, 0b11    ; Set 'present' and 'writable' flags
+    mov rsi, AXK_FIX_ADDR( axk_pdpt_high ) + ( 511 * 8 )
+    mov qword [rsi], rax
 
-    ; Finally, we can load the GDT and jump to the 'trampoline' code section
-    lgdt [AX_FIX_ADDR( ax_gdt_pointer_low )]
-    jmp 0x08:AX_FIX_ADDR( ax_x86_bsp_trampoline )
+    mov rax, AXK_FIX_ADDR( axk_pdpt_high )
+    or rax, 0b11    ; Set 'present' and 'writable' flags
+    mov rsi, AXK_FIX_ADDR( axk_pml4 ) + ( 511 * 8 )
+    mov qword [rsi], rax
 
-    ; ---------- Error Handlers -----------
-    .no_multiboot:
-    mov ax, 'MB'
-    jmp .print_entry_error
+    ; Now we need to update the active PML4, since we still are using the one from the UEFI enviornment
+    mov rax, AXK_FIX_ADDR( axk_pml4 )
+    mov cr3, rax
 
-    .no_cpuid:
-    mov ax, 'CI'
-    jmp .print_entry_error
+    ret
 
-    .no_longmode:
-    mov ax, 'LM'
-    jmp .print_entry_error
 
-    .no_local_apic:
-    mov ax, 'IC'
-    jmp .print_entry_error
+_debug_paint_buffer:
 
-    .no_msr:
-    mov ax, 'MR'
-    jmp .print_entry_error
+    ; Parameters: rdi => ptr bootparams
+    ; Doesnt return, call using a jmp 
 
-    ; TODO: Add better error message display
-    .print_entry_error:
-    mov dword [0xb8000], 0x0F3D0F3D     ; '=='
-    mov dword [0xb8004], 0x0F3D0F3D     ; '=='
-    mov dword [0xb8008], 0x0F3D0F3D     ; '=='
-    mov dword [0xb800C], 0x0F3D0F3D     ; '=='
-    mov dword [0xb8010], 0x0F3D0F3D     ; '=='
-    mov dword [0xb8014], 0x0F3D0F3D     ; '=='
-    mov dword [0xb8018], 0x0F200F3E     ; '> '
-    mov dword [0xb801C], 0x0F6F0F42     ; 'Bo'
-    mov dword [0xb8020], 0x0F740F6F     ; 'ot'
-    mov dword [0xb8024], 0x0F460F20     ; ' F'
-    mov dword [0xb8028], 0x0F690F61     ; 'ai'
-    mov dword [0xb802C], 0x0F750F6C     ; 'lu'
-    mov dword [0xb8030], 0x0F650F72     ; 're'
-    mov dword [0xb8034], 0x0F3C0F20     ; ' <'
-    mov dword [0xb8038], 0x0F3D0F3D     ; '=='
-    mov dword [0xb803C], 0x0F3D0F3D     ; '=='
-    mov dword [0xb8040], 0x0F3D0F3D     ; '=='
-    mov dword [0xb8044], 0x0F3D0F3D     ; '=='
-    mov dword [0xb8048], 0x0F3D0F3D     ; '=='
-    mov dword [0xb804C], 0x0F3D0F3D     ; '=='
+    mov rcx, 0
+    .loop_begin:
 
-    ; Go to the next line, and write info about the failure
-    mov dword [0xb80A8], 0x4F684F54     ; 'Th'
-    mov dword [0xb80AC], 0x4F204F65     ; 'e '
-    mov dword [0xb80B0], 0x4F504F43     ; 'CP'
-    mov dword [0xb80B4], 0x4F204F55     ; 'U '
-    mov dword [0xb80B8], 0x4F6F4F64     ; 'do'
-    mov dword [0xb80BC], 0x4F734F65     ; 'es'
-    mov dword [0xb80C0], 0x4F274F6E     ;'n''
-    mov dword [0xb80C4], 0x4F204F74     ; 't '
-    mov dword [0xb80C8], 0x4F754F73     ; 'su'
-    mov dword [0xb80CC], 0x4F704F70     ; 'pp'
-    mov dword [0xb80D0], 0x4F724F6F     ; 'or'
-    mov dword [0xb80D4], 0x4F204F74     ; 't '
+    mov rax, qword [rdi + 8]
+    add rax, rcx
+    mov byte [rax], 0xFF
+    inc rcx
+    cmp rcx, qword [rdi + 16]
+    jl .loop_begin
 
-    cmp ax, 'LM'
-    je .print_no_longmode
-
-    cmp ax, 'CI'
-    je .print_no_cpuid
-
-    cmp ax, 'MB'
-    je .print_no_multiboot
-
-    ; TODO: Support the other error modes
-    mov dword [0xb80D8], 0x4F6E4F55     ; 'Un'
-    mov dword [0xb80DC], 0x4F6E4F6B     ; 'kn'
-    mov dword [0xb80E0], 0x4F774F6F     ; 'ow'
-    mov dword [0xb80E4], 0x4F214F6E     ; 'n?'
     hlt
 
-    .print_no_longmode:
-    mov dword [0xb80D8], 0x4F344F36     ; '64'
-    mov dword [0xb80DC], 0x4F624F20     ; ' b'
-    mov dword [0xb80E0], 0x4F744F69     ; 'it'
-    mov dword [0xb80E4], 0x4F6D4F20     ; ' m'
-    mov dword [0xb80E8], 0x4F644F6F     ; 'od'
-    mov dword [0xb80EC], 0x4F214F65     ; 'e!'
+
+axk_x86_bsp_entry:
+
+    cli
+    or rdi, rdi
+    jz .invalid_bootparams
+    mov rax, AXK_TZERO_MAGIC_VALUE
+    cmp rsi, rax
+    jne .invalid_bootparams
+    cmp qword [rdi], rax
+    jne .invalid_bootparams
+
+    ; Store the pointer to bootloader parameters so we can pass it to the entry point later on
+    mov rax, AXK_FIX_ADDR( axk_tzero_params )
+    mov qword [rax], rdi
+
+    ; Setup a stack
+    mov rsp, AXK_FIX_ADDR( axk_bsp_stack_end )
+    mov rbp, rsp
+
+    ; Check for support of required features
+    call check_hardware_support
+    or rax, rax
+    jz .missing_hardware_support
+
+    ; Now, were going to map the first 2GB of physical space to the high kernel address range
+    call map_kernel_address_space
+
+    ; Finally, were going to load our updated GDT and jump to C code
+    ; TODO: Implement a better GDT system, possibly per CPU? Easy to update from C code?
+    lgdt [axk_gdt_pointer]
+    jmp finish_bootstrap
+
+
+    .invalid_bootparams:
+
+    ;; TODO: Find a good way to display an error to the screen
+    jmp _debug_paint_buffer
     hlt
 
-    .print_no_cpuid:
-    mov dword [0xb80D8], 0x4F504F43     ; 'CP'
-    mov dword [0xb80DC], 0x4F494F55     ; 'UI'
-    mov dword [0xb80E0], 0x4F214F44     ; 'D!'
+    .missing_hardware_support:
+    
+    ;; TODO: Find a good way to display an error to the screen
+    jmp _debug_paint_buffer
     hlt
 
-    .print_no_multiboot:
-    mov dword [0xb80D8], 0x4F754F4D     ; 'Mu'
-    mov dword [0xb80DC], 0x4F744F6C     ; 'lt'
-    mov dword [0xb80E0], 0x4F624F69     ; 'ib'
-    mov dword [0xb80E4], 0x4F6F4F6F     ; 'oo'
-    mov dword [0xb80E8], 0x4F214F74     ; 't!'
-    hlt
+
+finish_bootstrap:
+
+    ; Update the segment registers
+    mov ax, 0x10
+    mov ss, ax
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    mov ax, 0x08
+    mov cs, ax
+
+    ; Update the stack pointer to use the newly mapped high address range
+    mov rsp, axk_bsp_stack_end
+    mov rbp, rsp
+
+    ; Lastly, were going to jump to the x86 C entry point
+    mov rdi, axk_tzero_params
+    call axk_x86_c_bsp_entry
+

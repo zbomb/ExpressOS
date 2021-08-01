@@ -35,6 +35,7 @@ static struct axk_atomic_uint64_t g_counters[ AXK_COUNTER_MAX_INDEX + 1 ];
 bool axk_sysinfo_init( void )
 {
     // Initialize state
+    AXK_ZERO_MEM( g_container );
     axk_rbtree_create( &g_container, sizeof( void* ), NULL, NULL );
     axk_spinlock_init( &g_container_lock );
 
@@ -82,6 +83,8 @@ bool axk_sysinfo_query( uint32_t index, uint32_t sub_index, void* out_data, uint
 
     // Check to ensure the data size matches
     struct axk_sysinfo_frame_t* ptr_frame = *((struct axk_sysinfo_frame_t**)( data_pointer ));
+    if( ptr_frame == NULL ) { return false; }
+
     if( ptr_frame->size != data_size || ptr_frame->size == 0UL ) { return false; }
 
     // Copy the data to the output buffer if desired

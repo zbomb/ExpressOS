@@ -17,6 +17,8 @@ struct axk_cpu_local_storage_t
     uint32_t os_identifier;
     uint32_t arch_identifier;
     void* local_scheduler;
+    uint32_t domain;
+    uint32_t clock_domain;
 };
 
 /*

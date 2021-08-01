@@ -12,7 +12,7 @@
     Constants
 */
 #define AXK_BOOT_MEMORYMAP_MAX_ENTRIES 128
-
+ 
 #ifndef AXK_PACK
 #define AXK_PACK __attribute__((__packed__))
 #endif
@@ -50,25 +50,31 @@ struct axk_bootparams_memorymap_t
     struct axk_bootparams_memorymap_entry_t entry_list[ AXK_BOOT_MEMORYMAP_MAX_ENTRIES ];
 };
 
-enum AXK_FRAMEBUFFER_FORMAT
+enum axk_pixel_format_t
 {
-    FRAMEBUFFER_FORMAT_RGB8 = 0,
-    FRAMEBUFFER_FORMAT_RBG8 = 1,
-    FRAMEBUFFER_FORMAT_GRB8 = 2,
-    FRAMEBUFFER_FORMAT_GBR8 = 3,
-    FRAMEBUFFER_FORMAT_BRG8 = 4,
-    FRAMEBUFFER_FORMAT_BGR8 = 5
+    PIXEL_FORMAT_RGBX_32    = 0,
+    PIXEL_FORMAT_BGRX_32    = 1,
+};
+
+struct axk_resolution_t
+{
+    uint32_t id;
+    uint32_t width;
+    uint32_t height;
+    uint32_t pixels_per_scanline;
+    enum axk_pixel_format_t format;
 };
 
 struct axk_bootparams_framebuffer_t
 {
-    uint32_t width;
-    uint32_t height;
-    uint32_t scanline_size;
-    uint8_t bits_per_pixel;
-    enum AXK_FRAMEBUFFER_FORMAT format;
     void* buffer;
+    uint64_t size;
+    struct axk_resolution_t resolution;
+
+    uint32_t resolution_count;
+    struct axk_resolution_t resolution_list[ 128 ];
 };
+
 
 
 /*

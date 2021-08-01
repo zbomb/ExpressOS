@@ -15,10 +15,9 @@ global axk_get_kernel_offset
 global axk_get_kernel_size
 global axk_cleanup_bootstrap
 
-extern ax_kernel_begin
-extern ax_kernel_end
-extern ax_kernel_page_count
-extern ax_pdt_low
+extern axk_kernel_begin
+extern axk_kernel_end
+extern axk_pdt_low
 
 section .text
 bits 64
@@ -66,7 +65,7 @@ axk_get_kernel_offset:
     ; Parameters:   None
     ; Returns       Kernel Offset (in rax)
 
-    mov rax, ax_kernel_begin + AXK_VIRTUAL_OFFSET
+    mov rax, axk_kernel_begin + AXK_VIRTUAL_OFFSET
     ret
 
 axk_get_kernel_size:
@@ -74,27 +73,12 @@ axk_get_kernel_size:
     ; Parameters:   None
     ; Returns:      Kernel Image Size (in rax)
 
-    mov rax, ax_kernel_end - AXK_VIRTUAL_OFFSET
-    mov rcx, ax_kernel_begin
+    mov rax, axk_kernel_end - AXK_VIRTUAL_OFFSET
+    mov rcx, axk_kernel_begin
     sub rax, rcx
     ret
 
 axk_cleanup_bootstrap:
-
-    ; Parameters:   None
-    ; Returns:      None
-
-    ; Remove all the lower memory mappings we no longer need
-    mov rcx, 0
-    mov rax, ax_pdt_low
-    .unmap_loop:
-
-    mov byte [rax], 0
-    inc rcx
-    inc rax
-    cmp rcx, 4096
-    jl .unmap_loop
-
     ret
 
 

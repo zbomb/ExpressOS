@@ -45,6 +45,7 @@ bool axk_interlink_init( void )
 
     for( uint32_t i = 0; i < g_handlers_count; i++ )
     {
+        AXK_ZERO_MEM( g_handlers[ i ] );
         axk_rbtree_create( &( g_handlers[ i ] ), sizeof( void* ), NULL, NULL );
     }
 
@@ -53,6 +54,7 @@ bool axk_interlink_init( void )
 
     for( uint32_t i = 0; i < g_handlers_count; i++ )
     {
+        AXK_ZERO_MEM( g_queues[ i ].messages );
         axk_vector_create( &( g_queues[ i ].messages ), sizeof( void* ), NULL, NULL );
         axk_spinlock_init( &( g_queues[ i ].lock ) );
     }

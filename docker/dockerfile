@@ -13,6 +13,9 @@ RUN apt-get install -y grub-efi-amd64-bin
 RUN apt-get install -y xorriso
 RUN apt-get install -y mtools
 RUN apt-get install -y git
+RUN apt-get install -y gnu-efi
+RUN apt-get install -y binutils-mingw-w64
+RUN apt-get install -y gcc-mingw-w64
 
 # Download prerequisits for building cross-compiler
 RUN apt-get install -y bison

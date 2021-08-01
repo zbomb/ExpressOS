@@ -69,7 +69,7 @@ struct axk_local_scheduler_t* axk_create_smp_scheduler( void )
 {
     // Create a new instance of the scheduler
     struct axk_smp_local_scheduler_t* schd = (struct axk_smp_local_scheduler_t*) malloc( sizeof( struct axk_smp_local_scheduler_t ) );
-    memset( schd, 0, sizeof( schd ) );
+    memset( schd, 0, sizeof( struct axk_smp_local_scheduler_t ) );
 
     // Load the function table
     schd->func_table.init = smpschd_init;
@@ -104,6 +104,7 @@ bool smpschd_init( struct axk_local_scheduler_t* self )
     this->b_init        = true;
     this->processor     = axk_get_cpu_id();
 
+    AXK_ZERO_MEM( this->normal_priority_tree );
     axk_rbtree_create( &( this->normal_priority_tree ), sizeof( void* ), NULL, NULL );
     axk_spinlock_init( &( this->soft_realtime_lock ) );
     axk_spinlock_init( &( this->high_priority_lock ) );

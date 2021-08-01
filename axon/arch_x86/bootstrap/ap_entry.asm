@@ -5,24 +5,24 @@
 ;======================================================================
 
 ; ===================== Preprocessor =====================
-%define AX_HIGH_KERNEL_OFFSET       0xFFFFFFFF80000000
-%define AX_FIX_ADDR( _PTR_ )        ( _PTR_ - AX_HIGH_KERNEL_OFFSET )
+%define AXK_HIGH_KERNEL_OFFSET       0xFFFFFFFF80000000
+%define AXK_FIX_ADDR( _PTR_ )        ( _PTR_ - AXK_HIGH_KERNEL_OFFSET )
 
 
 ; ====================== Exports/Imports ====================
 global axk_get_ap_code_begin
 global axk_get_ap_code_size
 
-extern ax_pml4
-extern ax_gdt_pointer_low 
-extern ax_ap_trampoline
+extern axk_pml4
+extern axk_gdt_pointer
+extern axk_ap_trampoline
 
 ; ====================== Code ======================
 section .text
 bits 16
 align 16
 
-ax_ap_code_begin:   ; @ 0x8000
+axk_ap_code_begin:   ; @ 0x8000
 
     cli
     cld
@@ -96,7 +96,7 @@ ap_setup64:         ; @ 0x8080
     ; Now we need to enable paging
     ; Once we do, we can use the low identity mappings for the kernel 
     ; Then enable long mode and jump into 64-bit code
-    mov eax, AX_FIX_ADDR( ax_pml4 )
+    mov eax, AXK_FIX_ADDR( axk_pml4 )
     mov cr3, eax
     mov eax, cr4
     or eax, 1 << 5
@@ -112,23 +112,23 @@ ap_setup64:         ; @ 0x8080
 
     ; Now that we have paging enabled, we want to load the 'main' GDT, before jumping to x86-64 code
     ; Then, we can jump to the 64-bit trampoline code, that will get us to the C++ entry point function
-    lgdt [AX_FIX_ADDR( ax_gdt_pointer_low)]
-    jmp 0x08:AX_FIX_ADDR( ax_ap_trampoline )
+    lgdt [AXK_FIX_ADDR( axk_gdt_pointer )]
+    jmp 0x08:AXK_FIX_ADDR( axk_ap_trampoline )
 
-ax_ap_code_end:
+axk_ap_code_end:
 
 
 ;; ============ Exported Functions ==============
 bits 64
 axk_get_ap_code_begin:
 
-    mov rax, ax_ap_code_begin
+    mov rax, axk_ap_code_begin
     ret
 
 axk_get_ap_code_size:
 
-    mov rax, ax_ap_code_end
-    mov rdx, ax_ap_code_begin
+    mov rax, axk_ap_code_end
+    mov rdx, axk_ap_code_begin
     sub rax, rdx
     xor rdx, rdx
     ret

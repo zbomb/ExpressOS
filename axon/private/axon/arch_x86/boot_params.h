@@ -18,17 +18,16 @@ struct axk_bootparams_acpi_t
 };
 
 /*
-    ax_bootparams_parse
-    * Internal Function
-    * This is the X86_64 specific version of this function
-    * Parses multiboot info and fills the boot parameter structures (memorymap, framebuffer, acpi, etc..)
+    axk_x86_bootparams_parse
+    * Internal Function (x86-64 only)
+    * Parses information passed to the kernel from the T-0 bootloader
 */
-void ax_bootparams_parse( void* ptr_multiboot );
+bool axk_x86_bootparams_parse( void* ptr_params );
 
 /*
     axk_bootparams_get_acpi
     * Internal Function
-    * Gets a pointer to the ACPI info found when parsing bootparameters (multiboot2 in the case of X86)
+    * Gets a pointer to the ACPI info found when parsing the boot parameters
 */
 const struct axk_bootparams_acpi_t* axk_bootparams_get_acpi( void );
 
