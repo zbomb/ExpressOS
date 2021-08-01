@@ -168,8 +168,6 @@ check_hardware_support:
 
 map_kernel_address_space:
 
-    hlt
-    
     ; This requires two PDTs, each with 512 entries
     mov rcx, 0
     .map_begin:
@@ -196,7 +194,7 @@ map_kernel_address_space:
     mov qword [rax], r8
     inc rcx
     cmp rcx, 512
-    jl .map_begin
+    jb .map_begin
 
     ; Now we need to setup the PDPT (entries 510, 511) and the PML4 (entry 511)
     mov rax, AXK_FIX_ADDR( axk_pdt_high_1 )
@@ -214,10 +212,34 @@ map_kernel_address_space:
     mov rsi, AXK_FIX_ADDR( axk_pml4 ) + ( 511 * 8 )
     mov qword [rsi], rax
 
+    ; Next we need to copy in the UEFI mappings, this way we can still access info passed in from the bootloader
+    ; Later on, we will ditch these mappings once we get all physical memory mapped to the high address range (AXK_VA_PHYSICAL)
+    mov r8, cr3
+    mov r9, AXK_FIX_ADDR( axk_pml4 )
+    mov rcx, 0
+    .copy_loop:
+
+    mov rax, r8
+    add rax, rcx
+    mov dl, byte [rax]
+    mov rax, r9
+    add rax, rcx
+    mov byte [rax], dl
+
+    inc rcx
+    cmp rcx, 0x800
+    jl .copy_loop
+
     ; Now we need to update the active PML4, since we still are using the one from the UEFI enviornment
+    ; But, we want to store the old PML4, so we can copy in any entires in the lower half (0 to 255)
     mov rax, AXK_FIX_ADDR( axk_pml4 )
     mov cr3, rax
 
+    ; And now, lets jump to running code at the correct virtual address
+    mov rax, .begin_high_address
+    jmp rax
+
+    .begin_high_address:
     ret
 
 
@@ -243,12 +265,12 @@ axk_x86_bsp_entry:
 
     cli
     or rdi, rdi
-    jz .invalid_bootparams
+    jz invalid_bootparams
     mov rax, AXK_TZERO_MAGIC_VALUE
     cmp rsi, rax
-    jne .invalid_bootparams
+    jne invalid_bootparams
     cmp qword [rdi], rax
-    jne .invalid_bootparams
+    jne invalid_bootparams
 
     ; Store the pointer to bootloader parameters so we can pass it to the entry point later on
     mov rax, AXK_FIX_ADDR( axk_tzero_params )
@@ -261,7 +283,7 @@ axk_x86_bsp_entry:
     ; Check for support of required features
     call check_hardware_support
     or rax, rax
-    jz .missing_hardware_support
+    jz missing_hardware_support
 
     ; Now, were going to map the first 2GB of physical space to the high kernel address range
     call map_kernel_address_space
@@ -269,16 +291,19 @@ axk_x86_bsp_entry:
     ; Finally, were going to load our updated GDT and jump to C code
     ; TODO: Implement a better GDT system, possibly per CPU? Easy to update from C code?
     lgdt [axk_gdt_pointer]
-    jmp finish_bootstrap
 
+    mov rax, 0x08
+    push rax
+    push finish_bootstrap
+    rex64 retf
 
-    .invalid_bootparams:
+invalid_bootparams:
 
     ;; TODO: Find a good way to display an error to the screen
     jmp _debug_paint_buffer
     hlt
 
-    .missing_hardware_support:
+missing_hardware_support:
     
     ;; TODO: Find a good way to display an error to the screen
     jmp _debug_paint_buffer
@@ -295,14 +320,15 @@ finish_bootstrap:
     mov fs, ax
     mov gs, ax
 
-    mov ax, 0x08
-    mov cs, ax
+    ;; TODO: Finished Here
+    jmp _debug_paint_buffer
+    hlt
 
     ; Update the stack pointer to use the newly mapped high address range
     mov rsp, axk_bsp_stack_end
     mov rbp, rsp
 
     ; Lastly, were going to jump to the x86 C entry point
-    mov rdi, axk_tzero_params
+    mov rdi, qword [axk_tzero_params]
     call axk_x86_c_bsp_entry
 

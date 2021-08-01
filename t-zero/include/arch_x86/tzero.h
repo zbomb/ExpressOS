@@ -73,7 +73,9 @@ struct efi_resolution_t
     uint32_t pixels_per_scanline;
     uint32_t index;
     enum efi_pixel_format_t format;
-};
+    uint32_t _pad;
+
+};  // Size = 24 bytes
 
 struct efi_framebuffer_t
 {
