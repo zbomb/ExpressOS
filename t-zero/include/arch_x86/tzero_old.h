@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <efi.h>
+#include <efi.h> 
 #include <efilib.h>
 #include <elf.h>
 
@@ -50,94 +50,57 @@
     Other Constants
 */
 #define TZERO_MAGIC_VALUE   0x4C4946544F464621UL
+#define TZERO_KVA_OFFSET    0xFFFFFFFF80000000
 
 /*
-    T-0 Framebuffer Structure
+    Global Helper Functions
 */
-enum tzero_pixel_format_t
+__attribute__((__noreturn__)) void tzero_halt( void );
+
+/*
+    Framebuffer Structure
+*/
+enum efi_pixel_format_t
 {
-    PIXEL_FORMAT_INVALID = 0,
-    PIXEL_FORMAT_RGBX_32 = 1,
-    PIXEL_FORMAT_BGRX_32 = 2,
-    PIXEL_FORMAT_BITMASK = 3
+    efi_pixel_rgbx_32   = 0,
+    efi_pixel_bgrx_32   = 1
 };
 
-struct tzero_resolution_t
+struct efi_resolution_t
 {
     uint32_t width;
     uint32_t height;
     uint32_t pixels_per_scanline;
     uint32_t index;
-    uint8_t red_bit_width;
-    uint8_t green_bit_width;
-    uint8_t blue_bit_width;
-    uint8_t red_shift;
-    uint8_t green_shift;
-    uint8_t blue_shift;
-    uint8_t mode;
-    uint8_t _pad_;
-};
+    enum efi_pixel_format_t format;
+    uint32_t _pad;
 
-struct tzero_framebuffer_t
+};  // Size = 24 bytes
+
+struct efi_framebuffer_t
 {
-    uint64_t phys_addr;
+    void* address;
     size_t size;
-    struct tzero_resolution_t resolution;
+    struct efi_resolution_t res;
 };
+
 
 /*
-    T-0 Memory Map
+    Kernel Parameters
 */
-enum tzero_memory_status_t
-{
-    TZERO_MEMORY_RESERVED       = 0,
-    TZERO_MEMORY_AVAILABLE      = 1,
-    TZERO_MEMORY_ACPI           = 2,
-    TZERO_MEMORY_BOOTLOADER     = 3
-};
-
-struct tzero_memory_entry_t
-{
-    uint64_t base_address;
-    uint64_t page_count;
-    uint32_t type;
-    uint32_t _pad_;
-};
-
-struct tzero_memory_map_t
-{
-    struct tzero_memory_entry_t* list;
-    uint32_t count;
-};
-
-/*
-    T-0 ACPI Info
-*/
-struct tzero_acpi_info_t
-{
-    uint64_t rsdp_phys_addr;
-    bool b_rsdp_new_version;
-};
-
-/*
-    Generic Payload Parameters
-*/
-struct tzero_payload_parameters_t
+struct tzero_payload_params_t
 {
     uint64_t magic_value;
-    void( *fn_on_success )( void );
-    void( *fn_on_error )( const char* );
-    struct tzero_framebuffer_t framebuffer;
-    struct tzero_memory_map_t memory_map;
-    struct tzero_resolution_t* available_resolutions;
-    uint32_t resolution_count;
-};
-
-/*
-    x86 Specific Payload Parameters
-*/
-struct tzero_x86_payload_parameters_t
-{
-    uint64_t magic_value;
-    struct tzero_acpi_info_t acpi;
+    void( *fn_load_success )( void );
+    void( *fn_load_failed )( const char*, const char* );
+    void* framebuffer_ptr;
+    size_t framebuffer_size;
+    struct efi_resolution_t framebuffer_res;
+    EFI_MEMORY_DESCRIPTOR* memmap_ptr;
+    uint32_t memmap_size;
+    uint32_t memmap_desc_size;
+    void* rsdp_ptr;
+    bool b_new_rsdp;
+    struct efi_resolution_t* res_list;
+    uint32_t res_count;
 };

@@ -14,6 +14,7 @@ AXON_X86_PATH 				= arch_x86/
 
 AXON_BUILD_PATH 		= build/
 AXON_X86_BUILD_PATH 	= build/x86/
+AXON_DATA_PATH			= data/
 AXON_OUTPUT_DIR 		= ../bin/x86/axon/
 
 LIBK_OUTPUT_DIR			= ../bin/x86/libk/
@@ -54,6 +55,10 @@ AXON_OBJECTS_X86 	:= $(patsubst $(AXON_X86_PATH)%.asm, $(AXON_X86_BUILD_PATH)%.o
 $(AXON_OBJECTS_C) : $(AXON_SOURCE_C)
 	mkdir -p $(dir $@) && \
 	$(C_CC) $(AXON_CPARAMS) $(patsubst $(AXON_BUILD_PATH)%.o, $(AXON_SOURCE_PATH)%, $@) -o $@
+ 
+$(AXON_BUILD_PATH)data/fonts/basic_out.o : $(AXON_DATA_PATH)fonts/basic_out.psf 
+	mkdir -p $(AXON_BUILD_PATH)data/fonts/ && \
+	objcopy -O elf64-x86-64 -B i386 -I binary $(AXON_DATA_PATH)fonts/basic_out.psf $(AXON_BUILD_PATH)data/fonts/basic_out.o
 
 .PHONY: compile-axon-c
 compile-axon-c: $(AXON_OBJECTS_C)
@@ -70,9 +75,9 @@ build-libk-x86:
 	cd $(LIBK_ROOT) && make build-libk-x86
 
 .PHONY: build-axon-x86
-build-axon-x86: compile-axon-asm-x86 compile-axon-c build-libk-x86
+build-axon-x86: compile-axon-asm-x86 compile-axon-c build-libk-x86 $(AXON_BUILD_PATH)data/fonts/basic_out.o
 	mkdir -p $(dir $(AXON_OUTPUT_DIR)) && \
-	$(LINKER) $(AXON_LPARAMS) -o $(AXON_OUTPUT_DIR)axon.bin -L $(LIBK_OUTPUT_DIR) -T $(AXON_LINKFILE) $(AXON_OBJECTS_X86) $(AXON_OBJECTS_C) -l k
+	$(LINKER) $(AXON_LPARAMS) -o $(AXON_OUTPUT_DIR)axon.bin -L $(LIBK_OUTPUT_DIR) -T $(AXON_LINKFILE) $(AXON_OBJECTS_X86) $(AXON_OBJECTS_C) $(AXON_BUILD_PATH)data/fonts/basic_out.o -l k
 
 .PHONY: clean-axon
 clean-axon:

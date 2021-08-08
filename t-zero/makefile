@@ -63,7 +63,7 @@ build-tzero-installer-x86: compile-tzero-installer-x86
 .PHONY: build-tzero-debug-x86
 build-tzero-debug-x86: compile-tzero-os-x86
 	mkdir -p $(dir $(TZERO_BUILD_PATH_X86))debug_iso/ && \
-	rm -r $(TZERO_BUILD_PATH_X86)debug_iso/* && \
+	rm -r -f $(dir $(TZERO_BUILD_PATH_X86))debug_iso/* && \
 	mkdir -p $(dir $(TZERO_BUILD_PATH_X86))debug_iso/EFI/BOOT/ && \
 	mkdir -p $(dir $(TZERO_OUTPUT_DIR_X86))os_launcher/ && \
 	cp -r $(TZERO_DATA_PATH_X86)* $(TZERO_BUILD_PATH_X86)debug_iso && \
