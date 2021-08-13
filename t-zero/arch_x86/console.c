@@ -23,20 +23,20 @@ void tzero_console_prints16( CHAR16* str )
 
 void tzero_console_prints8( const char* str )
 {
-    if( str == NULL ) 
+    size_t len = str == NULL ? 0UL : strlen( str );
+    if( len == 0UL ) 
     { 
         efi_table->ConOut->OutputString( efi_table->ConOut, L"NULL" );
     }
     else
     {
         // Determine length of the string, copy into a u-16 formatted string
-        size_t len = strlen( str );
-        uint16_t* u16_str = (uint16_t) tzero_alloc( len * 2UL );
+        uint16_t* u16_str = (uint16_t*) tzero_alloc( ( len + 1UL ) * 2UL );
+
         for( size_t i = 0; i < len; i++ )
         {
             u16_str[ i ] = str[ i ];
         }
-
         u16_str[ len ] = 0x00;
 
         // Print UTF-16 string as normal

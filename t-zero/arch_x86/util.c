@@ -118,6 +118,14 @@ size_t strlen( const char* str )
 }
 
 
+void* memcpy( void* restrict dst, const void* restrict src, size_t count )
+{
+    if( dst == NULL || src == NULL || count == 0UL ) { return dst; }
+    for( size_t i = 0; i < count; i++ ) { ( (uint8_t*)dst )[ i ] = ( (uint8_t*)src )[ i ]; }
+    return dst;
+}
+
+
 __attribute__((__noreturn__)) void tzero_halt( void )
 {
     while( true ) { __asm__( "hlt" ); }
@@ -127,13 +135,13 @@ __attribute__((__noreturn__)) void tzero_halt( void )
 void* tzero_alloc( uint64_t sz )
 {
     void* output = NULL;
-    EFI_STATUS status = efi_table->BootServices->AllocatePool( EfiLoaderData, size, &output );
+    EFI_STATUS status = efi_table->BootServices->AllocatePool( EfiLoaderData, sz, &output );
     
     if( EFI_ERROR( status ) || output == NULL )
     {
-        tzero_console_prints( L"T-0 (ERROR): Memory allocation failed! Error code: " );
+        tzero_console_prints16( L"T-0 (ERROR): Memory allocation failed! Error code: " );
         tzero_console_printu32( (uint32_t) status );
-        tzero_console_prints( L" \r\n" );
+        tzero_console_prints16( L" \r\n" );
         tzero_halt();
     }
 
@@ -148,7 +156,7 @@ void tzero_free( void* ptr )
     EFI_STATUS status = efi_table->BootServices->FreePool( ptr );
     if( EFI_ERROR( status ) )
     {
-        tzero_console_prints( L"T-0 (WARNING): Failed to release allocated memory! Error code: " );
+        tzero_console_prints16( L"T-0 (WARNING): Failed to release allocated memory! Error code: " );
         tzero_console_printu32( (uint32_t) status );
         tzero_console_printnl();
     }
@@ -162,7 +170,7 @@ __attribute__((__noreturn__)) void tzero_launch( uint64_t entry_point, void* par
 
     if( entry_point == 0UL )
     {
-        tzero_console_prints( L"T-0 (WARNING): Attempt to launch payload with NULL entry point! Bootloader will now halt \r\n" );
+        tzero_console_prints16( L"T-0 (WARNING): Attempt to launch payload with NULL entry point! Bootloader will now halt \r\n" );
         tzero_halt();
     }
 
@@ -175,9 +183,11 @@ __attribute__((__noreturn__)) void tzero_launch( uint64_t entry_point, void* par
         "movq %1, %%rsi\n"
         "movq %0, %%rax\n"
         "jmp *%%rax"
-        : : "r"( (uint64_t)( entry_fn ) ), "r"( param_two ), "r"( param_one )
+        : : "r"( (uint64_t)( entry_point ) ), "r"( param_two ), "r"( param_one )
         :
     );
+
+    while( 1 ) { __asm__( "hlt" ); }
 }
 
 
@@ -196,7 +206,7 @@ EFI_FILE* tzero_open_file( EFI_FILE* directory, CHAR16* path, EFI_FILE_INFO* out
     }
 
     // Open the file
-    if( EFI_ERROR( directory->Open( directory, &output, path, EFI_FILE_MODE_READ, EFI_FILE_READ_ONLY ) )
+    if( EFI_ERROR( directory->Open( directory, &output, path, EFI_FILE_MODE_READ, EFI_FILE_READ_ONLY ) ) )
     {
         return NULL;
     }

@@ -13,7 +13,9 @@
 			"interrupts.h": "c",
 			"timers_private.h": "c",
 			"debug_print.h": "c",
-			"panic.h": "c"
+			"panic.h": "c",
+			"atomics.h": "c",
+			"sysinfo.h": "c"
 		}
 	}
 }

@@ -3,7 +3,6 @@
     2021, Zachary Berry
     axon/source/arch_x86/entry.c
 ==============================================================*/
-#ifdef _X86_64_
 
 #include "axon/panic.h"
 #include "axon/boot/basic_out.h"
@@ -65,7 +64,7 @@ bool axk_start_aux_processors( uint32_t* out_cpu_count );
 bool axk_build_system_info_bsp( uint32_t cpu_count );
 bool axk_build_system_info_ap( uint32_t id );
 
-
+ 
 void axk_x86_c_bsp_entry( struct tzero_payload_params_t* ptr_info )
 {
     // Parse the boot parameters

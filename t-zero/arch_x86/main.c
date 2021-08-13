@@ -5,31 +5,34 @@
 ==============================================================*/
 
 #include "tzero.h"
-#include "libc.h"
 #include "util.h"
 #include "console.h"
 
 /*
     Constants
 */
-#define KERNEL_FILE_NAME    L"AXON.BIN"
-#define KERNEL_VOFFSET      0xFFFFFFFF80000000
+#define KERNEL_FILE_NAME        L"AXON.BIN"
+#define KERNEL_VOFFSET          0xFFFFFFFF80000000
+#define KERNEL_AP_INIT_ADDR     0x8000
+#define KERNEL_AP_INIT_PAGES    1
 
 /*
     Globals
 */
-static EFI_SYSTEM_TABLE* efi_table  = NULL;
-static EFI_HANDLE efi_handle        = NULL;
-static UINTN efi_memmap_key         = 0U;
+EFI_SYSTEM_TABLE* efi_table                         = NULL;
+EFI_HANDLE efi_handle                               = NULL;
+UINTN efi_memmap_key                                = 0;
+struct tzero_payload_parameters_t* tzero_params     = NULL;
+struct tzero_x86_payload_parameters_t* x86_params   = NULL;
 
 /*
     Forward Function Declarations
 */
 bool parse_framebuffer_info( struct tzero_payload_parameters_t* out_info );
-bool parse_memory_map( struct tzero_payload_parameters_t* out_info );
+bool finalize_memory_map( struct tzero_payload_parameters_t* out_info );
 bool parse_acpi_info( struct tzero_x86_payload_parameters_t* out_arch_info );
-void on_success_callback( void );
-void on_failure_callback( const char* message );
+__attribute__(( sysv_abi )) void on_success_callback( void );
+__attribute__(( sysv_abi )) void on_failure_callback( const char* message );
 
 /*
     Entry Point
@@ -44,7 +47,18 @@ EFI_STATUS efi_main( EFI_HANDLE in_handle, EFI_SYSTEM_TABLE* in_table )
 
     // Print header
     tzero_console_clear();
-    tzero_console_prints16( "T-0: Initializing bootloader...\r\n" );
+    tzero_console_prints16( L"T-0: Initializing bootloader...\r\n" );
+
+    // Ensure the page required for processor initialization is reserved so it wont be allocated for any other purpose
+    EFI_PHYSICAL_ADDRESS ap_init_addr = KERNEL_AP_INIT_ADDR;
+    status = efi_table->BootServices->AllocatePages( AllocateAddress, EfiLoaderCode, (UINTN) KERNEL_AP_INIT_PAGES, &ap_init_addr );
+    if( EFI_ERROR( status ) )
+    {
+        tzero_console_prints16( L"T-0 (Warning): Failed to reserve memory pages required for aux processor initialization by the kernel, continuing boot process but issues may arise \r\n" );
+
+        // We need to pause for a short amount of time (3s) to ensure the user sees the message
+        efi_table->BootServices->Stall( 3000000 );
+    }
 
     // Attempt to load the kernel binary
     EFI_FILE_INFO kernel_info;
@@ -55,7 +69,7 @@ EFI_STATUS efi_main( EFI_HANDLE in_handle, EFI_SYSTEM_TABLE* in_table )
     {
         tzero_console_prints16( L"T-0 (ERROR): Failed to open kernel binary (" );
         tzero_console_prints16( KERNEL_FILE_NAME );
-        tzero_console_prints16( "), entering halted state \r\n" );
+        tzero_console_prints16( L"), entering halted state \r\n" );
         tzero_halt();
     }
 
@@ -123,7 +137,7 @@ EFI_STATUS efi_main( EFI_HANDLE in_handle, EFI_SYSTEM_TABLE* in_table )
             status = efi_table->BootServices->AllocatePages( AllocateAddress, EfiLoaderData, page_count, &addr );
             if( !EFI_ERROR( status ) )
             {
-                status = kernel_file->SetOffset( kernel_file, phdr_list[ i ].offset );
+                status = kernel_file->SetPosition( kernel_file, phdr_list[ i ].offset );
             }
 
             if( !EFI_ERROR( status ) )
@@ -156,43 +170,38 @@ EFI_STATUS efi_main( EFI_HANDLE in_handle, EFI_SYSTEM_TABLE* in_table )
     }
 
     // Create the structure we will place all parameters into and pass along to the payload
-    struct tzero_payload_parameters_t params;
-    memset( (void*) &params, 0, sizeof( struct tzero_payload_parameters_t ) );
+    tzero_params    = (struct tzero_payload_parameters_t*) tzero_alloc( sizeof( struct tzero_payload_parameters_t ) );
+    x86_params      = (struct tzero_x86_payload_parameters_t*) tzero_alloc( sizeof( struct tzero_x86_payload_parameters_t) );
+
+    memset( (void*) tzero_params, 0, sizeof( struct tzero_payload_parameters_t ) );
+    memset( (void*) x86_params, 0, sizeof( struct tzero_x86_payload_parameters_t ) );
 
     // Parse the current framebuffer information, along with all available resolutions
-    if( !parse_framebuffer_info( &params ) )
+    if( !parse_framebuffer_info( tzero_params ) )
     {
         tzero_console_prints16( L"T-0 (ERROR): Failed to parse graphics information, entering halted state \r\n" );
         tzero_halt();
     }
 
-    // Parse the physical memory map
-    if( !parse_memory_map( &params ) )
-    {
-        tzero_console_prints16( L"T-0 (ERROR): Failed to parse physical memory map, entering halted state \r\n" );
-        tzero_halt();
-    }
-
     // Set the final static values in the generic parameters structure
-    params.magic_value      = TZERO_MAGIC_VALUE;
-    params.fn_on_success    = on_success_callback;
-    params.fn_on_error      = on_failure_callback;
+    tzero_params->magic_value       = TZERO_MAGIC_VALUE;
+    tzero_params->fn_on_success     = on_success_callback;
+    tzero_params->fn_on_error       = on_failure_callback;
 
     // Now, we need to build out architecture specific parameters
-    struct tzero_x86_payload_parameters_t x86_params;
-    memset( (void*) &x86_params, 0, sizeof( struct tzero_x86_payload_parameters_t ) );
-
-    if( !parse_acpi_info( &x86_params ) )
+    if( !parse_acpi_info( x86_params ) )
     {
         tzero_console_prints16( L"T-0 (ERROR): Failed to located ACPI table information, entering halted state \r\n" );
         tzero_halt();
     }
 
     // Ensure the magic value is set, so the payload can be sure both parameter lists are available
-    x86_params.magic_value = TZERO_MAGIC_VALUE;
-
+    x86_params->magic_value = TZERO_MAGIC_VALUE;
+    x86_params->arch_code   = TZERO_ARCH_CODE_X86;
+    
     // And finally, find the entry point, and launch the payload with the two parameter lists
-    tzero_launch( (uint64_t)( header.entry ) - KERNEL_VOFFSET, (void*) &params, (void*) &x86_params );
+    // Generic parameters will be placed into 'rdi', and the architecture specific parameters into 'rsi'
+    tzero_launch( (uint64_t)( header.entry ) - KERNEL_VOFFSET, (void*) tzero_params, (void*) x86_params );
 }
 
 /*
@@ -214,7 +223,7 @@ bool parse_bitmask( uint32_t mask, uint8_t* out_width, uint8_t* out_shift )
         if( algo_mode == 0 && set )
         {
             start_bit = i;
-            algo_mode = 1
+            algo_mode = 1;
         }
         else if( algo_mode == 1 && !set )
         {
@@ -257,8 +266,8 @@ bool parse_framebuffer_info( struct tzero_payload_parameters_t* out_params )
     }
 
     // Allocate space for all resolutions available in the output structure
-    out_params->resolution_count        = gop->Mode->MaxModes;
-    out_params->available_resolutions   = (struct tzero_resolution_t*) tzero_alloc( sizeof( struct tzero_resolution_t ) * gop->Mode->MaxModes );
+    out_params->resolution_count        = gop->Mode->MaxMode;
+    out_params->available_resolutions   = (struct tzero_resolution_t*) tzero_alloc( sizeof( struct tzero_resolution_t ) * gop->Mode->MaxMode );
 
     // Iterate through all available resolutions in GOP
     for( uint32_t i = 0; i < gop->Mode->MaxMode; i++ )
@@ -409,7 +418,7 @@ bool parse_framebuffer_info( struct tzero_payload_parameters_t* out_params )
     tzero_console_printu32( out_params->framebuffer.resolution.height );
     tzero_console_prints16( L"  Format: " );
 
-    switch( out_params->framebuffer.mode )
+    switch( out_params->framebuffer.resolution.mode )
     {
         case PIXEL_FORMAT_RGBX_32:
         tzero_console_prints16( L"RGB  " );
@@ -443,7 +452,6 @@ enum tzero_memory_status_t convert_memory_type( uint32_t in_type )
         /* fall through */
         case EfiLoaderData:
         return TZERO_MEMORY_BOOTLOADER;
-        break;
 
         // These ranges are good to use
         case EfiBootServicesCode:
@@ -451,15 +459,17 @@ enum tzero_memory_status_t convert_memory_type( uint32_t in_type )
         case EfiBootServicesData: 
         /* fall through */
         case EfiConventionalMemory:
-        /* fall through */
-        case EfiPersistentMemory:
+        //case EfiPersistentMemory:
         return TZERO_MEMORY_AVAILABLE;
-        break;
 
         // ACPI reclaimable memory
         case EfiACPIReclaimMemory:
         return TZERO_MEMORY_ACPI;
-        break;
+
+        case EfiMemoryMappedIO:
+        /* fall through */
+        case EfiMemoryMappedIOPortSpace:
+        return TZERO_MEMORY_MAPPED_IO;
 
         // This is non-usable memory
         case EfiReservedMemoryType:
@@ -472,15 +482,10 @@ enum tzero_memory_status_t convert_memory_type( uint32_t in_type )
         /* fall through */
         case EfiACPIMemoryNVS:
         /* fall through */
-        case EfiMemoryMappedIO:
-        /* fall through */
-        case EfiMemoryMappedIOPortSpace:
-        /* fall through */
         case EfiPalCode:
         /* fall through */
         default:
         return TZERO_MEMORY_RESERVED;
-        break;
     }
 }
 
@@ -488,90 +493,133 @@ enum tzero_memory_status_t convert_memory_type( uint32_t in_type )
 /*
     Memory Map Parsing
 */
-bool parse_memory_map( struct tzero_payload_parameters_t* out_params )
+bool finalize_memory_map( struct tzero_payload_parameters_t* out_params )
 {
-    if( out_params == NULL ) { return false; }
+    if( out_params == NULL || out_params->memory_map.list != NULL ) { return false; }
 
-    // Allocate space for, and read the physical memory map
-    EFI_MEMORY_DESCRIPTOR* mem_desc_list = NULL;
-    UINTN mem_desc_size, memmap_size;
-    UINT32 mem_desc_ver;
+    // First, determine the total number of EFI memory map entries and allocate storage for both the EFI map, and the T-0 map
+    EFI_STATUS status;
+    EFI_MEMORY_DESCRIPTOR* mmap_efi = NULL;
+    UINTN mmap_entry_size, mmap_size;
+    UINT32 mmap_entry_ver;
 
-    efi_table->BootServices->GetMemoryMap( &memmap_size, mem_desc_list, &efi_memmap_key, &mem_desc_size, &mem_desc_ver );
-    mem_desc_list = (EFI_MEMORY_DESCRIPTOR*) tzero_alloc( mem_map_size );
-    efi_table->BootServices->GetMemoryMap( &memmap_size, mem_desc_list, &efi_memmap_key, &mem_desc_size, &mem_desc_ver );
+    // Print out message, in-case of an error after exiting boot services, and pause for 1s incase any bootloader output is important to developer
+    tzero_console_prints16( L"T-0: Finalizing memory map and exiting EFI boot services..\r\nIf the kernel does not continue to boot, then there was an error during this process...\r\n" );
+    efi_table->BootServices->Stall( 1000000 );
 
-    // Now, we need to count the total number of unique memory sections so we can allocate storage in the parameters structure
-    uint32_t source_section_count = memmap_size / mem_desc_size;
-    enum tzero_memory_status_t last_section_status = TZERO_MEMORY_RESERVED;
-    uint64_t entry_counter = 0UL;
-    uint64_t page_counter = 0UL;
-
-    for( uint32_t i = 0; i < source_section_count; i++ )
+    // We are going to have 5 attempts at reading the memory map
+    for( uint32_t i = 0; i < 5; i++ )
     {
-        EFI_MEMORY_DESCRIPTOR* desc = mem_desc_list + i;
-        
+        // First call to this function will give us the total number of entries in the memory map so we can allocate storage
+        efi_table->BootServices->GetMemoryMap( &mmap_size, mmap_efi, &efi_memmap_key, &mmap_entry_size, &mmap_entry_ver );
+
+        // Allocate space to write the EFI memory map to, and also space to parse that map into a more generic structure
+        // Were going to allocate space for 5 extra entries, because we are performing two pool allocations here (plus a few extra just incase)
+        // The 'tzero memory map' most definately wont have the same numebr of entries as the EFI version, since we combine adjacent entries of similar type
+        // BUT, we need to perform the allocation before we have a chance to parse! So, we allocate space for a 'worst case scenario'
+        uint32_t mmap_efi_entries = mmap_size / mmap_entry_size;
+        mmap_efi = (EFI_MEMORY_DESCRIPTOR*) tzero_alloc( mmap_size + ( mmap_entry_size * 5UL ) );
+        out_params->memory_map.list = (struct tzero_memory_entry_t*) tzero_alloc( sizeof( struct tzero_memory_entry_t ) * ( mmap_efi_entries + 5UL ) );
+
+        // Read the EFI memory map..
+        status = efi_table->BootServices->GetMemoryMap( &mmap_size, mmap_efi, &efi_memmap_key, &mmap_entry_size, &mmap_entry_ver );
+        if( EFI_ERROR( status ) )
+        {
+            // Free the storage allocated, and try again
+            tzero_free( mmap_efi );
+            tzero_free( out_params->memory_map.list );
+        }
+        else
+        {
+            // We need to exit boot services since we have the most up-to-date memory map
+            status = efi_table->BootServices->ExitBootServices( efi_handle, efi_memmap_key );
+            if( EFI_ERROR( status ) )
+            {
+                tzero_free( mmap_efi );
+                tzero_free( out_params->memory_map.list );
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    // Check if we were able to read the memory map
+    if( mmap_efi == NULL || out_params->memory_map.list == NULL )
+    {
+        tzero_console_prints16( L"T-0 (ERROR): Failed to read the EFI memory map or hand system control over to the kernel! Entering halted state.. \r\n" );
+        tzero_halt();
+    }
+
+    // First, lets go through the EFI memory map and determine the total number of unique sections we need to write into the T-0 memory map
+    uint32_t mmap_entries_efi                           = mmap_size / mmap_entry_size;
+    enum tzero_memory_status_t last_entry_status_efi    = TZERO_MEMORY_RESERVED;
+    uint64_t mmap_entries_tzero                          = 0UL;
+    uint64_t total_pages                                = 0UL;
+
+    for( uint32_t i = 0; i < mmap_entries_efi; i++ )
+    {
+        EFI_MEMORY_DESCRIPTOR* entry = (EFI_MEMORY_DESCRIPTOR*)( (uint8_t*)( mmap_efi ) + ( (uint64_t)( i ) * (uint64_t)( mmap_entry_size ) ) );
         // We want to determine the 'converted' type, and increment the counter when the last section type doesnt match the current
         // section type, this way we end up with a count of the total number of unique memory sections
         if( i == 0 )
         {
-            last_section_status = convert_memory_type( desc->Type );
-            entry_counter++;
+            last_entry_status_efi = convert_memory_type( entry->Type );
+            mmap_entries_tzero++;
         }
         else
         {
-            enum tzero_memory_status_t this_status = convert_memory_type( desc->Type );
-            if( this_status != last_section_status )
+            enum tzero_memory_status_t this_status = convert_memory_type( entry->Type );
+            if( this_status != last_entry_status_efi )
             {
                 // Found the start of a new memory range, increment the counter
-                last_section_status = this_status;
-                entry_counter++;
+                last_entry_status_efi = this_status;
+                mmap_entries_tzero++;
             }
         }
 
-        page_counter += desc->NumberOfPages;
+        total_pages += entry->NumberOfPages;
     }
 
-    // Now, we can allocate storage for the 'T-0 Memory Map'
-    if( entry_counter == 0UL )
+    if( mmap_entries_tzero == 0UL )
     {
-        tzero_console_prints16( L"T-0 (ERROR): Failed to parse memory map, the UEFI memory map was empty! \r\n" );
-        return false;
+        tzero_halt();
     }
 
-    out_params->memory_map.list     = (struct tzero_memory_entry_t*) tzero_alloc( sizeof( struct tzero_memory_entry_t ) * entry_counter );
-    out_params->memory_map.count    = entry_counter;
+    // Now, we need to actually parse the map
+    uint32_t last_entry_efi = 0U;
 
-    // Now, we need to loop through each output section, and parse the corresponding UEFI entries
-    uint32_t last_uefi_entry = 0U;
-
-    for( uint32_t i = 0; i < entry_counter; i++ )
+    for( uint32_t i = 0; i < mmap_entries_tzero; i++ )
     {
         struct tzero_memory_entry_t* dest_entry = out_params->memory_map.list + i;
+        EFI_MEMORY_DESCRIPTOR* last_entry = (EFI_MEMORY_DESCRIPTOR*)( (uint8_t*)( mmap_efi ) + ( (uint64_t)( last_entry_efi ) * (uint64_t)( mmap_entry_size ) ) );
 
-        dest_entry->type            = (uint32_t) convert_memory_type( mem_desc_list[ last_uefi_entry ].Type );
-        dest_entry->base_address    = mem_desc_list[ last_uefi_entry ].PhysicalStart;
+        dest_entry->type            = (uint32_t) convert_memory_type( last_entry->Type );
+        dest_entry->base_address    = last_entry->PhysicalStart;
 
-        for( uint32_t j = last_uefi_entry; j < source_section_count; j++ )
+        for( uint32_t j = last_entry_efi; j < mmap_entries_efi; j++ )
         {
+            EFI_MEMORY_DESCRIPTOR* j_entry = (EFI_MEMORY_DESCRIPTOR*)( (uint8_t*)( mmap_efi ) + ( (uint64_t)( j ) * (uint64_t)( mmap_entry_size ) ) );
+
             // Check if we hit the start of the next section
-            if( (uint32_t)( convert_memory_type( mem_desc_list[ j ].Type ) ) != dest_entry->type )
+            if( (uint32_t)( convert_memory_type( j_entry->Type ) ) != dest_entry->type )
             {
-                last_uefi_entry = j;
+                last_entry_efi = j;
                 break;
             }
 
-            dest_entry->page_count += mem_desc_list[ j ].NumberOfPages;
+            dest_entry->page_count += j_entry->NumberOfPages;
         }
     }
 
     // And finally, we just want to ensure this map is sorted by physical start address
     struct tzero_memory_entry_t temp_entry;
-    for( uint32_t i = 0; i < entry_counter - 1U; i++ )
+    for( uint32_t i = 0; i < mmap_entries_tzero - 1U; i++ )
     {
         // Find the lowest physical starting address for any entry starting at index (i)
         uint32_t lowest_index = i;
-        for( uint32_t j = i; j < entry_counter; j++ )
+        for( uint32_t j = i; j < mmap_entries_tzero; j++ )
         {
             if( out_params->memory_map.list[ j ].base_address < out_params->memory_map.list[ lowest_index ].base_address )
             {
@@ -587,15 +635,6 @@ bool parse_memory_map( struct tzero_payload_parameters_t* out_params )
             memcpy( out_params->memory_map.list + lowest_index, &temp_entry, sizeof( struct tzero_memory_entry_t ) );
         }
     }
-
-    // Print out a debug message
-    tzero_console_prints16( L"T-0: Prased memory map successfully! There are " );
-    tzero_console_printu32( entry_counter );
-    tzero_console_prints16( L" entries in the map, with a total of " );
-    tzero_console_printu64( page_counter );
-    tzero_console_prints16( L" pages (" );
-    tzero_console_printu64( ( page_counter * 0x1000UL ) / 1024UL / 1024UL );
-    tzero_console_prints16( L" GB)\r\n" );
 
     return true;
 }
@@ -652,17 +691,28 @@ bool parse_acpi_info( struct tzero_x86_payload_parameters_t* out_arch_info )
 /*
     Launch Success Callback
 */
-void on_success_callback( void )
+__attribute__(( sysv_abi )) void on_success_callback( void )
 {
-
+    // Parse the memory map and exit EFI boot services
+    if( !finalize_memory_map( tzero_params ) )
+    {
+        tzero_console_printnl();
+        tzero_console_prints16( L"T-0 (ERROR): Failed to handover system control to the kernel, entering halted state\r\n" );
+        tzero_halt();
+    }
 }
 
 
 /*
     Launch Failure Callback
 */
-void on_failure_callback( const char* message )
+__attribute__(( sysv_abi )) void on_failure_callback( const char* message )
 {
-
+    tzero_console_printnl();
+    tzero_console_printnl();
+    tzero_console_prints16( L"T-0 (ERROR): The kernel was unabled to be launched! Error: " );
+    tzero_console_prints8( message == NULL ? "No message provided, the installation may be corrupt" : message );
+    tzero_console_printnl();
+    tzero_halt();
 }
 

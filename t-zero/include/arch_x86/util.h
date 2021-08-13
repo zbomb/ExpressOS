@@ -8,6 +8,8 @@
 #include <stdint.h>
 #include <stdbool.h> 
 #include <stddef.h>
+#include <efi.h>
+#include <efilib.h>
 
 
 /*
@@ -39,6 +41,12 @@ void* memset( void* dst, int val, size_t count );
     * C Library Function
 */
 size_t strlen( const char* str );
+
+/*
+    memcpy
+    * C Library Function
+*/
+void* memcpy( void* restrict dst, const void* restrict src, size_t count );
 
 /*
     tzero_halt

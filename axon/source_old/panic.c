@@ -16,7 +16,7 @@ void axk_panic( const char* str )
     // TODO: Get RIP off stack to let us know where this was called from
 #ifdef _X86_64_
     uint64_t ret_addr = (uint64_t) __builtin_extract_return_addr( __builtin_return_address( 0 ) );
-#else
+#else 
     uint64_t ret_addr = 0UL;
 #endif
 

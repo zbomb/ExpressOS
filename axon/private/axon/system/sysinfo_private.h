@@ -1,11 +1,11 @@
 /*==============================================================
-    Axon Kernel - Private System Info Header
+    Axon Kernel - System Info (Private Header)
     2021, Zachary Berry
-    axon/private/axon/system/sysinfo_private.h
+    axon/private/axon/system/sysinfo.h
 ==============================================================*/
 
 #pragma once
-#include "axon/config.h"
+#include "axon/kernel/kernel.h"
 #include "axon/system/sysinfo.h"
 
 /*
@@ -57,3 +57,4 @@ uint64_t axk_counter_decrement( uint32_t index, uint64_t diff );
     * Returns the input value
 */
 uint64_t axk_counter_write( uint32_t index, uint64_t value );
+
