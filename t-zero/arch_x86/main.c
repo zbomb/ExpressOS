@@ -588,7 +588,8 @@ bool finalize_memory_map( struct tzero_payload_parameters_t* out_params )
     }
 
     // Now, we need to actually parse the map
-    uint32_t last_entry_efi = 0U;
+    uint32_t last_entry_efi         = 0U;
+    out_params->memory_map.count    = mmap_entries_tzero;
 
     for( uint32_t i = 0; i < mmap_entries_tzero; i++ )
     {

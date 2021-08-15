@@ -131,6 +131,27 @@ void axk_basicterminal_get_text_size( const char* str, uint32_t* out_width, uint
 }
 
 
+void axk_basicterminal_get_text_size_n( const char* str, size_t count, uint32_t* out_width, uint32_t* out_height )
+{
+    uint32_t width = 0U;
+    uint32_t height = 0U;
+
+    if( str != NULL )
+    {
+        size_t len = strlen( str );
+        if( len > count ) { len = count; }
+        size_t full_w   = len * ( BASIC_TERMINAL_FONT_WIDTH + BASIC_TERMINAL_CHAR_EXTRA_WIDTH );
+        size_t full_h   = BASIC_TERMINAL_FONT_HEIGHT + BASIC_TERMINAL_CHAR_EXTRA_HEIGHT;
+
+        width   = (uint32_t)( full_w > 0xFFFFFFFFUL ? 0xFFFFFFFFUL : full_w );
+        height  = (uint32_t)( full_h > 0xFFFFFFFFUL ? 0xFFFFFFFFUL : full_h );
+    }
+
+    if( out_width != NULL )     { *out_width = width; }
+    if( out_height != NULL )    { *out_height = height; }
+}
+
+
 void _print_word( const char* str, size_t count )
 {
     // First, determine the size of the word and if it can fit on the current line
@@ -254,11 +275,27 @@ void axk_basicterminal_prints( const char* str )
 
     while( true )
     {
-        char c = *( str + index );
-        bool is_space = ( c == ' ' );
-        bool is_end = ( c == 0x00 );
-        bool is_tab = ( c == '\t' );
-        bool is_nl = ( c == '\n' );
+        char c          = *( str + index );
+        bool is_space   = false;
+        bool is_end     = false;
+        bool is_tab     = false;
+        bool is_nl      = false;
+
+        switch( c )
+        {
+            case ' ':
+            is_space = true;
+            break;
+            case '\0':
+            is_end = true;
+            break;
+            case '\t':
+            is_tab = true;
+            break;
+            case '\n':
+            is_nl = true;
+            break;
+        }
 
         if( is_end || is_space || is_tab || is_nl )
         {
@@ -613,6 +650,37 @@ void axk_basicterminal_draw_text( const char* str, uint32_t in_x, uint32_t in_y,
     if( g_mode != BASIC_TERMINAL_MODE_GRAPHICS || str == NULL || in_x >= g_framebuffer.resolution.width || in_y >= g_framebuffer.resolution.height ) { return; }
 
     size_t str_sz = strlen( str );
+
+    for( size_t i = 0; i < str_sz; i++ )
+    {
+        char c = str[ i ];
+
+        // Now, loop through the pixels affected by this letter being printed (including any padding), and determine if its foreground or background
+        uint8_t* gdata = (uint8_t*)( g_font.glyph_data ) + ( g_font.header.glyph_sz * (uint32_t)( c ) );
+        for( uint32_t y = 0; y < 16; y++ )
+        {
+            for( uint32_t x = 0; x < 8; x++ )
+            {
+                bool b_fg = ( ( *gdata & ( 0b10000000 >> x ) ) != 0 );
+                if( !b_fg && b_transparent_bg ) { continue; }
+
+                _draw_pixel( x + in_x, y + in_y, b_fg ? g_fg_r : g_bg_r, b_fg ? g_fg_g : g_bg_g, b_fg ? g_fg_b : g_bg_g );
+            }
+
+            gdata++;
+        }
+
+        in_x += 8 + BASIC_TERMINAL_CHAR_EXTRA_WIDTH;
+    }
+}
+
+
+void axk_basicterminal_draw_text_n( const char* str, size_t n, uint32_t in_x, uint32_t in_y, bool b_transparent_bg )
+{
+    if( g_mode != BASIC_TERMINAL_MODE_GRAPHICS || str == NULL || in_x >= g_framebuffer.resolution.width || in_y >= g_framebuffer.resolution.height ) { return; }
+
+    size_t str_sz = strlen( str );
+    str_sz = str_sz > n ? n : str_sz;
 
     for( size_t i = 0; i < str_sz; i++ )
     {

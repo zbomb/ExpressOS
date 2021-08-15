@@ -81,6 +81,15 @@ void axk_basicterminal_get_size( uint32_t* out_width, uint32_t* out_height );
 void axk_basicterminal_get_text_size( const char* str, uint32_t* out_width, uint32_t* out_height );
 
 /*
+    axk_basicterminal_get_text_size_n
+    * Private Function
+    * Determines the size of a string, and allows a max character count to be specified
+    * * Ignores any special formatting
+    * Can be used in either mode
+*/
+void axk_basicterminal_get_text_size_n( const char* str, size_t count, uint32_t* out_width, uint32_t* out_height );
+
+/*
     axk_basicterminal_clear
     * Private Function
     * Clears the screen, resets back to print at the top left corner of the screen
@@ -174,6 +183,14 @@ void axk_basicterminal_printh64( uint64_t num, bool b_leading_zeros );
     * NOTE: Can only be used in 'graphics' mode
 */
 void axk_basicterminal_draw_text( const char* str, uint32_t x, uint32_t y, bool b_transparent_bg );
+
+/*
+    axk_basicterminal_draw_text_n
+    * Private Function
+    * Draws a specified number of characters from the string
+    * See 'axk_basicterminal_draw_text'
+*/
+void axk_basicterminal_draw_text_n( const char* str, size_t n, uint32_t x, uint32_t y, bool b_transparent_bg );
 
 /*
     axk_basicterminal_draw_text_box

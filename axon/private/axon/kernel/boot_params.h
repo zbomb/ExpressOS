@@ -71,7 +71,7 @@ struct tzero_memory_map_t
 {
     struct tzero_memory_entry_t* list;
     uint32_t count;
-};
+}; 
 
 /*
     Generic Payload Parameters

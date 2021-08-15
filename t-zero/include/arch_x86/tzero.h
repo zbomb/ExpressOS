@@ -104,7 +104,7 @@ struct tzero_memory_entry_t
     uint64_t base_address;
     uint64_t page_count;
     uint32_t type;
-    uint32_t _pad_;
+    uint32_t _pad_; 
 };
 
 struct tzero_memory_map_t
