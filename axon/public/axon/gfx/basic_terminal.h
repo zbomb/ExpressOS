@@ -23,15 +23,6 @@ enum axk_basicterminal_mode_t
     BASIC_TERMINAL_MODE_GRAPHICS    = 1
 };
 
-
-/*
-    axk_basicterminal_init
-    * Initializes the 'basic terminal' system, so simple text can be written to the console before full graphics
-      drivers are able to be properly loaded. Also used by the panic system.
-    * NOTE: By default, the mode is set to 'BASIC_TERMINAL_MODE_CONSOLE'
-*/
-bool axk_basicterminal_init( struct tzero_payload_parameters_t* in_params );
-
 /*
     axk_basicterminal_get_mode
     * Gets the current terminal mode, either BASIC_TERMINAL_MODE_CONSOLE or BASIC_TERMINAL_MODE_GRPAHICS

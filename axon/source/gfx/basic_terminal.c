@@ -64,6 +64,15 @@ bool axk_basicterminal_init( struct tzero_payload_parameters_t* in_params )
 }
 
 
+void axk_basicterminal_update_pointers( void )
+{
+    if( g_framebuffer.phys_addr < AXK_KERNEL_VA_PHYSICAL )
+    {
+        g_framebuffer.phys_addr += AXK_KERNEL_VA_PHYSICAL;
+    }
+}
+
+
 enum axk_basicterminal_mode_t axk_basicterminal_get_mode( void )
 {
     return g_mode;

@@ -6,28 +6,32 @@
 
 #pragma once
 
-// ---------------------------- Global Headers ----------------------------
+/*
+    Global Headers
+*/
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
 
+/*
+    Address Space Layout Constants
+*/
+#define AXK_KERNEL_VA_PHYSICAL  0xFFFF800000000000UL
+#define AXK_KERNEL_VA_HEAP      0xFFFFC00000000000UL
+#define AXK_KERNEL_VA_SHARED    0xFFFFE00000000000UL
+#define AXK_KERNEL_VA_IMAGE     0xFFFFFFFF80000000UL
 
-// ---------------------------- Address Space Layout ----------------------------
-#define AXK_KERNEL_VA_PHYSICAL  0xFFFF800000000000
-#define AXK_KERNEL_VA_HEAP      0xFFFFC00000000000
-#define AXK_KERNEL_VA_SHARED    0xFFFFE00000000000
-#define AXK_KERNEL_VA_IMAGE     0xFFFFFFFF80000000
-
-#define AXK_USER_VA_IMAGE       0x100000000
-#define AXK_USER_VA_SHARED      0x400000000000
-#define AXK_USER_VA_STACKS      0x7F0000000000
+#define AXK_USER_VA_IMAGE       0x100000000UL
+#define AXK_USER_VA_SHARED      0x400000000000UL
+#define AXK_USER_VA_STACKS      0x7F0000000000UL
 
 /*
-    Constants
+    Other Constants
 */
 #ifdef __x86_64__
-#define AXK_PAGE_SIZE 0x1000
+#define AXK_PAGE_SIZE       0x1000UL
+#define AXK_HUGE_PAGE_SIZE  0x200000UL
 #endif
 
 #define AXK_PROCESS_INVALID     0UL

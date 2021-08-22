@@ -51,7 +51,7 @@ bool axk_mapmgr_init( void )
     // Get addresses of the page tables stored in the kernel image
     g_ptr_kpml4         = (uint64_t) &axk_pml4;
     uint64_t ptr_kpdpt  = (uint64_t) &axk_pdpt_low;
-    uint64_t ptr_kpdt   = (uint64_t) &axk_pdt_low;
+    uint64_t ptr_kpdt   = (uint64_t) &axk_pdt_low; 
 
     // Write the first 1GB of mappings to AXK_KERNEL_VA_PHYSICAL
     uint64_t* pml4_array    = (uint64_t*) g_ptr_kpml4;
